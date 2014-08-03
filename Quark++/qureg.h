@@ -13,9 +13,13 @@ public:
 	// if basis is empty, we iterate over all 2^nqubit basis
 	vector<qubase> basis; 
 
+	/*
+	 *	Default dummy ctor
+	 */
+	Qureg() {}
+
 	// Reserved memory for single-basis ctor
 	static const int RSV_SIZE = 64;
-
 	/*
 	 *	Init to a dense register of n qubits with all amp = 0.
 	 */
@@ -68,6 +72,16 @@ public:
 	 *	True if we explicitly store the basis
 	 */
 	bool isSparse() { return !basis.empty(); }
+	/*
+	 *	True if we don't explicitly store the basis
+	 * == !isSparse()
+	 */
+	bool isDense() { return basis.empty(); }
+
+	/*
+	 *	If dense, getBase(i) == i
+	 */
+	qubase getBase(int i) { return isDense() ? i : basis[i]; }
 };
 
 

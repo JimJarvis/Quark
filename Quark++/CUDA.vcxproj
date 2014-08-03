@@ -19,12 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="qugate.h" />
+    <ClInclude Include="quop.h" />
     <ClInclude Include="qureg.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="qugate.cpp" />
+    <ClCompile Include="quop.cpp" />
     <ClCompile Include="qureg.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DA03790A-9432-43C6-ABFE-5104E30B6A35}</ProjectGuid>

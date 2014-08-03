@@ -1,7 +1,11 @@
 #include "qureg.h"
+#include "quop.h"
+#include "qugate.h"
 #include <Eigen/Dense>
 #include "vld.h"
 using namespace Testing;
+using namespace Quop;
+using namespace Qugate;
 using Eigen::Matrix2cf;
 
 void eigen_demo()
@@ -15,7 +19,7 @@ void eigen_demo()
 	pr(m.adjoint());
 }
 
-int main(int argc, char **argv)
+void ctor()
 {
 	// Dense init
 	Qureg qureg1(3);
@@ -36,10 +40,23 @@ int main(int argc, char **argv)
 	pause();
 	ptitle("Sparse reg N");
 	pr(qureg3);
+}
 
-	vector<int> vec;
-	vec.reserve(30);
-	pr(vec.size());
+int main(int argc, char **argv)
+{
+	// Dense init
+	Qureg qureg1(2);
+	// Sparse init with only 1 base at start
+	Qureg qureg2(2, qubase(3));
+	// Sparse init with N
+	Qureg qureg3(3, 8);
+
+	auto& amp = qureg1.amp;
+	amp[0] = CX(0.2, 1);
+	amp[1] = CX(0.3, -1);
+	amp[2] = CX(0.1, .5);
+	amp[3] = CX(0.5, -.5);
+	pr(kronecker(qureg1, qureg2));
 
 	return 0;
 }
