@@ -25,3 +25,14 @@ Qureg::operator string()
 	oss << "]";
 	return oss.str();
 }
+
+Qureg& Qureg::operator+=(int scratch_nqubit)
+{
+	nqubit += scratch_nqubit;
+	if (!isSparse())
+	{
+		size = 1 << nqubit;
+		amp.resize(size, CX(0));
+	}
+	return *this;
+}

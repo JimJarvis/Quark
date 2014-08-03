@@ -20,7 +20,7 @@ using namespace std;
 
 typedef float REAL;
 typedef complex<REAL> CX;
-enum qubase : unsigned long long { zero = 0 };
+typedef unsigned long long qubase;
 
 template<typename T>
 inline string vec2str(vector<T> vec)
@@ -36,11 +36,14 @@ inline string vec2str(vector<T> vec)
 ///////***** Testing *****///////
 namespace Testing
 {
-	inline void psep() { cout << "！！！！！！！！！！！！！！！！！！！！！" << endl; }
+	inline void ptitle(string title = "") 
+	{ cout << "！！！！！！！！！！" << title << "！！！！！！！！！！！" << endl; }
 #define pr(X) cout << X << endl
 
 	template<typename T>
 	inline void pvec(vector<T> vec) { pr(vec2str(vec)); }
+
+	inline void pause() { cin.get(); }
 }
 
 #endif // utils_h__

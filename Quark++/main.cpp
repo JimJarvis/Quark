@@ -17,11 +17,25 @@ void eigen_demo()
 
 int main(int argc, char **argv)
 {
-	Qureg qureg(5);
-	qureg = Qureg(3);
-	qureg = Qureg(3, qubase(8));
+	// Dense init
+	Qureg qureg1(3);
+	// Sparse init with only 1 base at start
+	Qureg qureg2(3, qubase(8));
+	// Sparse init with N
+	Qureg qureg3(3, 8);
 
-	pr(qureg);
+	qureg1 += 3;
+	qureg2 += 3;
+	qureg3 += 3;
+
+	ptitle("Dense reg1");
+	pr(qureg1);
+	pause();
+	ptitle("Sparse reg single");
+	pr(qureg2);
+	pause();
+	ptitle("Sparse reg N");
+	pr(qureg3);
 
 	vector<int> vec;
 	vec.reserve(30);

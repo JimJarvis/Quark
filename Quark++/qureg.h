@@ -17,7 +17,16 @@ public:
 	static const int RSV_SIZE = 64;
 
 	/*
-	* Init to a specific basis state. All other basis have amp 0
+	 *	Init to a dense register of n qubits with all amp = 0.
+	 */
+	Qureg(int _nqubit) :
+		nqubit(_nqubit),
+		size(1 << nqubit),
+		amp(vector<CX>(size)),
+		basis(vector<qubase>(0)) { }
+
+	/*
+	* Init to a single specific basis state. All other basis have amp 0 (sparse)
 	*/
 	Qureg(int _nqubit, qubase initBase) : 
 		nqubit(_nqubit), 
@@ -30,15 +39,6 @@ public:
 		amp.push_back(1);
 		basis.push_back(initBase);
 	}
-
-	/*
-	 *	Init to a dense register of n qubits with all amp = 0.
-	 */
-	Qureg(int _nqubit) :
-		nqubit(_nqubit),
-		size(1 << nqubit),
-		amp(vector<CX>(size)),
-		basis(vector<qubase>(0)) { }
 
 	/*
 	 *	Init to a sparse register of size N with all amp = 0
@@ -59,7 +59,10 @@ public:
 		return os << string(qureg);
 	}
 
-
+	/*
+	 *	Add scratch bits to 'this'. (Add to most significant bit)
+	 */
+	Qureg& operator+=(int scratch_nqubit);
 
 	/*
 	 *	True if we explicitly store the basis
