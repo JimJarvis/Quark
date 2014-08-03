@@ -10,7 +10,7 @@ Qureg::operator string()
 	oss << setprecision(3) << "Qureg[";
 	for (int i = 0; i < size ; ++i)
 	{
-		oss << "|" << (isDense() ? basis[i] : i) << "> ";
+		oss << "|" << (isSparse() ? basis[i] : i) << "> ";
 		CX a = amp[i];
 		oss << a.real() << "+"
 			<< a.imag() << "i"

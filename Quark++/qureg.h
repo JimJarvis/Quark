@@ -55,9 +55,9 @@ public:
 	}
 
 	/*
-	 *	If we explicitly store the basis
+	 *	True if we explicitly store the basis
 	 */
-	bool isDense() { return !basis.empty(); }
+	bool isSparse() { return !basis.empty(); }
 };
 
 

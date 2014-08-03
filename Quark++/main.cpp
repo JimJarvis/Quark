@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
 	Qureg qureg(5);
 	qureg = Qureg(3);
-	qureg = Qureg(5, qubase(10));
+	qureg = Qureg(3, 5);
 
 	pr(qureg);
 
