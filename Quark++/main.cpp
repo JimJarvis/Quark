@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 {
 	init();
 
-	pr(kronecker(qureg1, qureg4));
+	pr(qureg1 * qureg4);
 
 	return 0;
 }

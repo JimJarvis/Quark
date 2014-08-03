@@ -3,6 +3,10 @@
 **********************************************/
 
 #include "qureg.h"
+#include "quop.h"
+#include "qugate.h"
+using namespace Quop;
+using namespace Qugate;
 
 #define BIT_PRINT
 
@@ -11,7 +15,6 @@
 #else
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
-
 
 Qureg::operator string()
 {
@@ -44,4 +47,10 @@ Qureg& Qureg::operator+=(int scratch_nqubit)
 		amp.resize(size, CX(0));
 	}
 	return *this;
+}
+
+///////***** Quop *****///////
+Qureg operator*(Qureg& q1, Qureg& q2)
+{
+	return kronecker(q1, q2);
 }

@@ -82,6 +82,11 @@ public:
 	 *	If dense, getBase(i) == i
 	 */
 	qubase getBase(int i) { return isDense() ? i : basis[i]; }
+
+	///////***** Quop *****///////
+	friend Qureg operator*(Qureg& q1, Qureg& q2);
+
+	///////***** Qugate *****///////
 };
 
 
