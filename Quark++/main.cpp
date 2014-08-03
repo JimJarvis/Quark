@@ -5,10 +5,10 @@ using namespace Testing;
 int main(int argc, char **argv)
 {
 	Qureg qureg(5);
-	qureg = Qureg(5, qubase(14));
+	qureg = Qureg(3);
+	qureg = Qureg(5, qubase(10));
 
-	pvec(qureg.amp);
-	pvec(qureg.basis);
+	pr(qureg);
 
 	return 0;
 }

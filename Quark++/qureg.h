@@ -43,6 +43,21 @@ public:
 		size(_size),
 		amp(vector<CX>(size)),
 		basis(vector<qubase>(size)) { }
+
+	/*
+	 *	Convert to string
+	 */
+	operator string();
+
+	friend ostream& operator<<(ostream& os, Qureg& qureg)
+	{
+		return os << string(qureg);
+	}
+
+	/*
+	 *	If we explicitly store the basis
+	 */
+	bool isDense() { return !basis.empty(); }
 };
 
 

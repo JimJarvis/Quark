@@ -18,9 +18,9 @@
 
 using namespace std;
 
-typedef complex<float> CX;
+typedef float REAL;
+typedef complex<REAL> CX;
 enum qubase : unsigned long long { zero = 0 };
-
 
 template<typename T>
 inline string vec2str(vector<T> vec)
@@ -32,6 +32,7 @@ inline string vec2str(vector<T> vec)
 	string s = oss.str();
 	return s.substr(0, s.size() - 2) + "]";
 }
+
 ///////***** Testing *****///////
 namespace Testing
 {
