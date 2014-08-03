@@ -3,7 +3,6 @@
 
 namespace Qugate
 {
-
 }
 
 #endif // qugate_h__

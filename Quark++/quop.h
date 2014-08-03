@@ -4,7 +4,14 @@
 #include "qureg.h"
 namespace Quop // quantum operations
 {
-	Qureg kronecker(Qureg& reg1, Qureg& reg2);
+	/*
+	 *	Kronecker product
+	 */
+	Qureg kronecker(Qureg& q1, Qureg& q2);
+
+	CX dot(Qureg& q1, Qureg& q2);
+
+	void normalize(Qureg& q);
 }
 
 #endif // quop_h__
