@@ -1,7 +1,6 @@
 /**********************************************
-* Quantum operations  *
+* Quantum gates  *
 **********************************************/
-#include "quop.h"
-#include "qureg.h"
 
-using namespace Quop;
+#include "qureg.h"
+#include "qugate.h"
