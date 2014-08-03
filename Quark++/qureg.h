@@ -13,17 +13,22 @@ public:
 	// if basis is empty, we iterate over all 2^nqubit basis
 	vector<qubase> basis; 
 
+	// Reserved memory for single-basis ctor
+	static const int RSV_SIZE = 64;
+
 	/*
 	* Init to a specific basis state. All other basis have amp 0
 	*/
 	Qureg(int _nqubit, qubase initBase) : 
 		nqubit(_nqubit), 
 		size(1),
-		amp(vector<CX>(1)),
-		basis(vector<qubase>(1))
+		amp(vector<CX>()),
+		basis(vector<qubase>())
 	{
-		amp[0] = 1;
-		basis[0] = initBase;
+		amp.reserve(RSV_SIZE);
+		basis.reserve(RSV_SIZE);
+		amp.push_back(1);
+		basis.push_back(initBase);
 	}
 
 	/*
@@ -53,6 +58,8 @@ public:
 	{
 		return os << string(qureg);
 	}
+
+
 
 	/*
 	 *	True if we explicitly store the basis
