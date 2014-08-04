@@ -15,7 +15,7 @@ void Qugate::generic_gate(Q, Matrix2cf mat, int tar)
 	qubase base1;
 	if (q.isDense())
 	{
-		for (qubase base = 0; base < q.size ; ++base)
+		for (qubase base = 0; base < q.size() ; ++base)
 			// only process base with 0 at the given target
 			if (base & t)
 			{

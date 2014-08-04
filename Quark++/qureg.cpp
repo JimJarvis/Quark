@@ -20,14 +20,14 @@ Qureg::operator string()
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
-	for (int i = 0; i < size ; ++i)
+	for (int i = 0; i < size() ; ++i)
 	{
 		oss << "|" << PRINT_KET(isSparse() ? basis[i] : i) << "> ";
 		CX a = amp[i];
 		oss << a.real() << "+"
 			<< a.imag() << "i"
 			<< " (" << abs(a) << ")";
-		if (i != size - 1)
+		if (i != size() - 1)
 		{
 			oss << ", ";
 			if (i % 4 == 3)
@@ -42,10 +42,7 @@ Qureg& Qureg::operator+=(int scratch_nqubit)
 {
 	nqubit += scratch_nqubit;
 	if (isDense())
-	{
-		size = 1 << nqubit;
-		amp.resize(size, CX(0));
-	}
+		amp.resize(1 << nqubit, CX(0));
 	return *this;
 }
 

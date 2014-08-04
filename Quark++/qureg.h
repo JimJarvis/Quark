@@ -12,7 +12,6 @@ class Qureg
 {
 public:
 	int nqubit; // number of qubits
-	int size; // number of non-zeros in CX_VEC
 	vector<CX> amp; // amplitudes
 	// non-zero basis, e.g. |00110> and |10100>
 	// if basis is empty, we iterate over all 2^nqubit basis
@@ -30,8 +29,7 @@ public:
 	 */
 	Qureg(int _nqubit) :
 		nqubit(_nqubit),
-		size(1 << nqubit),
-		amp(vector<CX>(size)),
+		amp(vector<CX>(1 << nqubit)),
 		basis(vector<qubase>(0))
 	{
 		amp[0] = 1;
@@ -42,7 +40,6 @@ public:
 	*/
 	Qureg(int _nqubit, qubase initBase) : 
 		nqubit(_nqubit), 
-		size(1),
 		amp(vector<CX>()),
 		basis(vector<qubase>())
 	{
@@ -57,9 +54,13 @@ public:
 	 */
 	Qureg(int _nqubit, int _size) :
 		nqubit(_nqubit),
-		size(_size),
-		amp(vector<CX>(size)),
-		basis(vector<qubase>(size)) { }
+		amp(vector<CX>(_size)),
+		basis(vector<qubase>(_size)) { }
+
+	/*
+	 *	Size of complex amplitude vector
+	 */
+	int size() { return amp.size(); }
 
 	/*
 	 *	Convert to string
