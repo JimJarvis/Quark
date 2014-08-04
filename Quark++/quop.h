@@ -7,11 +7,11 @@ namespace Quop // quantum operations
 	/*
 	 *	Kronecker product
 	 */
-	Qureg kronecker(Qureg& q1, Qureg& q2);
+	Qureg kronecker(Q1, Q2);
 
-	CX dot(Qureg& q1, Qureg& q2);
+	CX dot(Q1, Q2);
 
-	void normalize(Qureg& q);
+	void normalize(Q);
 }
 
 #endif // quop_h__

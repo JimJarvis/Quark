@@ -1,16 +1,5 @@
 #include "utils.h"
 
-template<typename T>
-string vec2str(vector<T> vec)
-{
-	ostringstream oss;
-	oss << "[";
-	for (T& ele : vec)
-		oss << ele << ", ";
-	string s = oss.str();
-	return s.substr(0, s.size() - 2) + "]";
-}
-
 // Convert to bit string
 template<>
 string bits2str<0>(qubase b)

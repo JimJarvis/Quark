@@ -1,12 +1,10 @@
 #include "qureg.h"
 #include "quop.h"
 #include "qugate.h"
-#include <Eigen/Dense>
 #include "vld.h"
 using namespace Testing;
 using namespace Quop;
 using namespace Qugate;
-using Eigen::Matrix2cf;
 
 // For testing
 // Dense init
@@ -21,10 +19,12 @@ Qureg qureg4(2);
 void eigen_demo()
 {
 	Matrix2cf m;
-	m(0, 0) = CX(2,3);
-	m(0, 1) = CX(3,4);
-	m(1, 0) = CX(1,1);
-	m(1, 1) = CX(2,3);
+	m << CX(2,3), CX(3,4), 
+		CX(1,1), CX(2,3);
+	//m(0, 0) = CX(2,3);
+	//m(0, 1) = CX(3,4);
+	//m(1, 0) = CX(1,1);
+	//m(1, 1) = CX(2,3);
 	pr(m);
 	pr(m.adjoint());
 }
@@ -83,6 +83,8 @@ int main(int argc, char **argv)
 	init();
 
 	pr(qureg1 * qureg4);
+
+	eigen_demo();
 
 	return 0;
 }

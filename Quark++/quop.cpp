@@ -6,7 +6,7 @@
 
 using namespace Quop;
 
-Qureg Quop::kronecker(Qureg& q1, Qureg& q2)
+Qureg Quop::kronecker(Q1, Q2)
 {
 	int new_nqubit = q1.nqubit + q2.nqubit;
 	int size1 = q1.size;

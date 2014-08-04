@@ -3,6 +3,11 @@
 
 #include "utils.h"
 
+/* convenient for function args */
+#define Q Qureg& q
+#define Q1 Qureg& q1
+#define Q2 Qureg& q2
+
 class Qureg
 {
 public:
@@ -58,9 +63,9 @@ public:
 	 */
 	operator string();
 
-	friend ostream& operator<<(ostream& os, Qureg& qureg)
+	friend ostream& operator<<(ostream& os, Q)
 	{
-		return os << string(qureg);
+		return os << string(q);
 	}
 
 	/*
@@ -84,7 +89,7 @@ public:
 	qubase getBase(int i) { return isDense() ? i : basis[i]; }
 
 	///////***** Quop *****///////
-	friend Qureg operator*(Qureg& q1, Qureg& q2);
+	friend Qureg operator*(Q1, Q2);
 
 	///////***** Qugate *****///////
 };

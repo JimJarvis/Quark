@@ -5,7 +5,12 @@
 
 namespace Qugate
 {
-	void cnot(Qureg& q, int control, int target);
+	void generic_gate(Q, Matrix2cf mat, int tar);
+	void generic_gate(Q, Matrix4cf mat, int tar1, int tar2);
+
+	void hadamard(Q, int tar);
+	void cnot(Q, int ctrl, int tar);
+	void toffoli(Q, int ctrl1, int ctrl2, int tar);
 
 }
 

@@ -50,7 +50,7 @@ Qureg& Qureg::operator+=(int scratch_nqubit)
 }
 
 ///////***** Quop *****///////
-Qureg operator*(Qureg& q1, Qureg& q2)
+Qureg operator*(Q1, Q2)
 {
 	return kronecker(q1, q2);
 }
