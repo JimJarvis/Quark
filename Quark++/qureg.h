@@ -26,13 +26,16 @@ public:
 	// Reserved memory for single-basis ctor
 	static const int RSV_SIZE = 64;
 	/*
-	 *	Init to a dense register of n qubits with all amp = 0.
+	 *	Init to a dense register of n qubits with |00..0> amp 1 and all other amp = 0.
 	 */
 	Qureg(int _nqubit) :
 		nqubit(_nqubit),
 		size(1 << nqubit),
 		amp(vector<CX>(size)),
-		basis(vector<qubase>(0)) { }
+		basis(vector<qubase>(0))
+	{
+		amp[0] = 1;
+	}
 
 	/*
 	* Init to a single specific basis state. All other basis have amp 0 (sparse)

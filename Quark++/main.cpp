@@ -78,13 +78,18 @@ void init()
 	basis3[1] = qubase(3);
 }
 
+void dense_hadamard()
+{
+	Qureg q(4);
+	hadamard(q);
+	pr(q);
+}
+
 int main(int argc, char **argv)
 {
 	init();
+	//pr(qureg1 * qureg4);
 
-	pr(qureg1 * qureg4);
-
-	eigen_demo();
-
+	dense_hadamard();
 	return 0;
 }
