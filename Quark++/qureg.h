@@ -25,29 +25,34 @@ public:
 	// Reserved memory for single-basis ctor
 	static const int RSV_SIZE = 64;
 	/*
-	 *	Init to a dense register of n qubits with |00..0> amp 1 and all other amp = 0.
-	 */
-	Qureg(int _nqubit) :
-		nqubit(_nqubit),
-		amp(vector<CX>(1 << nqubit)),
-		basis(vector<qubase>(0))
+	* Init to a single specific basis state that has amp 1. All other amps = 0.
+	* Sparse if we don't store the basis explicitly, default true
+	*/
+	Qureg(int _nqubit, qubase initBase, bool sparse = true) : 
+		nqubit(_nqubit)
 	{
-		amp[0] = 1;
+		amp = vector<CX>(sparse ? 1 : 1 << nqubit);
+		basis = vector<qubase>();
+
+		if (sparse)
+		{
+			amp.reserve(RSV_SIZE);
+			basis.reserve(RSV_SIZE);
+			amp.push_back(1);
+			basis.push_back(initBase);
+		}
+		else
+			amp[initBase] = 1;
 	}
 
 	/*
-	* Init to a single specific basis state. All other basis have amp 0 (sparse)
-	*/
-	Qureg(int _nqubit, qubase initBase) : 
-		nqubit(_nqubit), 
-		amp(vector<CX>()),
-		basis(vector<qubase>())
+	 *	Init to a dense register of n qubits with |00..0> amp 1 and all other amp = 0.
+	 */
+	Qureg(int _nqubit)
 	{
-		amp.reserve(RSV_SIZE);
-		basis.reserve(RSV_SIZE);
-		amp.push_back(1);
-		basis.push_back(initBase);
+		*this = Qureg(_nqubit, 0, false);
 	}
+
 
 	/*
 	 *	Init to a sparse register of size N with all amp = 0
