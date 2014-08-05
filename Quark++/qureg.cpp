@@ -8,8 +8,55 @@
 using namespace Quop;
 using namespace Qugate;
 
-#define BIT_PRINT
+/*
+* Dense: we don't store the basis explicitly
+* Init and set a specific base to amplitude 1. All other amps = 0.
+*/
+Qureg::Qureg(int _nqubit, qubase initBase) :
+	nqubit(_nqubit),
+	amp(vector<CX>(1 << nqubit)),
+	dense(true)
+{
+	amp[initBase] = 1;
+}
 
+/*
+* Sparse: we store the basis explicitly
+* If init true, we add initBase to amp[] with value 1
+* If init false, amp/basis[] will be empty and 'initBase' ignored
+* reservedSize for internal allocation
+*/
+Qureg::Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase) :
+	nqubit(_nqubit),
+	amp(vector<CX>()),
+	basis(vector<qubase>()),
+	dense(false)
+{
+	amp.reserve(reservedSize);
+	basis.reserve(reservedSize);
+	basemap = unordered_map<qubase, unsigned long>(reservedSize);
+	if (init)
+	{
+		basis.push_back(initBase);
+		amp.push_back(CX(1));
+		basemap[initBase] = 0; // indexed at 0
+	}
+}
+
+void Qureg::add_base(qubase base, CX a)
+{
+	if (contains_base(base))
+		amp[basemap[base]] = a;
+	else
+	{
+		basemap[base] = amp.size();
+		basis.push_back(base);
+		amp.push_back(a);
+	}
+}
+
+
+#define BIT_PRINT
 #ifdef BIT_PRINT
 #define PRINT_KET(ket) bits2str<4>(ket)
 #else

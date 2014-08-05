@@ -24,13 +24,7 @@ public:
 	 *	Dense: we don't store the basis explicitly
 	 * Init and set a specific base to amplitude 1. All other amps = 0.
 	 */
-	Qureg(int _nqubit, qubase initBase = 0) :
-		nqubit(_nqubit),
-		amp(vector<CX>(1 << nqubit)),
-		dense(true)
-	{
-		amp[initBase] = 1;
-	}
+	Qureg(int nqubit, qubase initBase = 0);
 
 	/*
 	* Sparse: we store the basis explicitly
@@ -38,22 +32,7 @@ public:
 	* If init false, amp/basis[] will be empty and 'initBase' ignored
 	* reservedSize for internal allocation
 	*/
-	Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase = 0) :
-		nqubit(_nqubit),
-		amp(vector<CX>()),
-		basis(vector<qubase>()),
-		dense(false)
-	{
-		amp.reserve(reservedSize);
-		basis.reserve(reservedSize);
-		basemap = unordered_map<qubase, unsigned long>(reservedSize);
-		if (init)
-		{
-			basis.push_back(initBase);
-			amp.push_back(CX(1));
-			basemap[initBase] = 0; // indexed at 0
-		}
-	}
+	Qureg(int nqubit, size_t reservedSize, bool init, qubase initBase = 0);
 
 	/*
 	 *	Size of complex amplitude vector
@@ -72,17 +51,12 @@ public:
 	 *	Add a base. Processes hashmap
 	 * Sparse ONLY. If base already exists, update the amplitude
 	 */
-	void add_base(qubase base, CX a)
-	{
-		if (contains_base(base))
-			amp[basemap[base]] = a;
-		else
-		{
-			basis.push_back(base);
-			amp.push_back(a);
-		}
-	}
+	void add_base(qubase base, CX a);
 
+	/*
+	*	If dense, get_base(i) == i
+	*/
+	qubase get_base(int i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Convert to string
@@ -98,11 +72,6 @@ public:
 	 *	Add scratch bits to 'this'. (Add to most significant bit)
 	 */
 	Qureg& operator+=(int scratch_nqubit);
-
-	/*
-	 *	If dense, get_base(i) == i
-	 */
-	qubase get_base(int i) { return dense ? i : basis[i]; }
 
 	///////***** Quop *****///////
 	friend Qureg operator*(Q1, Q2);
