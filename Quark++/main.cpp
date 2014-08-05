@@ -10,9 +10,7 @@ using namespace Qugate;
 // Dense init
 Qureg qureg1(2);
 // Sparse init with only 1 base at start
-Qureg qureg2(2, qubase(2));
-// Sparse init with N
-Qureg qureg3(2, 4);
+Qureg qureg3(2, 3, true, qubase(2));
 // Dense init
 Qureg qureg4(2);
 
@@ -35,13 +33,10 @@ void ctor()
 	// Dense init
 	Qureg qureg1(3);
 	// Sparse init with only 1 base at start
-	Qureg qureg2(3, qubase(8));
-	// Sparse init with N
-	Qureg qureg3(3, 8);
+	Qureg qureg2(3, 2, true, qubase(8));
 
 	qureg1 += 3;
 	qureg2 += 3;
-	qureg3 += 3;
 
 	ptitle("Dense reg1");
 	pr(qureg1);
@@ -49,8 +44,6 @@ void ctor()
 	ptitle("Sparse reg single");
 	pr(qureg2);
 	pause();
-	ptitle("Sparse reg N");
-	pr(qureg3);
 }
 
 void init()
@@ -67,16 +60,10 @@ void init()
 	amp4[2] = CX(2, 0);
 	amp4[3] = CX(1, 0);
 
-	auto& amp3 = qureg3.amp;
-	amp3[0] = CX(1, 0);
-	amp3[1] = CX(2, 0);
-	amp3[2] = CX(3, 0);
-	amp3[3] = CX(4, 0);
-	auto& basis3 = qureg3.basis;
-	basis3[3] = qubase(0);
-	basis3[2] = qubase(1);
-	basis3[0] = qubase(2);
-	basis3[1] = qubase(3);
+	qureg3.add_base(qubase(2), CX(1));
+	qureg3.add_base(qubase(3), CX(2));
+	qureg3.add_base(qubase(1), CX(3));
+	qureg3.add_base(qubase(0), CX(4));
 }
 
 void dense_hadamard()
@@ -93,9 +80,13 @@ void dense_hadamard()
 int main(int argc, char **argv)
 {
 	init();
-	//pr(qureg1 * qureg4);
+	pr(qureg1 * qureg4);
+	//eigen_demo();
+	//dense_hadamard();
 
-	eigen_demo();
-	dense_hadamard();
+	unordered_map<int, int> dud;
+	dud[2] = 3;
+	pr((dud.find(2))->second);
+
 	return 0;
 }

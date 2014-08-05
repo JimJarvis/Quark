@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iomanip>
 #include <bitset>
+#include <unordered_map>
 #include <Eigen/Dense>
 
 using namespace std;

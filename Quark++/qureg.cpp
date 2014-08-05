@@ -22,7 +22,7 @@ Qureg::operator string()
 	oss << setprecision(3) << "Qureg[";
 	for (int i = 0; i < size() ; ++i)
 	{
-		oss << "|" << PRINT_KET(isSparse() ? basis[i] : i) << "> ";
+		oss << "|" << PRINT_KET(get_base(i)) << "> ";
 		CX a = amp[i];
 		oss << a.real() << "+"
 			<< a.imag() << "i"
@@ -41,7 +41,7 @@ Qureg::operator string()
 Qureg& Qureg::operator+=(int scratch_nqubit)
 {
 	nqubit += scratch_nqubit;
-	if (isDense())
+	if (dense)
 		amp.resize(1 << nqubit, CX(0));
 	return *this;
 }

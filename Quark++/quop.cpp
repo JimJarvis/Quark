@@ -11,7 +11,7 @@ Qureg Quop::kronecker(Q1, Q2)
 	int new_nqubit = q1.nqubit + q2.nqubit;
 	int size1 = q1.size();
 	int size2 = q2.size();
-	bool sparse = q1.isSparse() || q2.isSparse();
+	bool sparse = !q1.dense || !q2.dense;
 
 	Qureg qans = sparse ? 
 				Qureg(new_nqubit, size1 * size2) :
@@ -26,7 +26,7 @@ Qureg Quop::kronecker(Q1, Q2)
 			qans.amp[ri] = q1.amp[i1] * q2.amp[i2];
 			if (sparse)
 				qans.basis[ri] = 
-					(q1.getBase(i1) << nqubit2) | q2.getBase(i2);
+					(q1.get_base(i1) << nqubit2) | q2.get_base(i2);
 			++ri;
 		}
 

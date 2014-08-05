@@ -13,7 +13,7 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 	auto& amp = q.amp;
 	CX a0, a1;
 	qubase base1;
-	if (q.isDense())
+	if (q.dense)
 	{
 		for (qubase base = 0; base < q.size() ; ++base)
 			// only process base with 0 at the given target
@@ -25,6 +25,10 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 				amp[base] = a0 * mat(0, 0) + a1 * mat(0, 1);
 				amp[base1] = a0 * mat(1, 0) + a1 * mat(1, 1);
 			}
+	}
+	else // sparse
+	{
+
 	}
 }
 
