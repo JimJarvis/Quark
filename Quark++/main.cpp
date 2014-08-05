@@ -27,6 +27,7 @@ void eigen_demo()
 	//m(1, 1) = CX(2,3);
 	pr(m);
 	pr(m.adjoint());
+	pr(m(0, 0) << m(0, 1) << m(1, 0) << m(1, 1));
 }
 
 void ctor()
@@ -80,9 +81,13 @@ void init()
 
 void dense_hadamard()
 {
-	Qureg q(4);
-	hadamard(q);
-	pr(q);
+	int nqubit = 3;
+	for (int qi = 0; qi < 1<<nqubit ; ++qi)
+	{
+		Qureg q(nqubit, qubase(qi), false);
+		hadamard(q);
+		pr(q);
+	}
 }
 
 int main(int argc, char **argv)
@@ -90,6 +95,7 @@ int main(int argc, char **argv)
 	init();
 	//pr(qureg1 * qureg4);
 
+	eigen_demo();
 	dense_hadamard();
 	return 0;
 }

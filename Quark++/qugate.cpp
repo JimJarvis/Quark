@@ -7,7 +7,7 @@
 
 using namespace Qugate;
 
-void Qugate::generic_gate(Q, Matrix2cf mat, int tar)
+void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = 1 << tar;
 	auto& amp = q.amp;
@@ -17,13 +17,13 @@ void Qugate::generic_gate(Q, Matrix2cf mat, int tar)
 	{
 		for (qubase base = 0; base < q.size() ; ++base)
 			// only process base with 0 at the given target
-			if (base & t)
+			if (!(base & t))
 			{
 				base1 = base ^ t;
 				a0 = amp[base];
 				a1 = amp[base1];
 				amp[base] = a0 * mat(0, 0) + a1 * mat(0, 1);
-				amp[base1] = a0 * mat(1, 1) + a1 * mat(1, 0);
+				amp[base1] = a0 * mat(1, 0) + a1 * mat(1, 1);
 			}
 	}
 }
@@ -40,6 +40,6 @@ void Qugate::hadamard(Q, int tar)
 
 void Qugate::hadamard(Q)
 {
-	for (int qbit = 0; qbit < q.nqubit; ++qbit)
-		hadamard(q, qbit);
+	for (int qi = 0; qi < q.nqubit; ++qi)
+		hadamard(q, qi);
 }

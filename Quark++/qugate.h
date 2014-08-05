@@ -5,8 +5,8 @@
 
 namespace Qugate
 {
-	void generic_gate(Q, Matrix2cf mat, int tar);
-	void generic_gate(Q, Matrix4cf mat, int tar1, int tar2);
+	void generic_gate(Q, Matrix2cf& mat, int tar);
+	void generic_gate(Q, Matrix4cf& mat, int tar1, int tar2);
 
 	void hadamard(Q, int tar);
 	void hadamard(Q);
