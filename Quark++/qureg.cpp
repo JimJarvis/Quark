@@ -34,7 +34,7 @@ Qureg::Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase) :
 {
 	amp.reserve(reservedSize);
 	basis.reserve(reservedSize);
-	basemap = unordered_map<qubase, unsigned long>(reservedSize);
+	basemap = unordered_map<qubase, size_t>(reservedSize);
 	if (init)
 	{
 		basis.push_back(initBase);
@@ -43,9 +43,10 @@ Qureg::Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase) :
 	}
 }
 
+template<bool Check>
 void Qureg::add_base(qubase base, CX a)
 {
-	if (contains_base(base))
+	if (Check && contains_base(base))
 		amp[basemap[base]] = a;
 	else
 	{
@@ -54,6 +55,8 @@ void Qureg::add_base(qubase base, CX a)
 		amp.push_back(a);
 	}
 }
+template void Qureg::add_base<true>(qubase, CX);
+template void Qureg::add_base<false>(qubase, CX);
 
 
 #define BIT_PRINT

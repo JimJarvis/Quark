@@ -9,8 +9,8 @@ using namespace Quop;
 Qureg Quop::kronecker(Q1, Q2)
 {
 	int new_nqubit = q1.nqubit + q2.nqubit;
-	int size1 = q1.size();
-	int size2 = q2.size();
+	size_t size1 = q1.size();
+	size_t size2 = q2.size();
 	bool sparse = !q1.dense || !q2.dense;
 
 	Qureg qans = sparse ? 

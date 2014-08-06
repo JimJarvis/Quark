@@ -18,7 +18,7 @@ public:
 	// if basis is empty, we iterate over all 2^nqubit basis
 	vector<qubase> basis; 
 	// Maps a qubase to an index in amp[] array
-	unordered_map<qubase, unsigned long> basemap;
+	unordered_map<qubase, size_t> basemap;
 
 	/*
 	 *	Dense: we don't store the basis explicitly
@@ -37,26 +37,35 @@ public:
 	/*
 	 *	Size of complex amplitude vector
 	 */
-	int size() { return amp.size(); }
+	size_t size() { return amp.size(); }
 
 	/*
 	 *	Test if a base already exists in basis[]
 	 */
 	bool contains_base(qubase base)
 	{
-		return basemap.find(base) == basemap.end();
+		return basemap.find(base) != basemap.end();
 	}
 
 	/*
 	 *	Add a base. Processes hashmap
-	 * Sparse ONLY. If base already exists, update the amplitude
+	 * Sparse ONLY. 
+	 * Check true: if base already exists, update the amplitude
 	 */
+	template<bool Check>
 	void add_base(qubase base, CX a);
+	// default: unchecked
+	void add_base(qubase base, CX a) { add_base<false>(base, a); }
 
 	/*
 	*	If dense, get_base(i) == i
 	*/
-	qubase get_base(int i) { return dense ? i : basis[i]; }
+	qubase get_base(size_t i) { return dense ? i : basis[i]; }
+
+	/*
+	 * Sparse ONLY: read index from basemap and get amplitude
+	 */
+	CX& amp_sparse(qubase base) { return amp[basemap[base]]; }
 
 	/*
 	 *	Convert to string

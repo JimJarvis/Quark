@@ -69,9 +69,10 @@ void init()
 void dense_hadamard()
 {
 	int nqubit = 3;
+	//int qi = 1;
 	for (int qi = 0; qi < 1<<nqubit ; ++qi)
 	{
-		Qureg q(nqubit, qubase(qi), false);
+		Qureg q(nqubit, qubase(qi), true, qubase(qi));
 		hadamard(q);
 		pr(q);
 	}
@@ -80,13 +81,9 @@ void dense_hadamard()
 int main(int argc, char **argv)
 {
 	init();
-	pr(qureg1 * qureg4);
+	//pr(qureg1 * qureg4);
 	//eigen_demo();
-	//dense_hadamard();
-
-	unordered_map<int, int> dud;
-	dud[2] = 3;
-	pr((dud.find(2))->second);
+	dense_hadamard();
 
 	return 0;
 }
