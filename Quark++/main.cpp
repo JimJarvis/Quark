@@ -93,7 +93,7 @@ void test_cnot()
 			q = Qureg::create<true>(nqubit, qubase(qi));
 		else
 			q = Qureg::create<false>(nqubit, 1, qubase(qi));
-		cnot(q, 0, 2);
+		cnot(q, 1, 2);
 		pr(q.sort().purge());
 	}
 }
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	//eigen_demo();
 	//test_hadamard<true>();
 	//test_hadamard<false>();
-	test_cnot<false>();
+	test_cnot<true>();
 
 	return 0;
 }

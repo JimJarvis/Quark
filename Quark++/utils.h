@@ -56,7 +56,32 @@ string vec2str(vector<T> vec)
 	return s.substr(0, s.size() - 2) + "]";
 }
 
-///////***** Testing *****///////
+///////************** Exceptions **************///////
+// thrown when requested file can't be opened
+class QuantumException : public exception
+{
+public:
+	QuantumException(string fp) : errmsg("Quantum error: ")
+	{
+		errmsg += fp;
+	}
+#ifdef _MSC_VER  // VC++ doesn't yet support noexcept()
+	virtual const char* what() const throw()
+	{
+		return errmsg.c_str();
+	}
+#else  // C++11 noexcept operator. Required by gcc
+	virtual const char* what() noexcept(true)
+	{
+		return errmsg.c_str();
+	}
+#endif
+private:
+	string errmsg;
+};
+
+
+///////************** Debugging **************///////
 namespace Testing
 {
 	inline void ptitle(string title = "") 

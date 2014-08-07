@@ -102,7 +102,8 @@ public:
 	 */
 	Qureg& sort()
 	{
-		std::sort(basis.begin(), basis.end());
+		if (!dense)
+			std::sort(basis.begin(), basis.end());
 		return *this;
 	}
 

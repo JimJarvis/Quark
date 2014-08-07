@@ -51,6 +51,7 @@ template void Qureg::add_base<false>(qubase, CX);
 // Remove near-zero amplitudes
 Qureg& Qureg::purge()
 {
+	if (dense) return *this; // do nothing
 	vector<CX> purgedAmp;
 	purgedAmp.reserve(amp.capacity());
 	vector<qubase> purgedBasis;
