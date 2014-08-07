@@ -74,14 +74,14 @@ void dense_hadamard()
 	{
 		Qureg q = Qureg::create<false>(nqubit, 1, qubase(qi));
 		hadamard(q);
-		pr(q);
+		pr(q.sort());
 	}
 }
 
 int main(int argc, char **argv)
 {
 	init();
-	pr(qureg1 * qureg3);
+	pr((qureg1 * qureg3).sort());
 	//eigen_demo();
 	dense_hadamard();
 

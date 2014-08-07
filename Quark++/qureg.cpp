@@ -48,7 +48,6 @@ void Qureg::add_base(qubase base, CX a)
 template void Qureg::add_base<true>(qubase, CX);
 template void Qureg::add_base<false>(qubase, CX);
 
-
 #define BIT_PRINT
 #ifdef BIT_PRINT
 #define PRINT_KET(ket) bits2str<4>(ket)
@@ -63,7 +62,7 @@ Qureg::operator string()
 	for (int i = 0; i < size() ; ++i)
 	{
 		oss << "|" << PRINT_KET(get_base<true>(i)) << "> ";
-		CX a = amp[i];
+		CX a = dense ? amp[i] : (*this)[get_base(i)];
 		oss << a.real() << "+"
 			<< a.imag() << "i"
 			<< " (" << abs(a) << ")";

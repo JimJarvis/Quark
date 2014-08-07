@@ -91,6 +91,17 @@ public:
 	 */
 	CX& operator[](qubase base) { return amp[basemap[base]]; }
 
+	/*
+	 *	Sort the basis vectors. 
+	 * The amp array is NOT sorted, cause basemap takes care of indices
+	 */
+	Qureg& sort()
+	{
+		std::sort(basis.begin(), basis.end());
+		return *this;
+	}
+
+
 	/**********************************************/
 	/*********** Common part  ***********/
 	/**********************************************/
