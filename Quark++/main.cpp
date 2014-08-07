@@ -28,6 +28,21 @@ void eigen_demo()
 	pr(m(0, 0) << m(0, 1) << m(1, 0) << m(1, 1));
 }
 
+// Create new Qureg with dummy amplitude values
+Qureg dummy_amp(int nqubit, bool dense)
+{
+	Qureg q = dense ?
+		Qureg::create<true>(nqubit) :
+		Qureg::create<false>(nqubit, 1);
+
+	for (qubase base = 0; base < 1<<q.nqubit; ++base)
+		if (dense)
+			q.amp[base] = (base+1) * 10;
+		else
+			q.add_base(base, (base+1) * 10);
+	return q;
+}
+
 void ctor()
 {
 	// Dense init
@@ -82,17 +97,16 @@ void test_hadamard()
 	}
 }
 
-template<bool dense>
 void test_cnot()
 {
 	int nqubit = 3;
 	Qureg q;
 	for (int qi = 0; qi < 1<<nqubit ; ++qi)
 	{
-		if (dense)
-			q = Qureg::create<true>(nqubit, qubase(qi));
-		else
-			q = Qureg::create<false>(nqubit, 1, qubase(qi));
+		q = Qureg::create<true>(nqubit, qubase(qi));
+		cnot(q, 1, 2);
+		pr(q);
+		q = Qureg::create<false>(nqubit, 1, qubase(qi));
 		cnot(q, 1, 2);
 		pr(q.sort().purge());
 	}
@@ -105,7 +119,11 @@ int main(int argc, char **argv)
 	//eigen_demo();
 	//test_hadamard<true>();
 	//test_hadamard<false>();
-	test_cnot<true>();
+	test_cnot();
+
+	Qureg qq = dummy_amp(3, true);
+	cnot(qq, 1, 2);
+	pr(qq);
 
 	return 0;
 }

@@ -45,6 +45,7 @@ string bits2str(qubase b)
 template <>
 string bits2str<0>(qubase b);
 string bits2str(qubase b);
+
 template<typename T>
 string vec2str(vector<T> vec)
 {

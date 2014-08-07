@@ -128,7 +128,17 @@ public:
 	qubase& get_base(size_t i) { return checkDense && dense ? i : basis[i]; }
 	qubase& get_base(size_t i) { return get_base<false>(i); }
 
-	operator string();
+	/*
+	 *	If nonZeroOnly true, prints only states with non-zero amp
+	 * default true
+	 */
+	template<bool nonZeroOnly>
+	string to_string();
+
+	operator string()
+	{
+		return to_string<true>();
+	}
 
 	friend ostream& operator<<(ostream& os, Q)
 	{

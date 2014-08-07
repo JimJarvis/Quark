@@ -83,27 +83,37 @@ Qureg& Qureg::purge()
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
 
-Qureg::operator string()
+template<bool nonZeroOnly>
+string Qureg::to_string()
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
-	for (int i = 0; i < size() ; ++i)
+	size_t actualPrints = 0;
+	for (size_t i = 0; i < size() ; ++i)
 	{
-		oss << "|" << PRINT_KET(get_base<true>(i)) << "> ";
 		CX a = dense ? amp[i] : (*this)[get_base(i)];
-		oss << a.real() << "+"
-			<< a.imag() << "i"
-			<< " (" << abs(a) << ")";
-		if (i != size() - 1)
+		float magnitude = abs(a);
+		if (nonZeroOnly && magnitude < TOL)
+			continue;
+
+		if (actualPrints != 0)
 		{
 			oss << ", ";
-			if (i % 4 == 3)
+			if (actualPrints % 4 == 0)
 				oss << "\n";
 		}
+		oss << "|" << PRINT_KET(get_base<true>(i)) << "> ";
+		oss << a.real() << "+"
+			<< a.imag() << "i"
+			<< " (" << magnitude << ")";
+
+		++ actualPrints;
 	}
 	oss << "]";
 	return oss.str();
 }
+template string Qureg::to_string<true>();
+template string Qureg::to_string<false>();
 
 Qureg& Qureg::operator+=(int scratch_nqubit)
 {
