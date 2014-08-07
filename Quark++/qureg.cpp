@@ -12,10 +12,8 @@ using namespace Qugate;
 * Dense: we don't store the basis explicitly
 * Init and set a specific base to amplitude 1. All other amps = 0.
 */
-Qureg::Qureg(int _nqubit, qubase initBase) :
-	nqubit(_nqubit),
-	amp(vector<CX>(1 << nqubit)),
-	dense(true)
+Qureg<true>::Qureg(int _nqubit, qubase initBase) :
+	Qureg<true, false>(_nqubit, 1 << nqubit)
 {
 	amp[initBase] = 1;
 }
@@ -26,27 +24,31 @@ Qureg::Qureg(int _nqubit, qubase initBase) :
 * If init false, amp/basis[] will be empty and 'initBase' ignored
 * reservedSize for internal allocation
 */
-Qureg::Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase) :
-	nqubit(_nqubit),
-	amp(vector<CX>()),
+Qureg<false>::Qureg(int _nqubit, size_t reservedSize) :
+	Qureg<false, false>(_nqubit, 0),
 	basis(vector<qubase>()),
-	dense(false)
+	basemap(unordered_map<qubase, size_t>(reservedSize))
 {
 	amp.reserve(reservedSize);
 	basis.reserve(reservedSize);
-	basemap = unordered_map<qubase, size_t>(reservedSize);
-	if (init)
-	{
-		basis.push_back(initBase);
-		amp.push_back(CX(1));
-		basemap[initBase] = 0; // indexed at 0
-	}
 }
 
-template<bool Check>
-void Qureg::add_base(qubase base, CX a)
+Qureg<false>::Qureg(int _nqubit, size_t reservedSize, qubase initBase) :
+	Qureg<false, false>(_nqubit, 1),
+	basis(vector<qubase>(1)),
+	basemap(unordered_map<qubase, size_t>(reservedSize))
 {
-	if (Check && contains_base(base))
+	amp.reserve(reservedSize);
+	basis.reserve(reservedSize);
+	basis[0] = initBase;
+	amp[0] = CX(1);
+	basemap[initBase] = 0; // indexed at 0
+}
+
+template<bool check>
+void Qureg<false>::add_base(qubase base, CX a)
+{
+	if (check && contains_base(base))
 		amp[basemap[base]] = a;
 	else
 	{
@@ -55,8 +57,8 @@ void Qureg::add_base(qubase base, CX a)
 		amp.push_back(a);
 	}
 }
-template void Qureg::add_base<true>(qubase, CX);
-template void Qureg::add_base<false>(qubase, CX);
+template void Qureg<false>::add_base<true>(qubase, CX);
+template void Qureg<false>::add_base<false>(qubase, CX);
 
 
 #define BIT_PRINT
@@ -66,7 +68,28 @@ template void Qureg::add_base<false>(qubase, CX);
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
 
-Qureg::operator string()
+Qureg<true>::operator string()
+{
+	ostringstream oss;
+	oss << setprecision(3) << "Qureg[";
+	for (int i = 0; i < size() ; ++i)
+	{
+		oss << "|" << PRINT_KET(get_base(i)) << "> ";
+		CX a = amp[i];
+		oss << a.real() << "+"
+			<< a.imag() << "i"
+			<< " (" << abs(a) << ")";
+		if (i != size() - 1)
+		{
+			oss << ", ";
+			if (i % 4 == 3)
+				oss << "\n";
+		}
+	}
+	oss << "]";
+	return oss.str();
+}
+Qureg<false>::operator string()
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
@@ -88,16 +111,26 @@ Qureg::operator string()
 	return oss.str();
 }
 
-Qureg& Qureg::operator+=(int scratch_nqubit)
+Qureg<true>& Qureg<true>::operator+=(int scratch_nqubit)
 {
 	nqubit += scratch_nqubit;
-	if (dense)
+	if (true)
 		amp.resize(1 << nqubit, CX(0));
 	return *this;
 }
+Qureg<false>& Qureg<false>::operator+=(int scratch_nqubit)
+{
+	nqubit += scratch_nqubit;
+	if (false)
+		amp.resize(1 << nqubit, CX(0));
+	return *this;
+}
+//template Qureg<true>& Qureg<true>::operator+=(int);
+//template Qureg<false>& Qureg<false>::operator+=(int);
 
 ///////***** Quop *****///////
-Qureg operator*(Q1, Q2)
-{
-	return kronecker(q1, q2);
-}
+//_DENSE_
+//Qureg<dense> operator*(Q1, Q2)
+//{
+//	return kronecker(q1, q2);
+//}

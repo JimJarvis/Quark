@@ -6,7 +6,8 @@
 
 using namespace Quop;
 
-Qureg Quop::kronecker(Q1, Q2)
+template<bool denseReturn, bool dense1, bool dense2>
+Qureg<denseReturn> Quop::kronecker(Q1, Q2)
 {
 	int new_nqubit = q1.nqubit + q2.nqubit;
 	size_t size1 = q1.size();

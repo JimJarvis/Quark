@@ -8,11 +8,11 @@ using namespace Qugate;
 
 // For testing
 // Dense init
-Qureg qureg1(2);
+Qureg<true> qureg1(2);
 // Sparse init with only 1 base at start
-Qureg qureg3(2, 3, true, qubase(2));
+Qureg<false> qureg3(2, 3, qubase(2));
 // Dense init
-Qureg qureg4(2);
+Qureg<true> qureg4(2);
 
 void eigen_demo()
 {
@@ -31,9 +31,9 @@ void eigen_demo()
 void ctor()
 {
 	// Dense init
-	Qureg qureg1(3);
+	Qureg<true> qureg1(3);
 	// Sparse init with only 1 base at start
-	Qureg qureg2(3, 2, true, qubase(8));
+	Qureg<false> qureg2(3, 2, qubase(8));
 
 	qureg1 += 3;
 	qureg2 += 3;
@@ -72,7 +72,7 @@ void dense_hadamard()
 	//int qi = 1;
 	for (int qi = 0; qi < 1<<nqubit ; ++qi)
 	{
-		Qureg q(nqubit, qubase(qi), true, qubase(qi));
+		Qureg<false> q(nqubit, qubase(qi), qubase(qi));
 		hadamard(q);
 		pr(q);
 	}

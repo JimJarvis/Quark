@@ -7,10 +7,13 @@ namespace Quop // quantum operations
 	/*
 	 *	Kronecker product
 	 */
-	Qureg kronecker(Q1, Q2);
+	template<bool denseReturn, bool dense1, bool dense2>
+	Qureg<denseReturn> kronecker(Q1, Q2);
 
+	_DENSE_2_
 	CX dot(Q1, Q2);
 
+	_DENSE_
 	void normalize(Q);
 }
 
