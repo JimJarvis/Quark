@@ -33,16 +33,19 @@ public:
 	// if basis is empty, we iterate over all 2^nqubit basis
 	vector<qubase> basis; 
 
-	/*
-	 *	Factory
-	 */
 	template<bool dense>
 	static Qureg create(int nqubit, unsigned long long = 0);
+	/*
+	 *	Create a dense Qureg, amp[initBase] = 1 while all others 0
+	 */
 	template<>
 	static Qureg create<true>(int nqubit, qubase initBase)
 	{
 		return Qureg(true, nqubit, initBase, 0, false);
 	}
+	/*
+	 *	Create a sparse Qureg, all amps = 0. 
+	 */
 	template<>
 	static Qureg create<false>(int nqubit, size_t reservedSize)
 	{
@@ -50,6 +53,9 @@ public:
 	}
 	template<bool dense>
 	static Qureg create(int nqubit, size_t reservedSize, qubase initBase);
+	/*
+	 *	Create a dense Qureg, amp[initBase] = 1 while all others 0
+	 */
 	template<>
 	static Qureg create<false>(int nqubit, size_t reservedSize, qubase initBase)
 	{
@@ -87,7 +93,7 @@ public:
 	/*
 	 * Sparse ONLY: read index from basemap and get amplitude
 	 */
-	CX& amp_sparse(qubase base) { return amp[basemap[base]]; }
+	CX& operator[](qubase base) { return amp[basemap[base]]; }
 
 	/*
 	 *	Convert to string

@@ -10,11 +10,11 @@ using namespace Qugate;
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = 1 << tar;
-	auto& amp = q.amp;
 	CX a0, a1;
 	qubase base0, base1;
 	if (q.dense)
 	{
+		auto& amp = q.amp;
 		for (base0 = 0; base0 < q.size() ; ++base0)
 			// only process base with 0 at the given target
 			if (!(base0 & t))
@@ -38,17 +38,17 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 			// We always process this basis if it's 0 at target bit
 			if (!(base0 & t))
 			{
-				a0 = q.amp_sparse(base0);
+				a0 = q[base0];
 				// we get the amplitude and don't add new base
 				if (counterpart)
 				{
-					a1 = q.amp_sparse(base1);
-					q.amp_sparse(base0) = a0 * mat(0, 0) + a1 * mat(0, 1);
-					q.amp_sparse(base1) = a0 * mat(1, 0) + a1 * mat(1, 1);
+					a1 = q[base1];
+					q[base0] = a0 * mat(0, 0) + a1 * mat(0, 1);
+					q[base1] = a0 * mat(1, 0) + a1 * mat(1, 1);
 				}
 				else // amp of base1 is 0 and we have to add new base
 				{
-					q.amp_sparse(base0) = a0 * mat(0, 0);
+					q[base0] = a0 * mat(0, 0);
 					q.add_base(base1, a0 * mat(1, 0));
 				}
 			}
@@ -56,10 +56,10 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 			// we process target 1 only if its 0 counterpart has not been processed
 			else if (!counterpart)
 			{
-				a1 = q.amp_sparse(base0);
+				a1 = q[base0];
 				// a0 == 0
 				q.add_base(base1, a1 * mat(0, 1));
-				q.amp_sparse(base0) = a1 * mat(1, 1);
+				q[base0] = a1 * mat(1, 1);
 			}
 		}
 	}
