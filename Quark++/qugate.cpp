@@ -30,9 +30,9 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 	{
 		size_t oldSize = q.size();
 		// Add new states to the end, if any
-		for (int i = 0; i < oldSize ; ++i)
+		for (size_t i = 0; i < oldSize ; ++i)
 		{
-			base0 = q.basis[i];
+			base0 = q.get_base(i);
 			base1 = base0 ^ t;
 			bool counterpart = q.contains_base(base1);
 			// We always process this basis if it's 0 at target bit

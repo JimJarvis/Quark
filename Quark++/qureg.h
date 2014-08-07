@@ -13,6 +13,9 @@ class Qureg
 private:
 	// Maps a qubase to an index in amp[] array
 	unordered_map<qubase, size_t> basemap;
+	// non-zero basis, e.g. |00110> and |10100>
+	// if basis is empty, we iterate over all 2^nqubit basis
+	vector<qubase> basis; 
 
 	/*
 	 * Private ctor
@@ -29,10 +32,10 @@ public:
 	int nqubit; // number of qubits
 	bool dense; // if we don't store basis[] explicitly
 	vector<CX> amp; // amplitudes
-	// non-zero basis, e.g. |00110> and |10100>
-	// if basis is empty, we iterate over all 2^nqubit basis
-	vector<qubase> basis; 
 
+	/**********************************************
+	* Creation ctors  *
+	**********************************************/
 	template<bool dense>
 	static Qureg create(int nqubit, unsigned long long = 0);
 	/*
@@ -62,11 +65,9 @@ public:
 		return Qureg(false, nqubit, initBase, reservedSize, true);
 	}
 
-	/*
-	 *	Size of complex amplitude vector
-	 */
-	size_t size() { return amp.size(); }
-
+	/**********************************************/
+	/*********** Sparse ONLY  ***********/
+	/**********************************************/
 	/*
 	 *	Test if a base already exists in basis[]
 	 */
@@ -78,26 +79,34 @@ public:
 	/*
 	 *	Add a base. Processes hashmap
 	 * Sparse ONLY. 
-	 * 'check' true: if base already exists, update the amplitude
+	 * 'checkExists' true: if base already exists, update the amplitude. Default false
 	 */
-	template<bool check>
+	template<bool checkExists>
 	void add_base(qubase base, CX a);
 	// default: unchecked
 	void add_base(qubase base, CX a) { add_base<false>(base, a); }
 
 	/*
-	*	If dense, get_base(i) == i
-	*/
-	qubase get_base(size_t i) { return dense ? i : basis[i]; }
-
-	/*
-	 * Sparse ONLY: read index from basemap and get amplitude
+	 * Read index from basemap and get amplitude
 	 */
 	CX& operator[](qubase base) { return amp[basemap[base]]; }
 
+	/**********************************************/
+	/*********** Common part  ***********/
+	/**********************************************/
 	/*
-	 *	Convert to string
+	*	Size of complex amplitude vector
+	*/
+	size_t size() { return amp.size(); }
+
+	/*
+	 *	Get base stored at an internal index
+	 * 'checkDense' true: checks whether we are dense or not. Default false
 	 */
+	template<bool checkDense>
+	qubase& get_base(size_t i) { return checkDense && dense ? i : basis[i]; }
+	qubase& get_base(size_t i) { return get_base<false>(i); }
+
 	operator string();
 
 	friend ostream& operator<<(ostream& os, Q)
@@ -106,14 +115,14 @@ public:
 	}
 
 	/*
-	 *	Add scratch bits to 'this'. (Add to most significant bit)
-	 */
-	Qureg& operator+=(int scratch_nqubit);
+	*	Add scratch bits to 'this'. (Add to most significant bit)
+	*/
+	Qureg& operator+=(int scratchNqubit);
 
-	///////***** Quop *****///////
+	///////************** Quop **************///////
 	friend Qureg operator*(Q1, Q2);
 
-	///////***** Qugate *****///////
+	///////************** Qugate **************///////
 };
 
 

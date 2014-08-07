@@ -25,8 +25,8 @@ Qureg Quop::kronecker(Q1, Q2)
 		{
 			qans.amp[ri] = q1.amp[i1] * q2.amp[i2];
 			if (sparse)
-				qans.basis[ri] = 
-					(q1.get_base(i1) << nqubit2) | q2.get_base(i2);
+				qans.get_base(ri) = 
+					(q1.get_base<true>(i1) << nqubit2) | q2.get_base<true>(i2);
 			++ri;
 		}
 

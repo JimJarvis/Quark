@@ -33,10 +33,10 @@ Qureg::Qureg(bool _dense, int _nqubit, qubase initBase, size_t reservedSize, boo
 }
 
 
-template<bool check>
+template<bool checkExists>
 void Qureg::add_base(qubase base, CX a)
 {
-	if (check && contains_base(base))
+	if (checkExists && contains_base(base))
 		amp[basemap[base]] = a;
 	else
 	{
@@ -62,7 +62,7 @@ Qureg::operator string()
 	oss << setprecision(3) << "Qureg[";
 	for (int i = 0; i < size() ; ++i)
 	{
-		oss << "|" << PRINT_KET(get_base(i)) << "> ";
+		oss << "|" << PRINT_KET(get_base<true>(i)) << "> ";
 		CX a = amp[i];
 		oss << a.real() << "+"
 			<< a.imag() << "i"
