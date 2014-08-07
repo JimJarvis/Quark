@@ -90,7 +90,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 	{
 		auto& amp = q.amp;
 		for (base = 0; base < q.size() ; ++base)
-			if ((base & c) && (base & t)) // don't flip twice
+			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
 				std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
@@ -104,7 +104,11 @@ void Qugate::cnot(Q, int ctrl, int tar)
 			{
 				baseFlip = base ^ t;
 				if (q.contains_base(baseFlip))
-					std::swap(q[base], q[baseFlip]);
+				{
+					// don't flip (swap) twice
+					if (base & t)
+						std::swap(q[base], q[baseFlip]);
+				}
 				else
 				{
 					q.add_base<false>(baseFlip, q[base]);

@@ -35,7 +35,7 @@ Qureg dummy_amp(int nqubit, bool dense)
 		Qureg::create<true>(nqubit) :
 		Qureg::create<false>(nqubit, 1);
 
-	for (qubase base = 0; base < 1<<q.nqubit; ++base)
+	for (qubase base = 0; base < 1<<nqubit; ++base)
 		if (dense)
 			q.amp[base] = (base+1) * 10;
 		else
@@ -117,12 +117,17 @@ int main(int argc, char **argv)
 	init();
 	pr((qureg1 * qureg3).sort());
 	//eigen_demo();
-	//test_hadamard<true>();
-	//test_hadamard<false>();
-	test_cnot();
+	pr("dense hadamard");
+	test_hadamard<true>();
+	pr("sparse hadamard");
+	test_hadamard<false>();
+	//test_cnot();
 
-	Qureg qq = dummy_amp(3, true);
-	cnot(qq, 1, 2);
+	Qureg qq = dummy_amp(2, true);
+	cnot(qq, 1, 0);
+	pr(qq);
+	qq = dummy_amp(2, false);
+	cnot(qq, 1, 0);
 	pr(qq);
 
 	return 0;

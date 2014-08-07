@@ -8,6 +8,9 @@
 #define Q1 Qureg& q1
 #define Q2 Qureg& q2
 
+/*
+ * Qubits start from least significant bit. 
+ */
 class Qureg
 {
 private:

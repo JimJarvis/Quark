@@ -78,7 +78,7 @@ Qureg& Qureg::purge()
 
 #define BIT_PRINT
 #ifdef BIT_PRINT
-#define PRINT_KET(ket) bits2str<4>(ket)
+#define PRINT_KET(ket) bits2str<3>(ket)
 #else
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
