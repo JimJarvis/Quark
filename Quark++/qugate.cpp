@@ -80,3 +80,35 @@ void Qugate::hadamard(Q)
 	for (int qi = 0; qi < q.nqubit; ++qi)
 		hadamard(q, qi);
 }
+
+void Qugate::cnot(Q, int ctrl, int tar)
+{
+	qubase c = 1 << ctrl;
+	qubase t = 1 << tar;
+	qubase base, baseFlip;
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (base = 0; base < q.size() ; ++base)
+			if (base & c)
+			{
+				amp[base ^ t] = amp[base];
+				amp[base] = 0;
+			}
+	}
+	else // sparse
+	{
+		size_t oldSize = q.size();
+		// Add new states to the end, if any
+		for (size_t i = 0; i < oldSize; ++i)
+		{
+			base = q.get_base(i);
+			if (base & c)
+			{
+				baseFlip = base ^ t;
+				q.add_base<true>(baseFlip, q[base]);
+				q[base] = 0;
+			}
+		}
+	}
+}

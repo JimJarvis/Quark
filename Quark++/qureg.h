@@ -33,6 +33,11 @@ public:
 	bool dense; // if we don't store basis[] explicitly
 	vector<CX> amp; // amplitudes
 
+	/*
+	 *	Dummy ctor for reference declaration
+	 */
+	Qureg() {}
+
 	/**********************************************
 	* Creation ctors  *
 	**********************************************/
@@ -101,6 +106,10 @@ public:
 		return *this;
 	}
 
+	/*
+	 *	Remove near-zero amplitude, tolerance defined by TOL
+	 */
+	Qureg& purge();
 
 	/**********************************************/
 	/*********** Common part  ***********/
@@ -129,6 +138,11 @@ public:
 	*	Add scratch bits to 'this'. (Add to most significant bit)
 	*/
 	Qureg& operator+=(int scratchNqubit);
+
+	/*
+	 *	Convert to a column vector of 2^nqubit size
+	 */
+	operator VectorXcf();
 
 	///////************** Qugate **************///////
 };

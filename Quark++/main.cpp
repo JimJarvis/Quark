@@ -66,15 +66,35 @@ void init()
 	qureg3.add_base(qubase(0), CX(4));
 }
 
-void dense_hadamard()
+template<bool dense>
+void test_hadamard()
 {
 	int nqubit = 3;
-	//int qi = 1;
+	Qureg q;
 	for (int qi = 0; qi < 1<<nqubit ; ++qi)
 	{
-		Qureg q = Qureg::create<false>(nqubit, 1, qubase(qi));
+		if (dense)
+			q = Qureg::create<true>(nqubit, qubase(qi));
+		else
+			q = Qureg::create<false>(nqubit, 1, qubase(qi));
 		hadamard(q);
 		pr(q.sort());
+	}
+}
+
+template<bool dense>
+void test_cnot()
+{
+	int nqubit = 3;
+	Qureg q;
+	for (int qi = 0; qi < 1<<nqubit ; ++qi)
+	{
+		if (dense)
+			q = Qureg::create<true>(nqubit, qubase(qi));
+		else
+			q = Qureg::create<false>(nqubit, 1, qubase(qi));
+		cnot(q, 0, 2);
+		pr(q.sort().purge());
 	}
 }
 
@@ -83,7 +103,9 @@ int main(int argc, char **argv)
 	init();
 	pr((qureg1 * qureg3).sort());
 	//eigen_demo();
-	dense_hadamard();
+	//test_hadamard<true>();
+	//test_hadamard<false>();
+	test_cnot<false>();
 
 	return 0;
 }

@@ -22,10 +22,15 @@
 using namespace std;
 using Eigen::Matrix2cf;
 using Eigen::Matrix4cf;
+using Eigen::VectorXcf;
+using Eigen::MatrixXcf;
 
 typedef float REAL;
 typedef complex<REAL> CX;
 typedef unsigned long long qubase;
+
+// Amplitude tolerance: smaller than this will be considered 0
+#define TOL 1e-7
 
 string int2str(int a);
 /*

@@ -37,7 +37,7 @@ template<bool checkExists>
 void Qureg::add_base(qubase base, CX a)
 {
 	if (checkExists && contains_base(base))
-		amp[basemap[base]] = a;
+		(*this)[base] = a;
 	else
 	{
 		basemap[base] = amp.size();
@@ -47,6 +47,33 @@ void Qureg::add_base(qubase base, CX a)
 }
 template void Qureg::add_base<true>(qubase, CX);
 template void Qureg::add_base<false>(qubase, CX);
+
+// Remove near-zero amplitudes
+Qureg& Qureg::purge()
+{
+	vector<CX> purgedAmp;
+	purgedAmp.reserve(amp.capacity());
+	vector<qubase> purgedBasis;
+	purgedBasis.reserve(basis.capacity());
+	CX a;
+	size_t s = 0; // new size
+	for (qubase& base : basis)
+	{
+		a = (*this)[base];
+		if (abs(a) > TOL)
+		{
+			purgedAmp.push_back(a);
+			purgedBasis.push_back(base);
+			basemap[base] = s++;
+		}
+		else // remove from basemap
+			basemap.erase(base);
+	}
+	// update with new vectors
+	amp = purgedAmp;
+	basis = purgedBasis;
+	return *this;
+}
 
 #define BIT_PRINT
 #ifdef BIT_PRINT
