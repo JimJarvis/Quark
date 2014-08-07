@@ -85,9 +85,3 @@ Qureg& Qureg::operator+=(int scratch_nqubit)
 		amp.resize(1 << nqubit, CX(0));
 	return *this;
 }
-
-///////***** Quop *****///////
-Qureg operator*(Q1, Q2)
-{
-	return kronecker(q1, q2);
-}

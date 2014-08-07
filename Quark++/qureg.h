@@ -119,9 +119,6 @@ public:
 	*/
 	Qureg& operator+=(int scratchNqubit);
 
-	///////************** Quop **************///////
-	friend Qureg operator*(Q1, Q2);
-
 	///////************** Qugate **************///////
 };
 

@@ -9,8 +9,8 @@ using namespace Qugate;
 // For testing
 // Dense init
 Qureg qureg1 = Qureg::create<true>(2);
-// Sparse init with only 1 base at start
-Qureg qureg3 = Qureg::create<false>(2, 3, qubase(2));
+// Sparse init with no base at start
+Qureg qureg3 = Qureg::create<false>(2, 4);
 // Dense init
 Qureg qureg4 = Qureg::create<true>(2);
 
@@ -81,7 +81,7 @@ void dense_hadamard()
 int main(int argc, char **argv)
 {
 	init();
-	//pr(qureg1 * qureg4);
+	pr(qureg1 * qureg3);
 	//eigen_demo();
 	dense_hadamard();
 
