@@ -124,10 +124,10 @@ int main(int argc, char **argv)
 	//test_cnot();
 
 	Qureg qq = dummy_amp(2, true);
-	cnot(qq, 1, 0);
+	cnot(qq, 0, 1);
 	pr(qq);
 	qq = dummy_amp(2, false);
-	cnot(qq, 1, 0);
+	cnot(qq, 0, 1);
 	pr(qq);
 
 	return 0;

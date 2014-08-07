@@ -85,7 +85,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 {
 	qubase c = 1 << ctrl;
 	qubase t = 1 << tar;
-	qubase base, baseFlip;
+	qubase base, base1; // base1 is flipped base
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -102,17 +102,67 @@ void Qugate::cnot(Q, int ctrl, int tar)
 			base = q.get_base(i);
 			if (base & c)
 			{
-				baseFlip = base ^ t;
-				if (q.contains_base(baseFlip))
+				base1 = base ^ t;
+				if (q.contains_base(base1))
 				{
 					// don't flip (swap) twice
 					if (base & t)
-						std::swap(q[base], q[baseFlip]);
+						std::swap(q[base], q[base1]);
 				}
 				else
 				{
-					q.add_base<false>(baseFlip, q[base]);
+					q.add_base<false>(base1, q[base]);
 					q[base] = 0;
+				}
+			}
+		}
+	}
+}
+
+void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
+{
+	qubase c = 1 << ctrl;
+	qubase t = 1 << tar;
+	qubase base, base1; // base1 is flipped base
+	CX a, a1;
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (base = 0; base < q.size(); ++base)
+		if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
+		{
+			a = amp[base];
+			a1 = amp[base ^ t];
+			amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
+			amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
+		}
+	}
+	else // sparse
+	{
+		size_t oldSize = q.size();
+		// Add new states to the end, if any
+		for (size_t i = 0; i < oldSize; ++i)
+		{
+			base = q.get_base(i);
+			if (base & c)
+			{
+				base1 = base ^ t;
+				if (q.contains_base(base1))
+				{
+					// don't flip (swap) twice
+					if (base & t)
+					{
+						a = q[base];
+						a1 = q[base1];
+						q[base] = a * mat(0, 0) + a1 * mat(0, 1);
+						q[base1] = a * mat(1, 0) + a1 * mat(1, 1);
+					}
+				}
+				else
+				{
+					a = q[base];
+					q.add_base<false>(base1, a * mat(1, 0));
+					q[base] = a * mat(0, 0);
 				}
 			}
 		}
