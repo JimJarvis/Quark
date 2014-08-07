@@ -59,7 +59,11 @@ public:
 
 // more dummy
 template<bool dense>
-class Qureg<dense, true> : public Qureg<dense, false> {};
+class Qureg<dense, true> : public Qureg<dense, false> 
+{
+public:
+	operator string();
+};
 
 /**********************************************
 * DENSE: we don't store basis vectors explicitly  *
@@ -75,7 +79,7 @@ public:
 
 	qubase get_base(size_t i) { return i; }
 
-	operator string();
+	//operator string();
 	Qureg<true>& operator+=(int scratchNqubit);
 };
 
@@ -132,7 +136,7 @@ public:
 	 */
 	CX& amp_sparse(qubase base) { return amp[basemap[base]]; }
 
-	operator string();
+	//operator string();
 	Qureg<false>& operator+=(int scratchNqubit);
 
 	///////***** Qugate *****///////

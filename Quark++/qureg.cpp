@@ -68,7 +68,8 @@ template void Qureg<false>::add_base<false>(qubase, CX);
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
 
-Qureg<true>::operator string()
+_DENSE_
+Qureg<dense, false>::operator string()
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
@@ -89,27 +90,31 @@ Qureg<true>::operator string()
 	oss << "]";
 	return oss.str();
 }
-Qureg<false>::operator string()
-{
-	ostringstream oss;
-	oss << setprecision(3) << "Qureg[";
-	for (int i = 0; i < size() ; ++i)
-	{
-		oss << "|" << PRINT_KET(get_base(i)) << "> ";
-		CX a = amp[i];
-		oss << a.real() << "+"
-			<< a.imag() << "i"
-			<< " (" << abs(a) << ")";
-		if (i != size() - 1)
-		{
-			oss << ", ";
-			if (i % 4 == 3)
-				oss << "\n";
-		}
-	}
-	oss << "]";
-	return oss.str();
-}
+
+template Qureg<true, false>::operator string();
+template Qureg<false, false>::operator string();
+
+//Qureg<false>::operator string()
+//{
+//	ostringstream oss;
+//	oss << setprecision(3) << "Qureg[";
+//	for (int i = 0; i < size() ; ++i)
+//	{
+//		oss << "|" << PRINT_KET(get_base(i)) << "> ";
+//		CX a = amp[i];
+//		oss << a.real() << "+"
+//			<< a.imag() << "i"
+//			<< " (" << abs(a) << ")";
+//		if (i != size() - 1)
+//		{
+//			oss << ", ";
+//			if (i % 4 == 3)
+//				oss << "\n";
+//		}
+//	}
+//	oss << "]";
+//	return oss.str();
+//}
 
 Qureg<true>& Qureg<true>::operator+=(int scratch_nqubit)
 {

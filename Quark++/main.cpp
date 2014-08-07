@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	init();
 	//pr(qureg1 * qureg4);
 	//eigen_demo();
-	dense_hadamard();
+	//dense_hadamard();
 
 	return 0;
 }
