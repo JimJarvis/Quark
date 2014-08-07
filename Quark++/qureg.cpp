@@ -8,45 +8,35 @@
 using namespace Quop;
 using namespace Qugate;
 
-/*
-* Dense: we don't store the basis explicitly
-* Init and set a specific base to amplitude 1. All other amps = 0.
-*/
-Qureg::Qureg(int _nqubit, qubase initBase) :
+// Private comprehensive ctor
+// The last two args are only relevant to sparse mode
+Qureg::Qureg(bool _dense, int _nqubit, qubase initBase, size_t reservedSize, bool init) :
+	dense(_dense),
 	nqubit(_nqubit),
-	amp(vector<CX>(1 << nqubit)),
-	dense(true)
+	amp(vector<CX>(dense ? 1 << nqubit : 0))
 {
-	amp[initBase] = 1;
-}
-
-/*
-* Sparse: we store the basis explicitly
-* If init true, we add initBase to amp[] with value 1
-* If init false, amp/basis[] will be empty and 'initBase' ignored
-* reservedSize for internal allocation
-*/
-Qureg::Qureg(int _nqubit, size_t reservedSize, bool init, qubase initBase) :
-	nqubit(_nqubit),
-	amp(vector<CX>()),
-	basis(vector<qubase>()),
-	dense(false)
-{
-	amp.reserve(reservedSize);
-	basis.reserve(reservedSize);
-	basemap = unordered_map<qubase, size_t>(reservedSize);
-	if (init)
+	if (dense)
+		amp[initBase] = 1;
+	else
 	{
-		basis.push_back(initBase);
-		amp.push_back(CX(1));
-		basemap[initBase] = 0; // indexed at 0
+		amp.reserve(reservedSize);
+		basis = vector<qubase>();
+		basis.reserve(reservedSize);
+		basemap = unordered_map<qubase, size_t>(reservedSize);
+		if (init)
+		{
+			basis.push_back(initBase);
+			amp.push_back(CX(1));
+			basemap[initBase] = 0; // indexed at 0
+		}
 	}
 }
 
-template<bool Check>
+
+template<bool check>
 void Qureg::add_base(qubase base, CX a)
 {
-	if (Check && contains_base(base))
+	if (check && contains_base(base))
 		amp[basemap[base]] = a;
 	else
 	{

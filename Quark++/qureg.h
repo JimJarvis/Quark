@@ -10,6 +10,21 @@
 
 class Qureg
 {
+private:
+	// Maps a qubase to an index in amp[] array
+	unordered_map<qubase, size_t> basemap;
+
+	/*
+	 * Private ctor
+	 *	Dense: we don't store the basis explicitly
+	 *    Set initBase to amplitude 1. All other amps = 0.
+	 * Sparse: we store the basis explicitly
+	 *    If init true, we add initBase to amp[] with value 1
+	 *    If init false, amp/basis[] will be empty and 'initBase' ignored
+	 *    reservedSize for internal allocation
+	 */
+	Qureg(bool dense, int nqubit, qubase initBase, size_t reservedSize, bool init);
+
 public:
 	int nqubit; // number of qubits
 	bool dense; // if we don't store basis[] explicitly
@@ -17,22 +32,29 @@ public:
 	// non-zero basis, e.g. |00110> and |10100>
 	// if basis is empty, we iterate over all 2^nqubit basis
 	vector<qubase> basis; 
-	// Maps a qubase to an index in amp[] array
-	unordered_map<qubase, size_t> basemap;
 
 	/*
-	 *	Dense: we don't store the basis explicitly
-	 * Init and set a specific base to amplitude 1. All other amps = 0.
+	 *	Factory
 	 */
-	Qureg(int nqubit, qubase initBase = 0);
-
-	/*
-	* Sparse: we store the basis explicitly
-	* If init true, we add initBase to amp[] with value 1
-	* If init false, amp/basis[] will be empty and 'initBase' ignored
-	* reservedSize for internal allocation
-	*/
-	Qureg(int nqubit, size_t reservedSize, bool init, qubase initBase = 0);
+	template<bool dense>
+	static Qureg create(int nqubit, unsigned long long = 0);
+	template<>
+	static Qureg create<true>(int nqubit, qubase initBase)
+	{
+		return Qureg(true, nqubit, initBase, 0, false);
+	}
+	template<>
+	static Qureg create<false>(int nqubit, size_t reservedSize)
+	{
+		return Qureg(false, nqubit, 0, reservedSize, false);
+	}
+	template<bool dense>
+	static Qureg create(int nqubit, size_t reservedSize, qubase initBase);
+	template<>
+	static Qureg create<false>(int nqubit, size_t reservedSize, qubase initBase)
+	{
+		return Qureg(false, nqubit, initBase, reservedSize, true);
+	}
 
 	/*
 	 *	Size of complex amplitude vector
@@ -50,9 +72,9 @@ public:
 	/*
 	 *	Add a base. Processes hashmap
 	 * Sparse ONLY. 
-	 * Check true: if base already exists, update the amplitude
+	 * 'check' true: if base already exists, update the amplitude
 	 */
-	template<bool Check>
+	template<bool check>
 	void add_base(qubase base, CX a);
 	// default: unchecked
 	void add_base(qubase base, CX a) { add_base<false>(base, a); }

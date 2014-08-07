@@ -14,8 +14,8 @@ Qureg Quop::kronecker(Q1, Q2)
 	bool sparse = !q1.dense || !q2.dense;
 
 	Qureg qans = sparse ? 
-				Qureg(new_nqubit, size1 * size2) :
-				Qureg(new_nqubit);
+				Qureg::create<false>(new_nqubit, size1 * size2) :
+				Qureg::create<true>(new_nqubit);
 
 	// If both of them are dense, then the resultant is also dense
 	int ri = 0;
