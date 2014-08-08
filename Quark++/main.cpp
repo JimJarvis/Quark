@@ -127,8 +127,17 @@ int main(int argc, char **argv)
 	cnot(qq, 0, 1);
 	pr(qq);
 	qq = dummy_amp(2, false);
-	cnot(qq, 0, 1);
+	Matrix2cf m;
+	m <<
+		0, 1,
+		1, 0;
+	generic_control(qq, m, 0, 1);
 	pr(qq);
+
+	const int nq = 7;
+	uint64_t dud = 53;
+	pr(bits2str<nq>(dud));
+	pr(bits2str<nq>(bit_reverse(dud) >> (64 - nq)));
 
 	return 0;
 }

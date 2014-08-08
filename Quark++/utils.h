@@ -32,19 +32,12 @@ typedef unsigned long long qubase;
 // Amplitude tolerance: smaller than this will be considered 0
 #define TOL 1e-7
 
-string int2str(int a);
-/*
- *	Convert to a bit string
- * May also specify minimal number of bits to print (template parameter)
- */
-template<int minbit>
-string bits2str(qubase b)
+inline string int2str(int a)
 {
-	return bitset<minbit>(b).to_string();
+	ostringstream oss;
+	oss << a;
+	return oss.str();
 }
-template <>
-string bits2str<0>(qubase b);
-string bits2str(qubase b);
 
 template<typename T>
 string vec2str(vector<T> vec)
@@ -55,6 +48,50 @@ string vec2str(vector<T> vec)
 		oss << ele << ", ";
 	string s = oss.str();
 	return s.substr(0, s.size() - 2) + "]";
+}
+
+//******** Bit ops
+/*
+ *	Convert to a bit string
+ * May also specify minimal number of bits to print (template parameter)
+ */
+template<int minbit>
+string bits2str(uint64_t b)
+{
+	return bitset<minbit>(b).to_string();
+}
+
+// Convert to bit string
+template<>
+inline string bits2str<0>(qubase b)
+{
+	string s = bitset<32>(b).to_string();
+
+	// kill leading zeros
+	int i = 0;
+	while (i < s.size() && s[i] == '0') { ++i; }
+	return i != s.size() ? s.substr(i) : "0";
+}
+inline string bits2str(qubase b) { return bits2str<0>(b); }
+
+template <typename T, T m, int k>
+static inline T swapbits(T p)
+{
+	T q = ((p >> k) ^ p)&m;
+	return p^q ^ (q << k);
+}
+inline uint64_t bit_reverse(uint64_t n)
+{
+	static const uint64_t m0 = 0x5555555555555555ULL;
+	static const uint64_t m1 = 0x0300c0303030c303ULL;
+	static const uint64_t m2 = 0x00c0300c03f0003fULL;
+	static const uint64_t m3 = 0x00000ffc00003fffULL;
+	n = ((n >> 1)&m0) | (n&m0) << 1;
+	n = swapbits<uint64_t, m1, 4>(n);
+	n = swapbits<uint64_t, m2, 8>(n);
+	n = swapbits<uint64_t, m3, 20>(n);
+	n = (n >> 34) | (n << 30);
+	return n;
 }
 
 ///////************** Exceptions **************///////

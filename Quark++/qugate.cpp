@@ -131,8 +131,9 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 		for (base = 0; base < q.size(); ++base)
 		if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
 		{
+			base1 = base ^ t;
 			a = amp[base];
-			a1 = amp[base ^ t];
+			a1 = amp[base1];
 			amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
 			amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
 		}
