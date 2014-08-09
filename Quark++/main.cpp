@@ -178,12 +178,16 @@ int main(int argc, char **argv)
 
 	pr(hadamard_mat(3));
 
-	VectorXcf v1(3);
-	v1 << 3, -2, 4;
+	MatrixXcf v1(3, 2);
+	v1 << 3, -2, 
+		4, -1, 
+		1, 0;
 	MatrixXcf m1(2, 3);
 	m1 << 10, 20, 30,
 		40, 50, 60;
-	pr(kronecker_mat(m1, v1));
+	pr(kronecker_mat(v1, m1));
+
+	pr(bits2str(14, 4));
 
 	return 0;
 }

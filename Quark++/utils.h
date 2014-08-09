@@ -69,7 +69,6 @@ INLINE string bits2str(uint64_t b)
 {
 	return bitset<minbit>(b).to_string();
 }
-
 // Convert to bit string
 template<>
 INLINE string bits2str<0>(qubase b)
@@ -82,6 +81,11 @@ INLINE string bits2str<0>(qubase b)
 	return i != s.size() ? s.substr(i) : "0";
 }
 INLINE string bits2str(qubase b) { return bits2str<0>(b); }
+INLINE string bits2str(qubase b, int minbit)
+{
+	string s = bitset<32>(b).to_string();
+	return s.substr(32 - minbit);
+}
 
 template <typename T, T m, int k>
 static INLINE T swapbits(T p)

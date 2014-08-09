@@ -151,7 +151,7 @@
     <ClCompile Include="..\qugate.cpp" />
     <ClCompile Include="..\quop.cpp" />
     <ClCompile Include="..\qureg.cpp" />
-    <ClCompile Include="qureg_test.cpp" />
+    <ClCompile Include="quop_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.h" />

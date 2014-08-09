@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="qureg_test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\qugate.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -26,6 +23,9 @@
     </ClCompile>
     <ClCompile Include="..\qureg.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="quop_test.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
