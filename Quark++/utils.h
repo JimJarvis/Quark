@@ -95,7 +95,13 @@ inline uint64_t bit_reverse(uint64_t n)
 }
 
 ///////************** For-range loop iterables **************///////
-template<typename T>
+/*
+ * inclusive/exclusive: 
+ *	Forward: [begin, end)
+ * Reverse: (begin, end]
+ * In reverse mode, if begin is 0, traverse from the last element
+ */
+template<typename T, bool forward = true>
 struct VecRange
 {
 	vector<T>& vec;
@@ -108,16 +114,10 @@ struct VecRange
 		vector<T>& vec;
 		iter(vector<T>& _vec, size_t _i) : vec(_vec), i(_i) {}
 
-		T& operator *()
-		{
-			return vec[i];
-		}
+		T& operator *() { return vec[i]; }
 
 		// prefix
-		size_t& operator++()
-		{
-			return ++i;
-		}
+		size_t& operator++() { return forward ? ++i : --i; }
 
 		bool operator==(const iter& other) const
 		{
@@ -130,29 +130,25 @@ struct VecRange
 	};
 
 	VecRange(vector<T>& _vec, size_t begin, size_t end) :
-		vec(_vec), beginIdx(begin), endIdx(end)
-	{
-	}
-
+		vec(_vec), 
+		beginIdx(forward ? begin : begin - 1), 
+		endIdx(forward ? end : end -1) { }
 	VecRange(vector<T>& _vec, size_t begin = 0) :
-		vec(_vec), beginIdx(begin)
-	{
-		endIdx = vec.size();
-	}
+		vec(_vec),
+		beginIdx(forward ? begin : 
+				(begin == 0 ? vec.size() : begin) - 1),
+				endIdx(forward ? vec.size() : -1) { }
 
-	iter begin()
-	{
-		return iter(vec, beginIdx);
-	}
-
-	iter end()
-	{
-		return iter(vec, endIdx);
-	}
+	iter begin() { return iter(vec, beginIdx); }
+	iter end() { return iter(vec, endIdx); }
 };
 
-
-template<typename IntType = int>
+/*
+ * inclusive/exclusive: 
+ *	Forward: [begin, end)
+ * Reverse: (begin, end]
+ */
+template<typename IntType = int, bool forward = true>
 struct Range
 {
 	IntType beginIdx, endIdx;
@@ -165,7 +161,7 @@ struct Range
 
 		IntType& operator *() { return i; }
 		// prefix
-		IntType& operator++() { return ++i; }
+		IntType& operator++() { return forward ? ++i : --i; }
 		bool operator==(const iter& other) const
 		{
 			return this->i == other.i;
@@ -177,14 +173,11 @@ struct Range
 	};
 
 	Range(IntType begin, IntType end) :
-		beginIdx(begin), endIdx(end)
-	{
-	}
-
+		beginIdx(forward ? begin : begin - 1), 
+		endIdx(forward ? end : end -1) { }
 	Range(IntType end) :
-		beginIdx(0), endIdx(end)
-	{
-	}
+		beginIdx(forward ? 0 : end - 1), 
+		endIdx(forward ? end : -1) { }
 
 	iter begin() { return iter(beginIdx); }
 	iter end() { return iter(endIdx); }

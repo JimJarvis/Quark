@@ -138,18 +138,24 @@ int main(int argc, char **argv)
 
 	ptitle("start vectoriong");
 	vector<int> a;
-	for (int i : Range<>(10))
+	for (int i : Range<int, false>(10))
 	{
 		a.push_back(i * 3);
 	}
 	pr(vec2str(a));
 
-	//for (int i : VecRange<int>(a, 3, 7))
-	for (int& i : VecRange<int>(a))
+	a.clear();
+	for (int i : Range<int>(10))
 	{
-		i = 3;
-		//a.push_back(i * 10);
-		pr(i);
+		a.push_back(i * 3);
+	}
+	pr(vec2str(a));
+
+	for (int i : VecRange<int>(a, 3, 7))
+	//for (int i : VecRange<int, false>(a, 1))
+	{
+		//i = 3;
+		a.push_back(i * 10);
 	}
 	pr(vec2str(a));
 
