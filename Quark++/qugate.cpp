@@ -11,11 +11,11 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = 1 << tar;
 	CX a0, a1;
-	qubase base0, base1;
+	qubase base1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (base0 = 0; base0 < q.size() ; ++base0)
+		for (qubase base0 : q.base_iter_d())
 			// only process base with 0 at the given target
 			if (!(base0 & t))
 			{
@@ -28,11 +28,9 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 	}
 	else // sparse
 	{
-		size_t oldSize = q.size();
 		// Add new states to the end, if any
-		for (size_t i = 0; i < oldSize ; ++i)
+		for (qubase base0 : q.base_iter_s())
 		{
-			base0 = q.get_base(i);
 			base1 = base0 ^ t;
 			bool counterpart = q.contains_base(base1);
 			// We always process this basis if it's 0 at target bit
@@ -85,21 +83,19 @@ void Qugate::cnot(Q, int ctrl, int tar)
 {
 	qubase c = 1 << ctrl;
 	qubase t = 1 << tar;
-	qubase base, base1; // base1 is flipped base
+	qubase base1; // base1 is flipped base
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (base = 0; base < q.size() ; ++base)
+		for (qubase base : q.base_iter_d())
 			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
 				std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
 	{
-		size_t oldSize = q.size();
 		// Add new states to the end, if any
-		for (size_t i = 0; i < oldSize; ++i)
+		for (qubase base : q.base_iter_s())
 		{
-			base = q.get_base(i);
 			if (base & c)
 			{
 				base1 = base ^ t;
@@ -123,28 +119,26 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 {
 	qubase c = 1 << ctrl;
 	qubase t = 1 << tar;
-	qubase base, base1; // base1 is flipped base
+	qubase base1; // base1 is flipped base
 	CX a, a1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (base = 0; base < q.size(); ++base)
-		if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
-		{
-			base1 = base ^ t;
-			a = amp[base];
-			a1 = amp[base1];
-			amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
-			amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
-		}
+		for (qubase base : q.base_iter_d())
+			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
+			{
+				base1 = base ^ t;
+				a = amp[base];
+				a1 = amp[base1];
+				amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
+				amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
+			}
 	}
 	else // sparse
 	{
-		size_t oldSize = q.size();
 		// Add new states to the end, if any
-		for (size_t i = 0; i < oldSize; ++i)
+		for (qubase base : q.base_iter_s())
 		{
-			base = q.get_base(i);
 			if (base & c)
 			{
 				base1 = base ^ t;

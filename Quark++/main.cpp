@@ -145,9 +145,10 @@ int main(int argc, char **argv)
 	pr(vec2str(a));
 
 	//for (int i : VecRange<int>(a, 3, 7))
-	for (int i : VecRange<int>(a))
+	for (int& i : VecRange<int>(a))
 	{
-		a.push_back(i * 10);
+		i = 3;
+		//a.push_back(i * 10);
 		pr(i);
 	}
 	pr(vec2str(a));

@@ -86,6 +86,11 @@ public:
 		amp[to_bigend(base)] = a;
 	}
 
+	/*
+	 * Iterate over all basis from 0 to 1<<nqubit
+	 */
+	Range<qubase> base_iter_d() { return Range<qubase>(size()); }
+
 	/**********************************************/
 	/*********** Sparse ONLY  ***********/
 	/**********************************************/
@@ -120,6 +125,11 @@ public:
 	 * Read index from basemap and get amplitude
 	 */
 	CX& operator[](qubase base) { return amp[basemap[base]]; }
+
+	/*
+	 *	For-each loop over basis[]. You can append to basis[] as you iterate
+	 */
+	VecRange<qubase> base_iter_s() { return VecRange<qubase>(basis); }
 
 	/*
 	 *	Sort the basis vectors. 
