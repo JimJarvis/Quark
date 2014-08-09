@@ -32,21 +32,12 @@ Qureg::Qureg(bool _dense, int _nqubit, qubase initBase, size_t reservedSize, boo
 	}
 }
 
-
-template<bool checkExists>
 void Qureg::add_base(qubase base, CX a)
 {
-	if (checkExists && contains_base(base))
-		(*this)[base] = a;
-	else
-	{
-		basemap[base] = amp.size();
-		basis.push_back(base);
-		amp.push_back(a);
-	}
+	basemap[base] = amp.size();
+	basis.push_back(base);
+	amp.push_back(a);
 }
-template void Qureg::add_base<true>(qubase, CX);
-template void Qureg::add_base<false>(qubase, CX);
 
 // Remove near-zero amplitudes
 Qureg& Qureg::purge()
@@ -91,7 +82,7 @@ string Qureg::to_string(bool nonZeroOnly, bool bigEndian)
 	for (size_t i = 0; i < size() ; ++i)
 	{
 		CX a = dense ? 
-			amp[bigEndian ? to_big_endian(i) : i] : 
+			amp[bigEndian ? to_bigend(i) : i] : 
 			(*this)[get_base(i)];
 		float magnitude = abs(a);
 		if (nonZeroOnly && magnitude < TOL)
@@ -107,7 +98,7 @@ string Qureg::to_string(bool nonZeroOnly, bool bigEndian)
 		oss << "|" << PRINT_KET(
 			(dense ? i : 
 				(bigEndian ? 
-					to_big_endian(get_base(i)) : get_base(i)))
+					to_bigend(get_base(i)) : get_base(i)))
 			) << "> ";
 		oss << a.real() << "+"
 			<< a.imag() << "i"

@@ -74,6 +74,19 @@ public:
 	}
 
 	/**********************************************/
+	/*********** Dense ONLY  ***********/
+	/**********************************************/
+	void set_base_d(qubase base, CX a)
+	{
+		amp[base] = a;
+	}
+
+	void set_base_bigend_d(qubase base, CX a)
+	{
+		amp[to_bigend(base)] = a;
+	}
+
+	/**********************************************/
 	/*********** Sparse ONLY  ***********/
 	/**********************************************/
 	/*
@@ -85,27 +98,17 @@ public:
 	}
 
 	/*
-	 *	Add a base. Processes hashmap
-	 * Sparse ONLY. 
-	 * 'checkExists' true: if base already exists, update the amplitude. Default false
+	 *	Add a base. Processes hashmap. Sparse ONLY. 
 	 */
-	template<bool checkExists>
 	void add_base(qubase base, CX a);
-	// default: unchecked
-	void add_base(qubase base, CX a) { add_base<false>(base, a); }
 
 	/*
 	 *	Add a base in big endian format. 
 	 * Note that internally everything is still little endian
 	 */
-	template<bool checkExists>
-	void add_base_big_endian(qubase base, CX a)
+	void add_base_bigend(qubase base, CX a)
 	{
-		add_base<checkExists>(to_big_endian(base), a);
-	}
-	void add_base_big_endian(qubase base, CX a) 
-	{ 
-		add_base(to_big_endian(base), a);
+		add_base(to_bigend(base), a);
 	}
 
 	/*
@@ -148,7 +151,7 @@ public:
 	/*
 	 *	Convert internal little endian representation to big endian
 	 */
-	qubase to_big_endian(qubase& base)
+	qubase to_bigend(qubase& base)
 	{
 		return bit_reverse(base) >> (64 - nqubit);
 	}

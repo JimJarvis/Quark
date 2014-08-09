@@ -111,7 +111,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 				}
 				else
 				{
-					q.add_base<false>(base1, q[base]);
+					q.add_base(base1, q[base]);
 					q[base] = 0;
 				}
 			}
@@ -162,7 +162,7 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 				else
 				{
 					a = q[base];
-					q.add_base<false>(base1, a * mat(1, 0));
+					q.add_base(base1, a * mat(1, 0));
 					q[base] = a * mat(0, 0);
 				}
 			}

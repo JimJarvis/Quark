@@ -37,9 +37,9 @@ Qureg dummy_amp(int nqubit, bool dense)
 
 	for (qubase base = 0; base < 1<<nqubit; ++base)
 		if (dense)
-			q.amp[base] = (base+1) * 10;
+			q.set_base_bigend_d(base, (base+1) * 10);
 		else
-			q.add_base_big_endian(base, (base+1) * 10);
+			q.add_base_bigend(base, (base+1) * 10);
 	return q;
 }
 
@@ -75,10 +75,10 @@ void init()
 	amp4[2] = CX(2, 0);
 	amp4[3] = CX(1, 0);
 
-	qureg3.add_base_big_endian(qubase(2), CX(1));
-	qureg3.add_base_big_endian(qubase(3), CX(2));
-	qureg3.add_base_big_endian(qubase(1), CX(3));
-	qureg3.add_base_big_endian(qubase(0), CX(4));
+	qureg3.add_base_bigend(qubase(2), CX(1));
+	qureg3.add_base_bigend(qubase(3), CX(2));
+	qureg3.add_base_bigend(qubase(1), CX(3));
+	qureg3.add_base_bigend(qubase(0), CX(4));
 }
 
 template<bool dense>
