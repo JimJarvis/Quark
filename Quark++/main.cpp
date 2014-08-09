@@ -112,6 +112,7 @@ void test_cnot()
 	}
 }
 
+
 int main(int argc, char **argv)
 {
 	init();
@@ -134,6 +135,22 @@ int main(int argc, char **argv)
 		1, 0;
 	generic_control(qq, m, 0, 1);
 	pr(qq.to_string(true, true));
+
+	ptitle("start vectoriong");
+	vector<int> a;
+	for (int i : Range<>(10))
+	{
+		a.push_back(i * 3);
+	}
+	pr(vec2str(a));
+
+	//for (int i : VecRange<int>(a, 3, 7))
+	for (int i : VecRange<int>(a))
+	{
+		a.push_back(i * 10);
+		pr(i);
+	}
+	pr(vec2str(a));
 
 	return 0;
 }
