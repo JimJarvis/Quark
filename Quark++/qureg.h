@@ -132,15 +132,25 @@ public:
 	qubase& get_base(size_t i) { return get_base<false>(i); }
 
 	/*
+	 *	Convert internal little endian representation to big endian
+	 */
+	qubase to_big_endian(qubase& base)
+	{
+		return bit_reverse(base) >> (64 - nqubit);
+	}
+
+	/*
 	 *	If nonZeroOnly true, prints only states with non-zero amp
 	 * default true
+	 * Qureg internal representation is little endian. 
+	 * You can make it big endian, which is the convention on most textbooks
+	 * default true
 	 */
-	template<bool nonZeroOnly>
-	string to_string();
+	string to_string(bool nonZeroOnly = true, bool bigEndian = true);
 
 	operator string()
 	{
-		return to_string<true>();
+		return to_string(true, true);
 	}
 
 	friend ostream& operator<<(ostream& os, Q)

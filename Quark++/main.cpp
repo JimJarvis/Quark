@@ -125,19 +125,15 @@ int main(int argc, char **argv)
 
 	Qureg qq = dummy_amp(2, true);
 	cnot(qq, 0, 1);
-	pr(qq);
+	pr(qq.to_string(true, false));
+
 	qq = dummy_amp(2, false);
 	Matrix2cf m;
 	m <<
 		0, 1,
 		1, 0;
 	generic_control(qq, m, 0, 1);
-	pr(qq);
-
-	const int nq = 7;
-	uint64_t dud = 53;
-	pr(bits2str<nq>(dud));
-	pr(bits2str<nq>(bit_reverse(dud) >> (64 - nq)));
+	//pr(qq.to_string(true, false));
 
 	return 0;
 }
