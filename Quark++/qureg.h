@@ -103,6 +103,11 @@ public:
 	void add_base(qubase base, CX a);
 
 	/*
+	 *	Get base stored internally at index i
+	 */
+	qubase& get_base(size_t i) { return basis[i]; }
+
+	/*
 	 *	Add a base in big endian format. 
 	 * Note that internally everything is still little endian
 	 */
@@ -142,11 +147,9 @@ public:
 
 	/*
 	 *	Get base stored at an internal index
-	 * 'checkDense' true: checks whether we are dense or not. Default false
+	 * dense and sparse
 	 */
-	template<bool checkDense>
-	qubase& get_base(size_t i) { return checkDense && dense ? i : basis[i]; }
-	qubase& get_base(size_t i) { return get_base<false>(i); }
+	qubase& get_base_d_s(size_t i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Convert internal little endian representation to big endian
