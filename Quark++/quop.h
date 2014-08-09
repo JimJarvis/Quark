@@ -19,6 +19,13 @@ namespace Quop // quantum operations
 	CX dot(Q1, Q2);
 
 	void normalize(Q);
+
+	/**********************************************/
+	/*********** Eigen operations  ***********/
+	/**********************************************/
+	MatrixXcf hadamard_mat(int nqubit);
+
+	MatrixXcf kronecker_mat(MatrixXcf& A, MatrixXcf& B);
 }
 
 #endif // quop_h__

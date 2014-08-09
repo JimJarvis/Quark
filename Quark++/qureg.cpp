@@ -128,3 +128,15 @@ Qureg& Qureg::operator+=(int scratchQubit)
 	nqubit += scratchQubit;
 	return *this;
 }
+
+Qureg::operator VectorXcf()
+{
+	VectorXcf vec(1 << nqubit);
+	if (dense)
+		for (qubase base : base_iter_d())
+			vec(base) = amp[base];
+	else
+		for (qubase base = 0; base < 1<<nqubit ; ++base)
+			vec(base) = contains_base(base) ? (*this)[base] : 0;
+	return vec;
+}

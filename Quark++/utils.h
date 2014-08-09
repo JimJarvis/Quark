@@ -32,7 +32,16 @@ typedef unsigned long long qubase;
 // Amplitude tolerance: smaller than this will be considered 0
 #define TOL 1e-7
 
-inline string int2str(int a)
+// Force inline
+#ifdef _MSC_VER
+#  define INLINE  __forceinline
+#elif defined(__GNUC__)
+#  define INLINE  inline __attribute__((always_inline))
+#else
+#  define INLINE  inline
+#endif
+
+INLINE string int2str(int a)
 {
 	ostringstream oss;
 	oss << a;
@@ -50,20 +59,20 @@ string vec2str(vector<T> vec)
 	return s.substr(0, s.size() - 2) + "]";
 }
 
-//******** Bit ops
+///////************** Bit operations **************///////
 /*
  *	Convert to a bit string
  * May also specify minimal number of bits to print (template parameter)
  */
 template<int minbit>
-string bits2str(uint64_t b)
+INLINE string bits2str(uint64_t b)
 {
 	return bitset<minbit>(b).to_string();
 }
 
 // Convert to bit string
 template<>
-inline string bits2str<0>(qubase b)
+INLINE string bits2str<0>(qubase b)
 {
 	string s = bitset<32>(b).to_string();
 
@@ -72,15 +81,15 @@ inline string bits2str<0>(qubase b)
 	while (i < s.size() && s[i] == '0') { ++i; }
 	return i != s.size() ? s.substr(i) : "0";
 }
-inline string bits2str(qubase b) { return bits2str<0>(b); }
+INLINE string bits2str(qubase b) { return bits2str<0>(b); }
 
 template <typename T, T m, int k>
-static inline T swapbits(T p)
+static INLINE T swapbits(T p)
 {
 	T q = ((p >> k) ^ p)&m;
 	return p^q ^ (q << k);
 }
-inline uint64_t bit_reverse(uint64_t n)
+INLINE uint64_t bit_reverse(uint64_t n)
 {
 	static const uint64_t m0 = 0x5555555555555555ULL;
 	static const uint64_t m1 = 0x0300c0303030c303ULL;
@@ -92,6 +101,42 @@ inline uint64_t bit_reverse(uint64_t n)
 	n = swapbits<uint64_t, m3, 20>(n);
 	n = (n >> 34) | (n << 30);
 	return n;
+}
+
+template <bool builtin> // use hardware built-in or not
+INLINE int bit_count(size_t b); // Count the bits in a bitmap
+// count all the way up to 64. Used less than count to 15
+template<>
+INLINE int bit_count<false>(size_t b)
+{
+	b -= (b >> 1) & 0x5555555555555555ULL;
+	b = ((b >> 2) & 0x3333333333333333ULL) + (b & 0x3333333333333333ULL);
+	b = ((b >> 4) + b) & 0x0F0F0F0F0F0F0F0FULL;
+	return (b * 0x0101010101010101ULL) >> 56;
+}
+// Assembly code that works for both FULL and MAX15
+template<>
+INLINE int bit_count<true>(uint64_t b)
+{
+#if defined(_MSC_VER)
+	return (int)__popcnt64(b);
+#else
+	__asm__("popcnt %1, %0" : "=r" (b) : "r" (b));
+	return b;
+#endif
+}
+
+INLINE int bit_count(uint64_t b)
+{
+	return bit_count<true>(b);
+}
+
+/*
+ *	Bitwise dot-product
+ */
+INLINE int bitwise_dot(uint64_t b1, uint64_t b2)
+{
+	return bit_count(b1 & b2) % 2;
 }
 
 ///////************** For-range loop iterables **************///////
@@ -212,7 +257,7 @@ private:
 namespace Testing
 {
 	inline void ptitle(string title = "") 
-	{ cout << "！！！！！！！！！！" << title << "！！！！！！！！！！！" << endl; }
+	{ cout << "！！！！！！！！！！ " << title << " ！！！！！！！！！！！" << endl; }
 #define pr(X) cout << X << endl
 #define pause std::cin.get()
 

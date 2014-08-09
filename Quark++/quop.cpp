@@ -37,3 +37,24 @@ Qureg Quop::operator*(Q1, Q2)
 {
 	return kronecker(q1, q2, q1.dense && q2.dense);
 }
+
+
+/**********************************************/
+/*********** Eigen  ***********/
+/**********************************************/
+MatrixXcf Quop::hadamard_mat(int nqubit)
+{
+	size_t size = 1 << nqubit;
+	MatrixXcf mat(size, size);
+	float coef = 1.0 / sqrt(size);
+	for (size_t i = 0; i < size ; ++i)
+		for (size_t j = 0; j < size; ++j)
+			// binary dot product
+			mat(i, j) = CX((bitwise_dot(i, j) ? -1 : 1) * coef);
+	return mat;
+}
+
+MatrixXcf Quop::kronecker_mat(MatrixXcf& A, MatrixXcf& B)
+{
+	return MatrixXcf(1, 1);
+}
