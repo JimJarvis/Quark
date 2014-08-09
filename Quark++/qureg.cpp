@@ -74,16 +74,14 @@ Qureg& Qureg::purge()
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
 
-string Qureg::to_string(bool nonZeroOnly, bool bigEndian)
+string Qureg::to_string(bool nonZeroOnly)
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
 	size_t actualPrints = 0;
-	for (size_t i = 0; i < size() ; ++i)
+	for (size_t i = 0; i < size(); ++i)
 	{
-		CX a = dense ? 
-			amp[bigEndian ? to_bigend(i) : i] : 
-			(*this)[get_base(i)];
+		CX a = dense ? amp[i] : (*this)[get_base(i)];
 		float magnitude = abs(a);
 		if (nonZeroOnly && magnitude < TOL)
 			continue;
@@ -94,26 +92,39 @@ string Qureg::to_string(bool nonZeroOnly, bool bigEndian)
 			if (actualPrints % 4 == 0)
 				oss << "\n";
 		}
-
-		oss << "|" << PRINT_KET(
-			(dense ? i : 
-				(bigEndian ? 
-					to_bigend(get_base(i)) : get_base(i)))
-			) << "> ";
+		oss << "|" << PRINT_KET(get_base_d_s(i)) << "> ";
 		oss << a.real() << "+"
 			<< a.imag() << "i"
 			<< " (" << magnitude << ")";
 
-		++ actualPrints;
+		++actualPrints;
 	}
 	oss << "]";
 	return oss.str();
 }
 
-Qureg& Qureg::operator+=(int scratch_nqubit)
+Qureg& Qureg::operator+=(int scratchQubit)
 {
-	nqubit += scratch_nqubit;
 	if (dense)
-		amp.resize(1 << nqubit, CX(0));
+	{
+		amp.resize(1 << (nqubit + scratchQubit), CX(0));
+		// Move old amplitudes over
+		// Do it in the reverse order to avoid conflict
+		for (size_t i = (1<<nqubit) - 1; i >= 0 ; --i)
+		{
+			amp[i << scratchQubit] = amp[i];
+			amp[i] = 0;
+		}
+	}
+	else
+		// Update sparse and hashmap
+		for (qubase& base : basis)
+		{
+			size_t idx = basemap[base];
+			basemap.erase(base);
+			base <<= scratchQubit;
+			basemap[base] = idx;
+		}
+	nqubit += scratchQubit;
 	return *this;
 }

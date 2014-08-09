@@ -81,11 +81,6 @@ public:
 		amp[base] = a;
 	}
 
-	void set_base_bigend_d(qubase base, CX a)
-	{
-		amp[to_bigend(base)] = a;
-	}
-
 	/*
 	 * Iterate over all basis from 0 to 1<<nqubit
 	 */
@@ -113,15 +108,6 @@ public:
 	qubase& get_base(size_t i) { return basis[i]; }
 
 	/*
-	 *	Add a base in big endian format. 
-	 * Note that internally everything is still little endian
-	 */
-	void add_base_bigend(qubase base, CX a)
-	{
-		add_base(to_bigend(base), a);
-	}
-
-	/*
 	 * Read index from basemap and get amplitude
 	 */
 	CX& operator[](qubase base) { return amp[basemap[base]]; }
@@ -135,16 +121,10 @@ public:
 	 *	Sort the basis vectors. 
 	 * The amp array is NOT sorted, cause basemap takes care of indices
 	 */
-	Qureg& sort(bool bigEndian = true)
+	Qureg& sort()
 	{
 		if (!dense)
-		{
-			if (bigEndian)
-				std::sort(basis.begin(), basis.end(), 
-				[&](qubase base1, qubase base2){ return to_bigend(base1) < to_bigend(base2); });
-			else
-				std::sort(basis.begin(), basis.end());
-		}
+			std::sort(basis.begin(), basis.end());
 		return *this;
 	}
 
@@ -168,25 +148,23 @@ public:
 	qubase& get_base_d_s(size_t i) { return dense ? i : basis[i]; }
 
 	/*
-	 *	Convert internal little endian representation to big endian
+	 *	Get a bit string representing a target qubit
+	 * Most significant bit
 	 */
-	qubase to_bigend(qubase& base)
+	qubase to_bit(int tar)
 	{
-		return bit_reverse(base) >> (64 - nqubit);
+		return qubase(1) << (nqubit - 1 - tar);
 	}
 
 	/*
 	 *	If nonZeroOnly true, prints only states with non-zero amp
 	 * default true
-	 * Qureg internal representation is little endian. 
-	 * You can make it big endian, which is the convention on most textbooks
-	 * default false
 	 */
-	string to_string(bool nonZeroOnly = true, bool bigEndian = true);
+	string to_string(bool nonZeroOnly = true);
 
 	operator string()
 	{
-		return to_string(true, true);
+		return to_string(true);
 	}
 
 	friend ostream& operator<<(ostream& os, Q)

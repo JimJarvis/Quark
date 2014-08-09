@@ -37,9 +37,9 @@ Qureg dummy_amp(int nqubit, bool dense)
 
 	for (qubase base = 0; base < 1<<nqubit; ++base)
 		if (dense)
-			q.set_base_bigend_d(base, (base+1) * 10);
+			q.set_base_d(base, (base+1) * 10);
 		else
-			q.add_base_bigend(base, (base+1) * 10);
+			q.add_base(base, (base+1) * 10);
 	return q;
 }
 
@@ -75,10 +75,10 @@ void init()
 	amp4[2] = CX(2, 0);
 	amp4[3] = CX(1, 0);
 
-	qureg3.add_base_bigend(qubase(2), CX(1));
-	qureg3.add_base_bigend(qubase(3), CX(2));
-	qureg3.add_base_bigend(qubase(1), CX(3));
-	qureg3.add_base_bigend(qubase(0), CX(4));
+	qureg3.add_base(qubase(2), CX(1));
+	qureg3.add_base(qubase(3), CX(2));
+	qureg3.add_base(qubase(1), CX(3));
+	qureg3.add_base(qubase(0), CX(4));
 }
 
 template<bool dense>
@@ -86,14 +86,12 @@ void test_hadamard()
 {
 	int nqubit = 3;
 	Qureg q;
-	qubase qrev;
 	for (size_t qi = 0; qi < 1 << nqubit; ++qi)
 	{
-		qrev = bit_reverse(qi) >> (64 - nqubit);
 		if (dense)
-			q = Qureg::create<true>(nqubit, qrev);
+			q = Qureg::create<true>(nqubit, qi);
 		else
-			q = Qureg::create<false>(nqubit, 1, qrev);
+			q = Qureg::create<false>(nqubit, 1, qi);
 		hadamard(q);
 		pr(q.sort());
 	}
@@ -128,7 +126,7 @@ int main(int argc, char **argv)
 
 	Qureg qq = dummy_amp(2, true);
 	cnot(qq, 0, 1);
-	//pr(qq.to_string(true, false));
+	pr(qq);
 
 	qq = dummy_amp(2, false);
 	Matrix2cf m;
@@ -136,7 +134,7 @@ int main(int argc, char **argv)
 		0, 1,
 		1, 0;
 	generic_control(qq, m, 0, 1);
-	pr(qq.to_string(true, true));
+	pr(qq);
 
 	ptitle("start vectoriong");
 	vector<int> a;

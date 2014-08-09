@@ -9,7 +9,7 @@ using namespace Qugate;
 
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
-	qubase t = 1 << tar;
+	qubase t = q.to_bit(tar);
 	CX a0, a1;
 	qubase base1;
 	if (q.dense)
@@ -81,8 +81,8 @@ void Qugate::hadamard(Q)
 
 void Qugate::cnot(Q, int ctrl, int tar)
 {
-	qubase c = 1 << ctrl;
-	qubase t = 1 << tar;
+	qubase c = q.to_bit(ctrl);
+	qubase t = q.to_bit(tar);
 	qubase base1; // base1 is flipped base
 	if (q.dense)
 	{
@@ -117,8 +117,8 @@ void Qugate::cnot(Q, int ctrl, int tar)
 
 void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 {
-	qubase c = 1 << ctrl;
-	qubase t = 1 << tar;
+	qubase c = q.to_bit(ctrl);
+	qubase t = q.to_bit(tar);
 	qubase base1; // base1 is flipped base
 	CX a, a1;
 	if (q.dense)
