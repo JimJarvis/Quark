@@ -29,7 +29,7 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 	else // sparse
 	{
 		// Add new states to the end, if any
-		for (qubase base0 : q.base_iter_s())
+		for (qubase base0 : q.base_iter())
 		{
 			base1 = base0 ^ t;
 			bool counterpart = q.contains_base(base1);
@@ -94,7 +94,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 	else // sparse
 	{
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter_s())
+		for (qubase base : q.base_iter())
 		{
 			if (base & c)
 			{
@@ -137,7 +137,7 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 	else // sparse
 	{
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter_s())
+		for (qubase base : q.base_iter())
 		{
 			if (base & c)
 			{

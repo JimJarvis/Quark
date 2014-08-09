@@ -86,12 +86,14 @@ void test_hadamard()
 {
 	int nqubit = 3;
 	Qureg q;
-	for (int qi = 0; qi < 1<<nqubit ; ++qi)
+	qubase qrev;
+	for (size_t qi = 0; qi < 1 << nqubit; ++qi)
 	{
+		qrev = bit_reverse(qi) >> (64 - nqubit);
 		if (dense)
-			q = Qureg::create<true>(nqubit, qubase(qi));
+			q = Qureg::create<true>(nqubit, qrev);
 		else
-			q = Qureg::create<false>(nqubit, 1, qubase(qi));
+			q = Qureg::create<false>(nqubit, 1, qrev);
 		hadamard(q);
 		pr(q.sort());
 	}

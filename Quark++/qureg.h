@@ -129,16 +129,22 @@ public:
 	/*
 	 *	For-each loop over basis[]. You can append to basis[] as you iterate
 	 */
-	VecRange<qubase> base_iter_s() { return VecRange<qubase>(basis); }
+	VecRange<qubase> base_iter() { return VecRange<qubase>(basis); }
 
 	/*
 	 *	Sort the basis vectors. 
 	 * The amp array is NOT sorted, cause basemap takes care of indices
 	 */
-	Qureg& sort()
+	Qureg& sort(bool bigEndian = true)
 	{
 		if (!dense)
-			std::sort(basis.begin(), basis.end());
+		{
+			if (bigEndian)
+				std::sort(basis.begin(), basis.end(), 
+				[&](qubase base1, qubase base2){ return to_bigend(base1) < to_bigend(base2); });
+			else
+				std::sort(basis.begin(), basis.end());
+		}
 		return *this;
 	}
 
