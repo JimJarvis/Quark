@@ -55,10 +55,10 @@ void ctor()
 
 	ptitle("Dense reg1");
 	pr(qureg1);
-	pause();
+	pause;
 	ptitle("Sparse reg single");
 	pr(qureg2);
-	pause();
+	pause;
 }
 
 void init()
@@ -155,6 +155,7 @@ int main(int argc, char **argv)
 	//for (int i : VecRange<int, false>(a, 1))
 	{
 		//i = 3;
+
 		a.push_back(i * 10);
 	}
 	pr(vec2str(a));

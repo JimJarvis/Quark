@@ -214,11 +214,10 @@ namespace Testing
 	inline void ptitle(string title = "") 
 	{ cout << "！！！！！！！！！！" << title << "！！！！！！！！！！！" << endl; }
 #define pr(X) cout << X << endl
+#define pause std::cin.get()
 
 	template<typename T>
 	inline void pvec(vector<T> vec) { pr(vec2str(vec)); }
-
-	inline void pause() { cin.get(); }
 }
 
 #endif // utils_h__
