@@ -95,6 +95,20 @@ public:
 	void add_base(qubase base, CX a) { add_base<false>(base, a); }
 
 	/*
+	 *	Add a base in big endian format. 
+	 * Note that internally everything is still little endian
+	 */
+	template<bool checkExists>
+	void add_base_big_endian(qubase base, CX a)
+	{
+		add_base<checkExists>(to_big_endian(base), a);
+	}
+	void add_base_big_endian(qubase base, CX a) 
+	{ 
+		add_base(to_big_endian(base), a);
+	}
+
+	/*
 	 * Read index from basemap and get amplitude
 	 */
 	CX& operator[](qubase base) { return amp[basemap[base]]; }
@@ -132,14 +146,25 @@ public:
 	qubase& get_base(size_t i) { return get_base<false>(i); }
 
 	/*
+	 *	Convert internal little endian representation to big endian
+	 */
+	qubase to_big_endian(qubase& base)
+	{
+		return bit_reverse(base) >> (64 - nqubit);
+	}
+
+	/*
 	 *	If nonZeroOnly true, prints only states with non-zero amp
 	 * default true
+	 * Qureg internal representation is little endian. 
+	 * You can make it big endian, which is the convention on most textbooks
+	 * default false
 	 */
-	string to_string(bool nonZeroOnly = true);
+	string to_string(bool nonZeroOnly = true, bool bigEndian = true);
 
 	operator string()
 	{
-		return to_string(true);
+		return to_string(true, true);
 	}
 
 	friend ostream& operator<<(ostream& os, Q)

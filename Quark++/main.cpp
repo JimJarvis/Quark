@@ -39,7 +39,7 @@ Qureg dummy_amp(int nqubit, bool dense)
 		if (dense)
 			q.amp[base] = (base+1) * 10;
 		else
-			q.add_base(base, (base+1) * 10);
+			q.add_base_big_endian(base, (base+1) * 10);
 	return q;
 }
 
@@ -75,10 +75,10 @@ void init()
 	amp4[2] = CX(2, 0);
 	amp4[3] = CX(1, 0);
 
-	qureg3.add_base(qubase(2), CX(1));
-	qureg3.add_base(qubase(3), CX(2));
-	qureg3.add_base(qubase(1), CX(3));
-	qureg3.add_base(qubase(0), CX(4));
+	qureg3.add_base_big_endian(qubase(2), CX(1));
+	qureg3.add_base_big_endian(qubase(3), CX(2));
+	qureg3.add_base_big_endian(qubase(1), CX(3));
+	qureg3.add_base_big_endian(qubase(0), CX(4));
 }
 
 template<bool dense>
@@ -125,19 +125,15 @@ int main(int argc, char **argv)
 
 	Qureg qq = dummy_amp(2, true);
 	cnot(qq, 0, 1);
-	pr(qq);
+	//pr(qq.to_string(true, false));
+
 	qq = dummy_amp(2, false);
 	Matrix2cf m;
 	m <<
 		0, 1,
 		1, 0;
 	generic_control(qq, m, 0, 1);
-	pr(qq);
-
-	const int nq = 7;
-	uint64_t dud = 53;
-	pr(bits2str<nq>(dud));
-	pr(bits2str<nq>(bit_reverse(dud) >> (64 - nq)));
+	pr(qq.to_string(true, true));
 
 	return 0;
 }
