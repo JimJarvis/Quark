@@ -83,8 +83,7 @@ Qureg& Qureg::purge()
 #define PRINT_KET(ket) (ket)
 #endif // BIT_PRINT
 
-template<bool nonZeroOnly>
-string Qureg::to_string()
+string Qureg::to_string(bool nonZeroOnly)
 {
 	ostringstream oss;
 	oss << setprecision(3) << "Qureg[";
@@ -112,8 +111,6 @@ string Qureg::to_string()
 	oss << "]";
 	return oss.str();
 }
-template string Qureg::to_string<true>();
-template string Qureg::to_string<false>();
 
 Qureg& Qureg::operator+=(int scratch_nqubit)
 {

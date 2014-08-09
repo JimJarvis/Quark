@@ -135,12 +135,11 @@ public:
 	 *	If nonZeroOnly true, prints only states with non-zero amp
 	 * default true
 	 */
-	template<bool nonZeroOnly>
-	string to_string();
+	string to_string(bool nonZeroOnly = true);
 
 	operator string()
 	{
-		return to_string<true>();
+		return to_string(true);
 	}
 
 	friend ostream& operator<<(ostream& os, Q)
