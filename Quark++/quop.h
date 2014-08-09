@@ -25,7 +25,7 @@ namespace Quop // quantum operations
 	/**********************************************/
 	MatrixXcf hadamard_mat(int nqubit);
 
-	MatrixXcf kronecker_mat(MatrixXcf& A, MatrixXcf& B);
+	MatrixXcf kronecker_mat(const MatrixXcf& A, const MatrixXcf& B);
 }
 
 #endif // quop_h__

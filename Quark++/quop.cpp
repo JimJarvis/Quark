@@ -54,7 +54,15 @@ MatrixXcf Quop::hadamard_mat(int nqubit)
 	return mat;
 }
 
-MatrixXcf Quop::kronecker_mat(MatrixXcf& A, MatrixXcf& B)
+MatrixXcf Quop::kronecker_mat(const MatrixXcf& A, const MatrixXcf& B)
 {
-	return MatrixXcf(1, 1);
+	size_t ar = A.rows();
+	size_t ac = A.cols();
+	size_t br = B.rows();
+	size_t bc = B.cols();
+	MatrixXcf mat(ar * br, ac * bc);
+	for (int i = 0; i < ar ; ++i)
+		for (int j = 0; j < ac; ++j)
+			mat.block(i * br, j * bc, br, bc) = B * A(i, j);
+	return mat;
 }
