@@ -29,6 +29,9 @@ typedef float REAL;
 typedef complex<REAL> CX;
 typedef unsigned long long qubase;
 
+#define pr(X) cout << X << endl
+#define pause std::cin.get()
+
 // Amplitude tolerance: smaller than this will be considered 0
 #define TOL 1e-7
 
@@ -41,22 +44,34 @@ typedef unsigned long long qubase;
 #  define INLINE  inline
 #endif
 
-INLINE string int2str(int a)
+///////************** Random engine **************///////
+INLINE void rand_seed(int seed = -1)
 {
-	ostringstream oss;
-	oss << a;
-	return oss.str();
+	srand(seed < 0 ? time(NULL) : seed);
 }
 
-template<typename T>
-string vec2str(vector<T> vec)
+INLINE int rand_int(int low, int high)
 {
-	ostringstream oss;
-	oss << "[";
-	for (T& ele : vec)
-		oss << ele << ", ";
-	string s = oss.str();
-	return s.substr(0, s.size() - 2) + "]";
+	return rand() % (high - low) + low;
+}
+
+INLINE float rand_float(float low, float high)
+{
+	float f = (float) rand() / RAND_MAX;
+	return low + f * (high - low);
+}
+
+INLINE CX rand_cx(float low, float high)
+{
+	return CX(rand_float(low, high), 
+			  rand_float(low, high));
+}
+
+// +- symmetric value
+INLINE CX rand_cx(float symm)
+{
+	return CX(rand_float(-symm, symm), 
+			  rand_float(-symm, symm));
 }
 
 ///////************** Bit operations **************///////
@@ -257,16 +272,43 @@ private:
 };
 
 
-///////************** Debugging **************///////
-namespace Testing
-{
-	inline void ptitle(string title = "") 
-	{ cout << "！！！！！！！！！！ " << title << " ！！！！！！！！！！！" << endl; }
-#define pr(X) cout << X << endl
-#define pause std::cin.get()
+///////************** String/printing **************///////
 
-	template<typename T>
-	inline void pvec(vector<T> vec) { pr(vec2str(vec)); }
+INLINE string int2str(int a)
+{
+	ostringstream oss;
+	oss << a;
+	return oss.str();
 }
+
+template<typename T>
+string vec2str(vector<T> vec)
+{
+	ostringstream oss;
+	oss << "[";
+	for (T& ele : vec)
+		oss << ele << ", ";
+	string s = oss.str();
+	return s.substr(0, s.size() - 2) + "]";
+}
+
+template <typename L, typename R>
+string concat_space(L left, R right)
+{
+	ostringstream os;
+	os << left << " " << right;
+	return os.str();
+}
+// Must use a start symbol
+#define _S string()
+INLINE string operator+(string s, int i) { return concat_space(s, i); }
+INLINE string operator+(string s, float f) { return concat_space(s, f); }
+INLINE string operator+(int i, string s) { return concat_space(i, s); }
+INLINE string operator+(float f, string s) { return concat_space(f, s); }
+
+INLINE void ptitle(string title = "") 
+{ cout << "！！！！！！！！！！ " << title << " ！！！！！！！！！！！" << endl; }
+template<typename T>
+INLINE void pvec(vector<T> vec) { pr(vec2str(vec)); }
 
 #endif // utils_h__

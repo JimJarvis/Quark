@@ -1,5 +1,10 @@
 #include "tests.h"
 
+// Qubit from 1 to 7
+auto qubitRange = Range<>(1, 8);
+
+auto qubase_range = [](int nqubit) { return Range<qubase>(1 << nqubit); };
+
 // An inefficient recursive version of hadarmard
 MatrixXcf hadamard_recursive(int nqubit)
 {
@@ -15,22 +20,22 @@ MatrixXcf hadamard_recursive(int nqubit)
 			HadamardMat, hadamard_recursive(nqubit - 1));
 }
 
-TEST(Quop, Kronecker_Hadamard)
+TEST(Quop, Eigen_Kronecker_Hadamard)
 {
-	for (int i = 1; i < 8; ++i)
+	for (int nqubit : qubitRange)
 		ASSERT_MAT(
-			hadamard_recursive(i), 
-			hadamard_mat(i)) << "Fail at qubit " << i;
+		hadamard_recursive(nqubit),
+		hadamard_mat(nqubit), ErrSS << "Fail at qubit " << nqubit);
 }
 
-TEST(Quop, Hadamard_gate)
+TEST(Quop, Qureg_Hadamard)
 {
 	Qureg qq;
-	for (int nqubit : Range<>(1, 8))
+	for (int nqubit : qubitRange)
 	{
 		MatrixXcf gold = hadamard_mat(nqubit);
 		// Each column should agree with hadamard mat
-		for (qubase base : Range<qubase>(1 << nqubit))
+		for (qubase base : qubase_range(nqubit))
 		{
 			Qureg qqds[2] = 
 			{
@@ -40,10 +45,23 @@ TEST(Quop, Hadamard_gate)
 			for (Qureg qq : qqds)
 			{
 				hadamard(qq);
-				ASSERT_MAT(gold.col(base), VectorXcf(qq))
-					<< (qq.dense ? "Dense" : "Sparse") 
-					<< " disagree at base " << bits2str(base, nqubit);
+				ASSERT_MAT(gold.col(base), VectorXcf(qq),
+						   ErrSS << (qq.dense ? "Dense" : "Sparse")
+						   << " disagree at base " << bits2str(base, nqubit));
 			}
 		}
 	}
+}
+
+TEST(Quop, Qureg_Kronecker)
+{
+	for (int nqubit : qubitRange)
+		for (int trial = 0; trial < 20 ; ++trial)
+		{
+			Qureg qd = Qureg::create<true>(nqubit);
+			for (qubase base : qd.base_iter_d())
+			{
+
+			}
+		}
 }
