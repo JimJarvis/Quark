@@ -8,16 +8,11 @@ auto qubase_range = [](int nqubit) { return Range<qubase>(1 << nqubit); };
 // An inefficient recursive version of hadarmard
 MatrixXcf hadamard_recursive(int nqubit)
 {
-	static CX _sqrt2 = CX(1 / sqrt(2));
-	static Matrix2cf HadamardMat;
-	HadamardMat <<
-		_sqrt2, _sqrt2,
-		_sqrt2, -_sqrt2;
 	if (nqubit == 1)
-		return HadamardMat;
+		return hadamard_mat();
 	else
 		return kronecker_mat(
-			HadamardMat, hadamard_recursive(nqubit - 1));
+			hadamard_mat(), hadamard_recursive(nqubit - 1));
 }
 
 TEST(Quop, Eigen_Kronecker_Hadamard)

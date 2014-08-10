@@ -23,7 +23,19 @@ namespace Quop // quantum operations
 	/**********************************************/
 	MatrixXcf hadamard_mat(int nqubit);
 
+	INLINE Matrix2cf hadamard_mat()
+	{
+		static CX _sqrt2 = CX(1 / sqrt(2));
+		static Matrix2cf HadamardMat;
+		HadamardMat <<
+			_sqrt2, _sqrt2,
+			_sqrt2, -_sqrt2;
+		return HadamardMat;
+	}
+
 	MatrixXcf kronecker_mat(const MatrixXcf& A, const MatrixXcf& B);
+
+	Matrix2cf cnot_mat();
 }
 
 #endif // quop_h__

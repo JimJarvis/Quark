@@ -4,8 +4,10 @@
 
 #include "qureg.h"
 #include "qugate.h"
+#include "quop.h"
 
 using namespace Qugate;
+using namespace Quop;
 
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
@@ -65,12 +67,7 @@ void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 
 void Qugate::hadamard(Q, int tar)
 {
-	static CX _sqrt2 = CX(1 / sqrt(2));
-	static Matrix2cf HadamardMat;
-	HadamardMat << 
-		_sqrt2, _sqrt2, 
-		_sqrt2, -_sqrt2;
-	generic_gate(q, HadamardMat, tar);
+	generic_gate(q, hadamard_mat(), tar);
 }
 
 void Qugate::hadamard(Q)
