@@ -3,7 +3,7 @@
 TEST(Qugate, Hadamard)
 {
 	Qureg qq;
-	for (int nqubit : QubitRange)
+	for (int nqubit : QubitRange(1))
 	{
 		MatrixXcf gold = hadamard_mat(nqubit);
 		// Each column should agree with hadamard mat
@@ -27,39 +27,36 @@ TEST(Qugate, Hadamard)
 
 TEST(Qugate, Cnot)
 {
-	for (int nqubit : QubitRange)
+	for (int nqubit : QubitRange(2))
 	{
-		Qureg qd1 = Qureg::create<true>(nqubit);
-		for (qubase base : qd1.base_iter_d())
-			qd1.set_base_d(base, rand_cx(1));
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 
-		Qureg qd2 = Qureg::create<true>(nqubit / 2 + 1);
-		for (qubase base : qd2.base_iter_d())
-			qd2.set_base_d(base, rand_cx(2));
+		Qureg QQs[] = { qd, qs };
 
-		size_t total = 1 << nqubit;
-		size_t sparseCap = total / 2 + 1;
-		Qureg qs1 = Qureg::create<false>(nqubit, sparseCap);
-		for (qubase base : Range<qubase, false>(total, total - sparseCap))
-			qs1.add_base(base, rand_cx(1));
-
-		Qureg qs2 = Qureg::create<false>(nqubit, sparseCap);
-		for (qubase base : Range<qubase>(sparseCap / 2 + 1))
-			qs2.add_base(base, rand_cx(2));
-
-		Qureg QQs[] = { qd1, qd2, qs1, qs2 };
-
-		VectorXcf vec1, vec2, qvecProd;
-		for (Qureg& q1 : QQs)
-		for (Qureg& q2 : QQs)
+		VectorXcf vec, vecNew;
+		qubase c, t; // ctrl and target
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
 		{
-			if (&q1 == &q2) continue;
+			vec = VectorXcf(q);
+			// generate two random bits
+			c = rand_int(0, nqubit);
+			t = rand_int(0, nqubit);
+			if (t == c) // avoid collision
+				// if last one
+				t = c + 1 == nqubit ? c - 1 : c + 1;
+			// Apply CNOT
+			cnot(q, c, t);
+			vecNew = VectorXcf(q);
 
-			vec1 = VectorXcf(q1);
-			vec2 = VectorXcf(q2);
-			qvecProd = kronecker(q1, q2, true);
-			ASSERT_MAT(
-				kronecker_mat(vec1, vec2), VectorXcf(qvecProd), "");
+			c = q.to_bit(c);
+			t = q.to_bit(t);
+			
+			for (int i : Range<>(1 << nqubit))
+			{
+				//ASSERT_CX_EQ(vec(i), vecNew(i));
+			}
 		}
 	}
 }

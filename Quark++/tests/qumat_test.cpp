@@ -12,7 +12,7 @@ MatrixXcf hadamard_recursive(int nqubit)
 
 TEST(Qumat, Eigen_Kronecker_Hadamard)
 {
-	for (int nqubit : QubitRange)
+	for (int nqubit : QubitRange(1))
 		ASSERT_MAT(
 		hadamard_recursive(nqubit),
 		hadamard_mat(nqubit), _S + "Fail at qubit" + nqubit);
@@ -20,13 +20,12 @@ TEST(Qumat, Eigen_Kronecker_Hadamard)
 
 TEST(Qumat, Qureg_Kronecker)
 {
-	for (int nqubit : QubitRange)
+	for (int nqubit : QubitRange(1))
 	{
 		Qureg qd1 = rand_qureg_dense(nqubit, 1);
 		Qureg qd2 = rand_qureg_dense(nqubit / 2 + 1, 2);
 
-		size_t total = 1 << nqubit;
-		size_t sparse = total / 2 + 1;
+		size_t sparse = half_fill(nqubit);
 		Qureg qs1 = rand_qureg_sparse(nqubit, sparse, 1, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, sparse/2 + 1, 2);
 
@@ -42,7 +41,7 @@ TEST(Qumat, Qureg_Kronecker)
 			vec2 = VectorXcf(q2);
 			qvecProd = kronecker(q1, q2, true);
 			ASSERT_MAT(
-				kronecker_mat(vec1, vec2), VectorXcf(qvecProd), "");
+				kronecker_mat(vec1, vec2), VectorXcf(qvecProd));
 		}
 	}
 }

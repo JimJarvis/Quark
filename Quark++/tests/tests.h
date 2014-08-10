@@ -11,14 +11,20 @@ using namespace Qugate;
 using namespace Eigen;
 
 ///////************** Test conventions **************///////
-#define QubitRange Range<>(1, 8)
-#define QubaseRange [](int nqubit) { return Range<qubase>(1 << nqubit); }
+#define QubitRange(start) Range<>(start, 8)
+#define QubaseRange(nqubit) Range<qubase>(1 << nqubit)
+
+INLINE void ASSERT_CX_EQ(const CX& cx1, const CX& cx2, const string& errstr = "", float tol = TOL)
+{
+	ASSERT_NEAR(cx1.real(), cx2.real(), tol) << errstr;
+	ASSERT_NEAR(cx1.imag(), cx2.imag(), tol) << errstr;
+}
 
 /*
  *	Error stream must be terminated by "Eend"
  * ErrSS << 23 << "dudulu" << Eend
  */
-inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr, float tol = TOL)
+inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr = "", float tol = TOL)
 {
 	size_t r, c;
 	ASSERT_EQ(r = m1.rows(), m2.rows()) << "Row dims should agree";
@@ -34,12 +40,7 @@ inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& e
 
 	for (size_t i = 0; i < r ; ++i)
 		for (size_t j = 0; j < c; ++j)
-		{
-			CX a1 = m1(i, j);
-			CX a2 = m2(i, j);
-			ASSERT_NEAR(a1.real(), a2.real(), tol) << genError(i, j);
-			ASSERT_NEAR(a1.imag(), a2.imag(), tol) << genError(i, j);
-		}
+			ASSERT_CX_EQ(m1(i, j), m2(i, j), genError(i, j), tol);
 }
 
 ///////************** Generate random qubits **************///////
@@ -51,19 +52,30 @@ inline Qureg rand_qureg_dense(int nqubit, float symm)
 	return qd;
 }
 
-inline Qureg rand_qureg_sparse(int nqubit, size_t sparse, float symm, bool fillFirst = true)
+/*
+ *	'sparse': how many amplitudes to fill out
+ */
+inline Qureg rand_qureg_sparse(int nqubit, size_t sparse, float symm, bool forwardFill = true)
 {
 	size_t total = 1 << nqubit;
 	if (sparse == 0)
 		sparse = total / 2 + 1;
 	Qureg qs = Qureg::create<false>(nqubit, sparse);
-	if (fillFirst)
+	if (forwardFill)
 		for (qubase base : Range<qubase>(sparse))
 			qs.add_base(base, rand_cx(symm));
 	else
 		for (qubase base : Range<qubase, false>(total, total - sparse))
 			qs.add_base(base, rand_cx(symm));
 	return qs;
+}
+
+/*
+ *	Fill half of the sparse amplitudes
+ */
+inline size_t half_fill(int nqubit)
+{
+	return (1 << nqubit) / 2 + 1;
 }
 
 #endif // tests_h__
