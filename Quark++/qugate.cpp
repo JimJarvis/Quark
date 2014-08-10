@@ -160,3 +160,40 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 		}
 	}
 }
+
+void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
+{
+	qubase c1 = q.to_bit(ctrl1);
+	qubase c2 = q.to_bit(ctrl2);
+	qubase t = q.to_bit(tar);
+	qubase base1; // base1 is flipped base
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base : q.base_iter_d())
+		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
+			std::swap(amp[base ^ t], amp[base]);
+	}
+	else // sparse
+	{
+		// Add new states to the end, if any
+		for (qubase base : q.base_iter())
+		{
+			if ((base & c1) && (base & c2))
+			{
+				base1 = base ^ t;
+				if (q.contains_base(base1))
+				{
+					// don't flip (swap) twice
+					if (base & t)
+						std::swap(q[base], q[base1]);
+				}
+				else
+				{
+					q.add_base(base1, q[base]);
+					q[base] = 0;
+				}
+			}
+		}
+	}
+}

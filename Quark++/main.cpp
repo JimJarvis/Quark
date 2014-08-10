@@ -63,6 +63,20 @@ void test_cnot()
 	}
 }
 
+void test_toffoli()
+{
+	int nqubit = 3;
+	Qureg q;
+	for (int qi = 0; qi < 1 << nqubit; ++qi)
+	{
+		q = Qureg::create<true>(nqubit, qubase(qi));
+		toffoli(q, 0, 1, 2);
+		pr(q);
+		q = Qureg::create<false>(nqubit, 1, qubase(qi));
+		toffoli(q, 0, 1, 2);
+		pr(q.sort().purge());
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -127,9 +141,14 @@ int main(int argc, char **argv)
 	pr(kronecker_mat(v1, m1));
 
 	ptitle("Toffoli");
-	pr(toffoli_mat());
-	pr(cnot_mat());
-	pr(cnot_mat());
+	test_toffoli();
+
+	qq = dummy_amp(3, true);
+	toffoli(qq, 2, 0, 1);
+	pr(qq);
+	qq = dummy_amp(3, false);
+	toffoli(qq, 2, 0, 1);
+	pr(qq);
 
 	return 0;
 }
