@@ -14,8 +14,9 @@ TEST(Qumat, Eigen_Kronecker_Hadamard)
 {
 	for (int nqubit : QubitRange(1))
 		ASSERT_MAT(
-		hadamard_recursive(nqubit),
-		hadamard_mat(nqubit), _S + "Fail at qubit" + nqubit);
+			hadamard_recursive(nqubit),
+			hadamard_mat(nqubit),
+			_S + "Fail at qubit" + nqubit);
 }
 
 TEST(Qumat, Qureg_Kronecker)

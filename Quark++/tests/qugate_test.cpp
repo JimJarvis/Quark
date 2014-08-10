@@ -17,9 +17,9 @@ TEST(Qugate, Hadamard)
 			for (Qureg qq : QQs)
 			{
 				hadamard(qq);
-				ASSERT_MAT(gold.col(base), VectorXcf(qq),
-						   _S + (qq.dense ? "Dense" : "Sparse")
-						   + " disagree at base " + bits2str(base, nqubit));
+				ASSERT_MAT(gold.col(base), VectorXcf(qq));
+						   //_S + (qq.dense ? "Dense" : "Sparse")
+						   //+ " disagree at base " + bits2str(base, nqubit));
 			}
 		}
 	}

@@ -21,9 +21,9 @@ INLINE void ASSERT_CX_EQ(const CX& cx1, const CX& cx2, const string& errstr = ""
 }
 
 /*
- *	Error stream must be terminated by "Eend"
- * ErrSS << 23 << "dudulu" << Eend
- */
+*	Error stream must be terminated by "Eend"
+* ErrSS << 23 << "dudulu" << Eend
+*/
 inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr = "", float tol = TOL)
 {
 	size_t r, c;
@@ -38,9 +38,14 @@ inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& e
 		return oss.str() + errstr;
 	};
 
-	for (size_t i = 0; i < r ; ++i)
-		for (size_t j = 0; j < c; ++j)
-			ASSERT_CX_EQ(m1(i, j), m2(i, j), genError(i, j), tol);
+	for (size_t i = 0; i < r; ++i)
+	for (size_t j = 0; j < c; ++j)
+	{
+		CX a1 = m1(i, j);
+		CX a2 = m2(i, j);
+		ASSERT_NEAR(a1.real(), a2.real(), tol) << genError(i, j);
+		ASSERT_NEAR(a1.imag(), a2.imag(), tol) << genError(i, j);
+	}
 }
 
 ///////************** Generate random qubits **************///////
