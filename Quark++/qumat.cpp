@@ -55,6 +55,19 @@ MatrixXcf Qumat::hadamard_mat(int nqubit)
 	return mat;
 }
 
+Matrix2cf Qumat::hadamard_mat()
+{
+	static CX _sqrt2 = CX(1 / sqrt(2));
+	static Matrix2cf HadamardMat;
+	INIT_ONCE(
+		HadamardMat <<
+			_sqrt2, _sqrt2,
+			_sqrt2, -_sqrt2;
+		init = true;
+	)
+	return HadamardMat;
+}
+
 MatrixXcf Qumat::kronecker_mat(const MatrixXcf& A, const MatrixXcf& B)
 {
 	size_t ar = A.rows();
@@ -66,4 +79,29 @@ MatrixXcf Qumat::kronecker_mat(const MatrixXcf& A, const MatrixXcf& B)
 		for (int j = 0; j < ac; ++j)
 			mat.block(i * br, j * bc, br, bc) = B * A(i, j);
 	return mat;
+}
+
+Matrix4cf Qumat::cnot_mat()
+{
+	static Matrix4cf CnotMat;
+	INIT_ONCE(
+		CnotMat <<
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 1,
+			0, 0, 1, 0; 
+	)
+	return CnotMat;
+}
+
+Matrix<CX, 8, 8> Qumat::toffoli_mat()
+{
+	static Matrix<CX, 8, 8> ToffoliMat;
+	static MatrixXcf zero6_2 = MatrixXcf::Zero(6, 2);
+	INIT_ONCE(
+	ToffoliMat << 
+		MatrixXcf::Identity(6, 6), zero6_2, 
+		zero6_2.transpose(), MatrixXcf::Identity(2, 2).colwise().reverse();
+	)
+	return ToffoliMat;
 }

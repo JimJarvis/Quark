@@ -4,7 +4,6 @@
 #include "vld.h"
 using namespace Qumat;
 using namespace Qugate;
-using namespace Eigen;
 
 // For testing
 // Dense init
@@ -109,11 +108,6 @@ int main(int argc, char **argv)
 	pr(vec2str(a));
 
 	MatrixXcf mm(8, 8);
-	MatrixXcf zz = MatrixXcf::Zero(6, 2);
-	// toffoli gate
-	mm << MatrixXcf::Identity(6, 6), zz, zz.transpose(), MatrixXcf::Identity(2,2).colwise().reverse();
-	ptitle("toffoli");
-	pr(mm);
 
 	mm = MatrixXcf::Zero(3, 3);
 	RowVectorXcf avec2(1); avec2 << 1;
@@ -123,8 +117,6 @@ int main(int argc, char **argv)
 	mm.row(0) = avec.transpose();
 	pr(mm);
 
-	pr(hadamard_mat(3));
-
 	MatrixXcf v1(3, 2);
 	v1 << 3, -2, 
 		4, -1, 
@@ -133,6 +125,11 @@ int main(int argc, char **argv)
 	m1 << 10, 20, 30,
 		40, 50, 60;
 	pr(kronecker_mat(v1, m1));
+
+	ptitle("Toffoli");
+	pr(toffoli_mat());
+	pr(cnot_mat());
+	pr(cnot_mat());
 
 	return 0;
 }

@@ -20,10 +20,7 @@
 #include <Eigen/Dense>
 
 using namespace std;
-using Eigen::Matrix2cf;
-using Eigen::Matrix4cf;
-using Eigen::VectorXcf;
-using Eigen::MatrixXcf;
+using namespace Eigen;
 
 typedef float REAL;
 typedef complex<REAL> CX;
@@ -43,6 +40,14 @@ typedef unsigned long long qubase;
 #else
 #  define INLINE  inline
 #endif
+
+/*
+*	For initializing static variables only once
+*   Variadic macro technique
+*/
+#define INIT_ONCE(...) \
+	static bool init = false; \
+	if (!init) { __VA_ARGS__; init = true; }
 
 ///////************** Random engine **************///////
 INLINE void rand_seed(int seed = -1)
