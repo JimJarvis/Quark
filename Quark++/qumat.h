@@ -21,15 +21,19 @@ namespace Qumat // quantum matrices
 	/**********************************************/
 	/*********** Eigen operations  ***********/
 	/**********************************************/
-	MatrixXcf hadamard_mat(int nqubit);
-
 	Matrix2cf hadamard_mat();
+	MatrixXcf hadamard_mat(int nqubit);
 
 	MatrixXcf kronecker_mat(const MatrixXcf& A, const MatrixXcf& B);
 
 	Matrix4cf cnot_mat();
 
 	Matrix<CX, 8, 8> toffoli_mat();
+	/*
+	 *	nctrl == 1 is CNOT
+	 * nctrl == 2 is regular toffoli
+	 */
+	MatrixXcf toffoli_mat(int nctrl);
 }
 
 #endif // qumat_h__

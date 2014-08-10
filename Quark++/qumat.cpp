@@ -105,3 +105,13 @@ Matrix<CX, 8, 8> Qumat::toffoli_mat()
 	)
 	return ToffoliMat;
 }
+
+MatrixXcf Qumat::toffoli_mat(int nctrl)
+{
+	size_t size = 1 << (nctrl + 1);
+	MatrixXcf ToffoliMat 
+		= MatrixXcf::Identity(size, size);
+	ToffoliMat.block(size - 2, size - 2, 2, 2) 
+		= MatrixXcf::Identity(2, 2).colwise().reverse();
+	return ToffoliMat;
+}
