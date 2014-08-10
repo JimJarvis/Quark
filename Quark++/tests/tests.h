@@ -42,4 +42,28 @@ inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& e
 		}
 }
 
+///////************** Generate random qubits **************///////
+inline Qureg rand_qureg_dense(int nqubit, float symm)
+{
+	Qureg qd = Qureg::create<true>(nqubit);
+	for (qubase base : qd.base_iter_d())
+		qd.set_base_d(base, rand_cx(symm));
+	return qd;
+}
+
+inline Qureg rand_qureg_sparse(int nqubit, size_t sparse, float symm, bool fillFirst = true)
+{
+	size_t total = 1 << nqubit;
+	if (sparse == 0)
+		sparse = total / 2 + 1;
+	Qureg qs = Qureg::create<false>(nqubit, sparse);
+	if (fillFirst)
+		for (qubase base : Range<qubase>(sparse))
+			qs.add_base(base, rand_cx(symm));
+	else
+		for (qubase base : Range<qubase, false>(total, total - sparse))
+			qs.add_base(base, rand_cx(symm));
+	return qs;
+}
+
 #endif // tests_h__
