@@ -25,7 +25,7 @@ TEST(Quop, Eigen_Kronecker_Hadamard)
 	for (int nqubit : qubitRange)
 		ASSERT_MAT(
 		hadamard_recursive(nqubit),
-		hadamard_mat(nqubit), ErrSS << "Fail at qubit " << nqubit);
+		hadamard_mat(nqubit), _S + "Fail at qubit" + nqubit);
 }
 
 TEST(Quop, Qureg_Hadamard)
@@ -46,8 +46,8 @@ TEST(Quop, Qureg_Hadamard)
 			{
 				hadamard(qq);
 				ASSERT_MAT(gold.col(base), VectorXcf(qq),
-						   ErrSS << (qq.dense ? "Dense" : "Sparse")
-						   << " disagree at base " << bits2str(base, nqubit));
+						   _S + (qq.dense ? "Dense" : "Sparse")
+						   + " disagree at base " + bits2str(base, nqubit));
 			}
 		}
 	}

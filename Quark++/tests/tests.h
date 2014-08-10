@@ -10,42 +10,11 @@ using namespace Quop;
 using namespace Qugate;
 using namespace Eigen;
 
-// Dummy struct for ErrorStream
-struct Endl {};
-struct ErrorStream
-{
-	ostringstream erross;
-	bool clear = false;
-	template<typename T>
-	ErrorStream& operator<<(const T& obj)
-	{
-		if (clear)
-		{
-			erross.clear();
-			clear = false;
-		}
-		erross << obj;
-		return *this;
-	}
-	
-	template<>
-	ErrorStream& operator<< <Endl>(const Endl& obj)
-	{
-		clear = true;
-		return *this;
-	}
-
-	string str() { return erross.str(); }
-};
-
-// Global
-static ErrorStream ErrSS;
-static Endl Eend;
-
 /*
- *	Debugging matrix comparison
+ *	Error stream must be terminated by "Eend"
+ * ErrSS << 23 << "dudulu" << Eend
  */
-void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, ErrorStream& erross, float tol = TOL)
+void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr, float tol = TOL)
 {
 	size_t r, c;
 	ASSERT_EQ(r = m1.rows(), m2.rows()) << "Row dims should agree";
@@ -56,7 +25,7 @@ void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, ErrorStream& erross, f
 		ostringstream oss;
 		oss << "Disagree at [" << i << ", " << j << "]: "
 			<< m1(i, j) << " vs " << m2(i, j) << endl;
-		return oss.str() + erross.str();
+		return oss.str() + errstr;
 	};
 
 	for (size_t i = 0; i < r ; ++i)
