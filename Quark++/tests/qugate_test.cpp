@@ -42,6 +42,7 @@ TEST(Qugate, Cnot)
 		{
 			vec = VectorXcf(q);
 			// generate two random bits
+
 			c = rand_int(0, nqubit);
 			t = rand_int(0, nqubit);
 			if (t == c) // avoid collision

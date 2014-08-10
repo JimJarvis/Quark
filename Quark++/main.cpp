@@ -78,6 +78,16 @@ void test_toffoli()
 	}
 }
 
+void test_rand_unique()
+{
+	vector<int> histogram(100, 0);
+	vector<int> holder(5, 0);
+	for (int i : Range<>(1000000))
+	for (size_t j : rand_unique<int>(holder, 5, 100))
+		++histogram[j];
+	pr(vec2str(histogram));
+}
+
 int main(int argc, char **argv)
 {
 	init();
@@ -150,11 +160,6 @@ int main(int argc, char **argv)
 	toffoli(qq, 2, 0, 1);
 	pr(qq);
 
-	vector<int> histogram(100, 0);
-	for (int i : Range<>(1000000))
-		for (size_t j : rand_unique(3, 100))
-			++histogram[j];
-	pr(vec2str(histogram));
-
+	test_rand_unique();
 	return 0;
 }

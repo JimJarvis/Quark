@@ -88,24 +88,24 @@ INLINE CX rand_cx(float symm)
  *	Algorithm: choose n ints without replacement from N.
  * http://stackoverflow.com/questions/48087/select-a-random-n-elements-from-listt-in-c-sharp/48089#48089
  */
-INLINE vector<uint64_t> rand_unique(size_t n, size_t N)
+template<typename IntType>
+vector<IntType>& rand_unique(vector<IntType>& out, IntType n, IntType N)
 {
-	vector<uint64_t> list;
-	list.reserve(n);
-	size_t rem = n; // remaining
-	size_t i = 0;
-	size_t N_ = N;
+	IntType rem = n; // remaining
+	IntType outidx = 0;
+	IntType ele = 0;
+	IntType N_ = N;
 	while (rem > 0)
 	{
 		if (rand_double() <= double(rem) / N_)
 		{
-			list.push_back(i);
+			out[outidx ++] = ele;
 			--rem;
 		}
-		++ i; 
+		++ ele; 
 		-- N_;
 	}
-	return list;
+	return out;
 }
 
 ///////************** Bit operations **************///////
