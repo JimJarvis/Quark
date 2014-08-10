@@ -303,8 +303,10 @@ string concat_space(L left, R right)
 #define _S string()
 INLINE string operator+(string s, int i) { return concat_space(s, i); }
 INLINE string operator+(string s, float f) { return concat_space(s, f); }
+INLINE string operator+(string s, size_t t) { return concat_space(s, t); }
 INLINE string operator+(int i, string s) { return concat_space(i, s); }
 INLINE string operator+(float f, string s) { return concat_space(f, s); }
+INLINE string operator+(size_t t, string s) { return concat_space(t, s); }
 
 INLINE void ptitle(string title = "") 
 { cout << "！！！！！！！！！！ " << title << " ！！！！！！！！！！！" << endl; }

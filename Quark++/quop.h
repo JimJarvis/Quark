@@ -16,8 +16,6 @@ namespace Quop // quantum operations
 	 */
 	Qureg operator*(Q1, Q2);
 
-	CX dot(Q1, Q2);
-
 	void normalize(Q);
 
 	/**********************************************/

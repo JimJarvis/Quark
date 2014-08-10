@@ -37,12 +37,12 @@ TEST(Quop, Qureg_Hadamard)
 		// Each column should agree with hadamard mat
 		for (qubase base : qubase_range(nqubit))
 		{
-			Qureg qqds[2] = 
+			Qureg QQs[2] = 
 			{
 				Qureg::create<true>(nqubit, base), 
 				Qureg::create<false>(nqubit, 1 << nqubit, base)
 			};
-			for (Qureg qq : qqds)
+			for (Qureg qq : QQs)
 			{
 				hadamard(qq);
 				ASSERT_MAT(gold.col(base), VectorXcf(qq),
@@ -56,12 +56,38 @@ TEST(Quop, Qureg_Hadamard)
 TEST(Quop, Qureg_Kronecker)
 {
 	for (int nqubit : qubitRange)
-		for (int trial = 0; trial < 20 ; ++trial)
-		{
-			Qureg qd = Qureg::create<true>(nqubit);
-			for (qubase base : qd.base_iter_d())
-			{
+	{
+		Qureg qd1 = Qureg::create<true>(nqubit);
+		for (qubase base : qd1.base_iter_d())
+			qd1.set_base_d(base, rand_cx(1));
 
-			}
+		Qureg qd2 = Qureg::create<true>(nqubit / 2 + 1);
+		for (qubase base : qd2.base_iter_d())
+			qd2.set_base_d(base, rand_cx(2));
+
+		size_t total = 1 << nqubit;
+		size_t sparseCap = total / 2 + 1;
+		Qureg qs1 = Qureg::create<false>(nqubit, sparseCap);
+		for (qubase base : Range<qubase, false>(total, total - sparseCap))
+			qs1.add_base(base, rand_cx(1));
+
+		Qureg qs2 = Qureg::create<false>(nqubit, sparseCap);
+		for (qubase base : Range<qubase>(sparseCap / 2 + 1))
+			qs2.add_base(base, rand_cx(2));
+
+		Qureg QQs[] = { qd1, qd2, qs1, qs2 };
+
+		VectorXcf vec1, vec2, qvecProd;
+		for (Qureg& q1 : QQs)
+		for (Qureg& q2 : QQs)
+		{
+			if (&q1 == &q2) continue;
+
+			vec1 = VectorXcf(q1);
+			vec2 = VectorXcf(q2);
+			qvecProd = kronecker(q1, q2, true);
+			ASSERT_MAT(
+				kronecker_mat(vec1, vec2), VectorXcf(qvecProd), "");
 		}
+	}
 }

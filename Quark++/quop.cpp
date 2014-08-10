@@ -15,6 +15,7 @@ Qureg Quop::kronecker(Q1, Q2, bool resultDense)
 	Qureg qans = resultDense ?
 		Qureg::create<true>(new_nqubit) :
 		Qureg::create<false>(new_nqubit, size1 * size2);
+	if (resultDense)  qans.set_base_d(qubase(0), CX(0));
 
 	// If both of them are dense, then the resultant is also dense
 	int ri = 0;
