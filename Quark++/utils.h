@@ -108,6 +108,13 @@ vector<IntType>& rand_unique(vector<IntType>& out, IntType n, IntType N)
 	return out;
 }
 
+template<typename T>
+INLINE vector<T>& rand_shuffle(vector<T>& vec)
+{
+	std::random_shuffle(vec.begin(), vec.end());
+	return vec;
+}
+
 ///////************** Bit operations **************///////
 /*
  *	Convert to a bit string

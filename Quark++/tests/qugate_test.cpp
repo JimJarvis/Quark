@@ -27,6 +27,8 @@ TEST(Qugate, Hadamard)
 
 TEST(Qugate, Cnot)
 {
+	// pre-alloc for 2 rand bits
+	vector<int> randBitVec(2);
 	for (int nqubit : QubitRange(2))
 	{
 		Qureg qd = rand_qureg_dense(nqubit, 1);
@@ -42,12 +44,10 @@ TEST(Qugate, Cnot)
 		{
 			vec = VectorXcf(q);
 			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
+			c = randBitVec[0];
+			t = randBitVec[1];
 
-			c = rand_int(0, nqubit);
-			t = rand_int(0, nqubit);
-			if (t == c) // avoid collision
-				// if last one
-				t = c + 1 == nqubit ? c - 1 : c + 1;
 			// Apply CNOT
 			cnot(q, c, t);
 			vecNew = VectorXcf(q);
@@ -65,42 +65,46 @@ TEST(Qugate, Cnot)
 	}
 }
 
-//TEST(Qugate, Toffoli)
-//{
-//	for (int nqubit : QubitRange(3))
-//	{
-//		Qureg qd = rand_qureg_dense(nqubit, 1);
-//		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
-//		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
-//
-//		Qureg QQs[] = { qd, qs1, qs2 };
-//
-//		VectorXcf vec, vecNew;
-//		qubase c1, c2, t; // ctrl and target
-//		for (Qureg& q : QQs)
-//		for (int trial : Range<>(20))
-//		{
-//			vec = VectorXcf(q);
-//			// generate two random bits
-//			c1 = rand_int(0, nqubit);
-//			c2 = rand_int(0, nqubit);
-//			t = rand_int(0, nqubit);
-//			if (t == c) // avoid collision
-//				// if last one
-//				t = c + 1 == nqubit ? c - 1 : c + 1;
-//			// Apply CNOT
-//			cnot(q, c, t);
-//			vecNew = VectorXcf(q);
-//
-//			c = q.to_bit(c);
-//			t = q.to_bit(t);
-//
-//			for (qubase base : Range<>(1 << nqubit))
-//			{
-//				ASSERT_CX_EQ(vec(base),
-//							 vecNew((base & c) ? base ^ t : base),
-//							 "base is " << bits2str(base));
-//			}
-//		}
-//	}
-//}
+TEST(Qugate, Toffoli)
+{
+	// pre-alloc for 3 rand bits
+	vector<int> randBitVec(3);
+	for (int nqubit : QubitRange(3))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { qd, qs1, qs2 };
+
+		VectorXcf vec, vecNew;
+		qubase c1, c2, t; // ctrl and target
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			vec = VectorXcf(q);
+			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, 3, nqubit));
+			c1 = randBitVec[0];
+			c2 = randBitVec[1];
+			t = randBitVec[2];
+
+			// Apply Toffoli
+			toffoli(q, c1, c2, t);
+
+			vecNew = VectorXcf(q);
+
+			c1 = q.to_bit(c1);
+			c2 = q.to_bit(c2);
+			t = q.to_bit(t);
+
+			for (qubase base : Range<>(1 << nqubit))
+			{
+				ASSERT_CX_EQ(vec(base),
+							 vecNew((base & c1) && (base & c2)
+									 ? base ^ t : base),
+							 "base is " << bits2str(base));
+			}
+		}
+	}
+}
