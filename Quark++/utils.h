@@ -60,6 +60,11 @@ INLINE int rand_int(int low, int high)
 	return rand() % (high - low) + low;
 }
 
+INLINE double rand_double()
+{
+	return (double)rand() / RAND_MAX;
+}
+
 INLINE float rand_float(float low, float high)
 {
 	float f = (float) rand() / RAND_MAX;
@@ -79,6 +84,30 @@ INLINE CX rand_cx(float symm)
 			  rand_float(-symm, symm));
 }
 
+/*
+ *	Algorithm: choose n ints without replacement from N.
+ * http://stackoverflow.com/questions/48087/select-a-random-n-elements-from-listt-in-c-sharp/48089#48089
+ */
+INLINE vector<uint64_t> rand_unique(size_t n, size_t N)
+{
+	vector<uint64_t> list;
+	list.reserve(n);
+	size_t rem = n; // remaining
+	size_t i = 0;
+	size_t N_ = N;
+	while (rem > 0)
+	{
+		if (rand_double() <= double(rem) / N_)
+		{
+			list.push_back(i);
+			--rem;
+		}
+		++ i; 
+		-- N_;
+	}
+	return list;
+}
+
 ///////************** Bit operations **************///////
 /*
  *	Convert to a bit string
@@ -91,7 +120,7 @@ INLINE string bits2str(uint64_t b)
 }
 // Convert to bit string
 template<>
-INLINE string bits2str<0>(qubase b)
+INLINE string bits2str<0>(uint64_t b)
 {
 	string s = bitset<32>(b).to_string();
 
@@ -100,8 +129,8 @@ INLINE string bits2str<0>(qubase b)
 	while (i < s.size() && s[i] == '0') { ++i; }
 	return i != s.size() ? s.substr(i) : "0";
 }
-INLINE string bits2str(qubase b) { return bits2str<0>(b); }
-INLINE string bits2str(qubase b, int minbit)
+INLINE string bits2str(uint64_t b) { return bits2str<0>(b); }
+INLINE string bits2str(uint64_t b, int minbit)
 {
 	string s = bitset<32>(b).to_string();
 	return s.substr(32 - minbit);

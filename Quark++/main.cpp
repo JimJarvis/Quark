@@ -150,5 +150,11 @@ int main(int argc, char **argv)
 	toffoli(qq, 2, 0, 1);
 	pr(qq);
 
+	vector<int> histogram(100, 0);
+	for (int i : Range<>(1000000))
+		for (size_t j : rand_unique(3, 100))
+			++histogram[j];
+	pr(vec2str(histogram));
+
 	return 0;
 }
