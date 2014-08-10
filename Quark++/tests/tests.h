@@ -5,16 +5,20 @@
 #include "../utils.h"
 #include "../qureg.h"
 #include "../qugate.h"
-#include "../quop.h"
-using namespace Quop;
+#include "../qumat.h"
+using namespace Qumat;
 using namespace Qugate;
 using namespace Eigen;
+
+///////************** Test conventions **************///////
+#define QubitRange Range<>(1, 8)
+#define QubaseRange [](int nqubit) { return Range<qubase>(1 << nqubit); }
 
 /*
  *	Error stream must be terminated by "Eend"
  * ErrSS << 23 << "dudulu" << Eend
  */
-void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr, float tol = TOL)
+inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& errstr, float tol = TOL)
 {
 	size_t r, c;
 	ASSERT_EQ(r = m1.rows(), m2.rows()) << "Row dims should agree";

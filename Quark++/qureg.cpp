@@ -3,9 +3,9 @@
 **********************************************/
 
 #include "qureg.h"
-#include "quop.h"
+#include "qumat.h"
 #include "qugate.h"
-using namespace Quop;
+using namespace Qumat;
 using namespace Qugate;
 
 // Private comprehensive ctor

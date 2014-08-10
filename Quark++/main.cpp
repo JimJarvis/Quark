@@ -1,8 +1,8 @@
 #include "qureg.h"
-#include "quop.h"
+#include "qumat.h"
 #include "qugate.h"
 #include "vld.h"
-using namespace Quop;
+using namespace Qumat;
 using namespace Qugate;
 using namespace Eigen;
 
@@ -133,8 +133,6 @@ int main(int argc, char **argv)
 	m1 << 10, 20, 30,
 		40, 50, 60;
 	pr(kronecker_mat(v1, m1));
-
-	pr(_S+"sdf" + 4);
 
 	return 0;
 }

@@ -4,10 +4,10 @@
 
 #include "qureg.h"
 #include "qugate.h"
-#include "quop.h"
+#include "qumat.h"
 
 using namespace Qugate;
-using namespace Quop;
+using namespace Qumat;
 
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {

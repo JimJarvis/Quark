@@ -1,12 +1,12 @@
 /**********************************************
 * Quantum operations  *
 **********************************************/
-#include "quop.h"
+#include "qumat.h"
 #include "qureg.h"
 
-using namespace Quop;
+using namespace Qumat;
 
-Qureg Quop::kronecker(Q1, Q2, bool resultDense)
+Qureg Qumat::kronecker(Q1, Q2, bool resultDense)
 {
 	int new_nqubit = q1.nqubit + q2.nqubit;
 	size_t size1 = q1.size();
@@ -34,7 +34,7 @@ Qureg Quop::kronecker(Q1, Q2, bool resultDense)
 	return qans;
 }
 
-Qureg Quop::operator*(Q1, Q2)
+Qureg Qumat::operator*(Q1, Q2)
 {
 	return kronecker(q1, q2, q1.dense && q2.dense);
 }
@@ -43,7 +43,7 @@ Qureg Quop::operator*(Q1, Q2)
 /**********************************************/
 /*********** Eigen  ***********/
 /**********************************************/
-MatrixXcf Quop::hadamard_mat(int nqubit)
+MatrixXcf Qumat::hadamard_mat(int nqubit)
 {
 	size_t size = 1 << nqubit;
 	MatrixXcf mat(size, size);
@@ -55,7 +55,7 @@ MatrixXcf Quop::hadamard_mat(int nqubit)
 	return mat;
 }
 
-MatrixXcf Quop::kronecker_mat(const MatrixXcf& A, const MatrixXcf& B)
+MatrixXcf Qumat::kronecker_mat(const MatrixXcf& A, const MatrixXcf& B)
 {
 	size_t ar = A.rows();
 	size_t ac = A.cols();

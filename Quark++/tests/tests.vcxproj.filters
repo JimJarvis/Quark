@@ -18,13 +18,16 @@
     <ClCompile Include="..\qugate.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\quop.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\qureg.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="quop_test.cpp">
+    <ClCompile Include="..\qumat.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qugate_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qumat_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

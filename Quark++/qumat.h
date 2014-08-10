@@ -1,8 +1,8 @@
-#ifndef quop_h__
-#define quop_h__
+#ifndef qumat_h__
+#define qumat_h__
 
 #include "qureg.h"
-namespace Quop // quantum operations
+namespace Qumat // quantum matrices
 {
 	/*
 	 *	Kronecker product
@@ -38,4 +38,4 @@ namespace Quop // quantum operations
 	Matrix2cf cnot_mat();
 }
 
-#endif // quop_h__
+#endif // qumat_h__

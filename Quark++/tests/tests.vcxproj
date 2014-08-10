@@ -149,9 +149,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\qugate.cpp" />
-    <ClCompile Include="..\quop.cpp" />
+    <ClCompile Include="..\qumat.cpp" />
     <ClCompile Include="..\qureg.cpp" />
-    <ClCompile Include="quop_test.cpp" />
+    <ClCompile Include="qugate_test.cpp" />
+    <ClCompile Include="qumat_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.h" />

@@ -1,10 +1,5 @@
 #include "tests.h"
 
-// Qubit from 1 to 7
-auto qubitRange = Range<>(1, 8);
-
-auto qubase_range = [](int nqubit) { return Range<qubase>(1 << nqubit); };
-
 // An inefficient recursive version of hadarmard
 MatrixXcf hadamard_recursive(int nqubit)
 {
@@ -17,40 +12,15 @@ MatrixXcf hadamard_recursive(int nqubit)
 
 TEST(Quop, Eigen_Kronecker_Hadamard)
 {
-	for (int nqubit : qubitRange)
+	for (int nqubit : QubitRange)
 		ASSERT_MAT(
 		hadamard_recursive(nqubit),
 		hadamard_mat(nqubit), _S + "Fail at qubit" + nqubit);
 }
 
-TEST(Quop, Qureg_Hadamard)
-{
-	Qureg qq;
-	for (int nqubit : qubitRange)
-	{
-		MatrixXcf gold = hadamard_mat(nqubit);
-		// Each column should agree with hadamard mat
-		for (qubase base : qubase_range(nqubit))
-		{
-			Qureg QQs[2] = 
-			{
-				Qureg::create<true>(nqubit, base), 
-				Qureg::create<false>(nqubit, 1 << nqubit, base)
-			};
-			for (Qureg qq : QQs)
-			{
-				hadamard(qq);
-				ASSERT_MAT(gold.col(base), VectorXcf(qq),
-						   _S + (qq.dense ? "Dense" : "Sparse")
-						   + " disagree at base " + bits2str(base, nqubit));
-			}
-		}
-	}
-}
-
 TEST(Quop, Qureg_Kronecker)
 {
-	for (int nqubit : qubitRange)
+	for (int nqubit : QubitRange)
 	{
 		Qureg qd1 = Qureg::create<true>(nqubit);
 		for (qubase base : qd1.base_iter_d())
