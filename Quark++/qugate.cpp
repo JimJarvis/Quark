@@ -229,3 +229,65 @@ void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 		}
 	}
 }
+
+// helper: if a base needs to be processed or not
+INLINE bool ncnot_process(qubase base, vector<qubase>& ctrlBasis)
+{
+	for (qubase& ctrl : ctrlBasis)
+		if (!(base & ctrl))
+			return false;
+	return true;
+}
+
+void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
+{
+	vector<qubase> ctrlBasis;
+	ctrlBasis.reserve(ctrls.size());
+	for (int ctrl : ctrls)
+		ctrlBasis.push_back(q.to_bit(ctrl));
+	qubase t = q.to_bit(tar);
+	qubase base1; // base1 is flipped base
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base : q.base_iter_d())
+			if (ncnot_process(base, ctrlBasis) && (base & t))
+				ControlDenseNot;
+	}
+	else // sparse
+	{
+		// Add new states to the end, if any
+		for (qubase base : q.base_iter())
+		{
+			if (ncnot_process(base, ctrlBasis))
+				ControlSparseNot
+		}
+	}
+}
+
+void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
+{
+	vector<qubase> ctrlBasis;
+	ctrlBasis.reserve(ctrls.size());
+	for (int ctrl : ctrls)
+		ctrlBasis.push_back(q.to_bit(ctrl));
+	qubase t = q.to_bit(tar);
+	qubase base1; // base1 is flipped base
+	CX a, a1;
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base : q.base_iter_d())
+			if (ncnot_process(base, ctrlBasis) && (base & t))
+				ControlDenseGeneric
+	}
+	else // sparse
+	{
+		// Add new states to the end, if any
+		for (qubase base : q.base_iter())
+		{
+			if (ncnot_process(base, ctrlBasis))
+				ControlSparseGeneric
+		}
+	}
+}

@@ -108,3 +108,56 @@ TEST(Qugate, Toffoli)
 		}
 	}
 }
+
+TEST(Qugate, Ncnot)
+{
+	// pre-alloc for 3 rand bits
+	const int NCNOT = 6;
+	vector<int> randBitVec(NCNOT);
+	for (int nqubit : Range<>(NCNOT, 9))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { qd, qs1, qs2 };
+
+		VectorXcf vec, vecNew;
+		qubase t; // ctrl and target
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			vec = VectorXcf(q);
+			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, NCNOT, nqubit));
+			t = randBitVec[randBitVec.size() - 1];
+
+			// Apply generalized cnot
+			ncnot(q, 
+				  vector<int>(randBitVec.begin(), randBitVec.begin() + randBitVec.size()-1), 
+				  t);
+
+			vecNew = VectorXcf(q);
+
+			vector<qubase> ctrlBasis;
+			for (int i = 0; i < randBitVec.size() - 1; ++i)
+				ctrlBasis.push_back(q.to_bit(randBitVec[i]));
+			t = q.to_bit(t);
+
+			bool process;
+			for (qubase base : Range<>(1 << nqubit))
+			{
+				process = true;
+				for (qubase& ctrl : ctrlBasis)
+					if (!(base & ctrl))
+					{
+						process = false;
+						break;
+					}
+				ASSERT_CX_EQ(vec(base),
+							 vecNew(process ? base ^ t : base),
+							 "base is " << bits2str(base));
+			}
+		}
+	}
+}

@@ -160,8 +160,5 @@ int main(int argc, char **argv)
 	toffoli(qq, 2, 0, 1);
 	pr(qq);
 
-	vector<int> dud(3);
-	for (int i = 0; i < 20; ++i)
-		pr(vec2str(rand_shuffle( rand_unique(dud, 3, 10))));
 	return 0;
 }
