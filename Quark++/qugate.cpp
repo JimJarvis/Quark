@@ -9,6 +9,10 @@
 using namespace Qugate;
 using namespace Qumat;
 
+/**********************************************/
+/*********** Single-qubit gates  ***********/
+/**********************************************/
+
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = q.to_bit(tar);
@@ -76,6 +80,60 @@ void Qugate::hadamard(Q)
 		hadamard(q, qi);
 }
 
+
+/**********************************************/
+/*********** Multi-controlled gates  ***********/
+/**********************************************/
+/*
+	*	Macro to avoid code copying
+	*/
+#define ControlDenseNot \
+	std::swap(amp[base ^ t], amp[base]);
+#define ControlSparseNot \
+{ \
+	base1 = base ^ t; \
+	if (q.contains_base(base1)) \
+	{ \
+		/* don't flip (swap) twice */ \
+		if (base & t) \
+			std::swap(q[base], q[base1]); \
+	} \
+	else \
+	{ \
+		q.add_base(base1, q[base]); \
+		q[base] = 0; \
+	} \
+}
+#define ControlDenseGeneric \
+{ \
+	base1 = base ^ t; \
+	a = amp[base]; \
+	a1 = amp[base1]; \
+	amp[base] = a * mat(0, 0) + a1 * mat(0, 1); \
+	amp[base1] = a * mat(1, 0) + a1 * mat(1, 1); \
+}
+#define ControlSparseGeneric \
+{ \
+	base1 = base ^ t; \
+	if (q.contains_base(base1)) \
+	{ \
+		/* don't flip (swap) twice */ \
+		if (base & t) \
+		{ \
+			a = q[base]; \
+			a1 = q[base1]; \
+			q[base] = a * mat(0, 0) + a1 * mat(0, 1); \
+			q[base1] = a * mat(1, 0) + a1 * mat(1, 1); \
+		} \
+	} \
+	else \
+	{ \
+		a = q[base]; \
+		q.add_base(base1, a * mat(1, 0)); \
+		q[base] = a * mat(0, 0); \
+	} \
+}
+
 void Qugate::cnot(Q, int ctrl, int tar)
 {
 	qubase c = q.to_bit(ctrl);
@@ -86,7 +144,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
-				std::swap(amp[base ^ t], amp[base]);
+				ControlDenseNot
 	}
 	else // sparse
 	{
@@ -94,20 +152,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 		for (qubase base : q.base_iter())
 		{
 			if (base & c)
-			{
-				base1 = base ^ t;
-				if (q.contains_base(base1))
-				{
-					// don't flip (swap) twice
-					if (base & t)
-						std::swap(q[base], q[base1]);
-				}
-				else
-				{
-					q.add_base(base1, q[base]);
-					q[base] = 0;
-				}
-			}
+				ControlSparseNot
 		}
 	}
 }
@@ -123,13 +168,7 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
-			{
-				base1 = base ^ t;
-				a = amp[base];
-				a1 = amp[base1];
-				amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
-				amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
-			}
+				ControlDenseGeneric
 	}
 	else // sparse
 	{
@@ -137,26 +176,7 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 		for (qubase base : q.base_iter())
 		{
 			if (base & c)
-			{
-				base1 = base ^ t;
-				if (q.contains_base(base1))
-				{
-					// don't flip (swap) twice
-					if (base & t)
-					{
-						a = q[base];
-						a1 = q[base1];
-						q[base] = a * mat(0, 0) + a1 * mat(0, 1);
-						q[base1] = a * mat(1, 0) + a1 * mat(1, 1);
-					}
-				}
-				else
-				{
-					a = q[base];
-					q.add_base(base1, a * mat(1, 0));
-					q[base] = a * mat(0, 0);
-				}
-			}
+				ControlSparseGeneric
 		}
 	}
 }
@@ -172,7 +192,7 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
-			std::swap(amp[base ^ t], amp[base]);
+			ControlDenseNot
 	}
 	else // sparse
 	{
@@ -180,20 +200,7 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 		for (qubase base : q.base_iter())
 		{
 			if ((base & c1) && (base & c2))
-			{
-				base1 = base ^ t;
-				if (q.contains_base(base1))
-				{
-					// don't flip (swap) twice
-					if (base & t)
-						std::swap(q[base], q[base1]);
-				}
-				else
-				{
-					q.add_base(base1, q[base]);
-					q[base] = 0;
-				}
-			}
+				ControlSparseNot
 		}
 	}
 }
@@ -210,13 +217,7 @@ void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
-		{
-			base1 = base ^ t;
-			a = amp[base];
-			a1 = amp[base1];
-			amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
-			amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
-		}
+			ControlDenseGeneric
 	}
 	else // sparse
 	{
@@ -224,26 +225,7 @@ void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 		for (qubase base : q.base_iter())
 		{
 			if ((base & c1) && (base & c2))
-			{
-				base1 = base ^ t;
-				if (q.contains_base(base1))
-				{
-					// don't flip (swap) twice
-					if (base & t)
-					{
-						a = q[base];
-						a1 = q[base1];
-						q[base] = a * mat(0, 0) + a1 * mat(0, 1);
-						q[base1] = a * mat(1, 0) + a1 * mat(1, 1);
-					}
-				}
-				else
-				{
-					a = q[base];
-					q.add_base(base1, a * mat(1, 0));
-					q[base] = a * mat(0, 0);
-				}
-			}
+				ControlSparseGeneric
 		}
 	}
 }
