@@ -197,3 +197,53 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 		}
 	}
 }
+
+void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
+{
+	qubase c1 = q.to_bit(ctrl1);
+	qubase c2 = q.to_bit(ctrl2);
+	qubase t = q.to_bit(tar);
+	qubase base1; // base1 is flipped base
+	CX a, a1;
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base : q.base_iter_d())
+		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
+		{
+			base1 = base ^ t;
+			a = amp[base];
+			a1 = amp[base1];
+			amp[base] = a * mat(0, 0) + a1 * mat(0, 1);
+			amp[base1] = a * mat(1, 0) + a1 * mat(1, 1);
+		}
+	}
+	else // sparse
+	{
+		// Add new states to the end, if any
+		for (qubase base : q.base_iter())
+		{
+			if ((base & c1) && (base & c2))
+			{
+				base1 = base ^ t;
+				if (q.contains_base(base1))
+				{
+					// don't flip (swap) twice
+					if (base & t)
+					{
+						a = q[base];
+						a1 = q[base1];
+						q[base] = a * mat(0, 0) + a1 * mat(0, 1);
+						q[base1] = a * mat(1, 0) + a1 * mat(1, 1);
+					}
+				}
+				else
+				{
+					a = q[base];
+					q.add_base(base1, a * mat(1, 0));
+					q[base] = a * mat(0, 0);
+				}
+			}
+		}
+	}
+}
