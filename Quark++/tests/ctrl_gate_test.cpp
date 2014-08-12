@@ -1,6 +1,6 @@
 #include "tests.h"
 
-// Helper
+// Helper: DEPRECATED!!!
 // 'process': whether ctrl bit is 1 or not
 void test_generic_ctrl(
 	bool isCtrlOn, VectorXcf& oldAmp, VectorXcf& newAmp, qubase& base, qubase& t, Matrix2cf& mat)
@@ -34,17 +34,21 @@ TEST(Qugate, SimpleCnot)
 		for (Qureg& q : QQs)
 		for (int trial : Range<>(20))
 		{
-			oldAmp = VectorXcf(q);
 			// generate two random bits
 			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
 			c = randBitVec[0]; t = randBitVec[1];
 
+			Qureg qc = q.clone();
+			generic_gate(qc, cnot_mat(), c, t);
+			oldAmp = VectorXcf(qc);
+
 			cnot(q, c, t);
 			newAmp = VectorXcf(q);
 
-			c = q.to_qubase(c); t = q.to_qubase(t);
-			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, pauli_X_mat());
+			ASSERT_MAT(oldAmp, newAmp);
+			//c = q.to_qubase(c); t = q.to_qubase(t);
+			//for (qubase base : Range<>(1 << nqubit))
+			//	test_generic_ctrl(base & c, oldAmp, newAmp, base, t, pauli_X_mat());
 		}
 	}
 }
@@ -72,12 +76,17 @@ TEST(Qugate, GenericCnot)
 			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
 			c = randBitVec[0]; t = randBitVec[1];
 
+			Qureg qc = q.clone();
+			generic_gate(qc, generic_control_mat(1, mat), c, t);
+			oldAmp = VectorXcf(qc);
+
 			generic_control(q, mat, c, t);
 			newAmp = VectorXcf(q);
 
-			c = q.to_qubase(c); t = q.to_qubase(t);
-			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, mat);
+			ASSERT_MAT(oldAmp, newAmp);
+			//c = q.to_qubase(c); t = q.to_qubase(t);
+			//for (qubase base : Range<>(1 << nqubit))
+			//	test_generic_ctrl(base & c, oldAmp, newAmp, base, t, mat);
 		}
 	}
 }
@@ -105,15 +114,18 @@ TEST(Qugate, SimpleToffoli)
 			rand_shuffle(rand_unique(randBitVec, 3, nqubit));
 			c1 = randBitVec[0]; c2 = randBitVec[1]; t = randBitVec[2];
 
-			// Apply Toffoli
-			toffoli(q, c1, c2, t);
+			Qureg qc = q.clone();
+			generic_gate(qc, toffoli_mat(), randBitVec);
+			oldAmp = VectorXcf(qc);
 
+			toffoli(q, c1, c2, t);
 			newAmp = VectorXcf(q);
 
-			c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
-			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl((base & c1) && (base & c2),
-				oldAmp, newAmp, base, t, pauli_X_mat());
+			ASSERT_MAT(oldAmp, newAmp);
+			//c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
+			//for (qubase base : Range<>(1 << nqubit))
+			//	test_generic_ctrl((base & c1) && (base & c2),
+			//	oldAmp, newAmp, base, t, pauli_X_mat());
 		}
 	}
 }
@@ -142,15 +154,18 @@ TEST(Qugate, GenericToffoli)
 			rand_shuffle(rand_unique(randBitVec, 3, nqubit));
 			c1 = randBitVec[0]; c2 = randBitVec[1]; t = randBitVec[2];
 
-			// Apply Toffoli
-			generic_toffoli(q, mat, c1, c2, t);
+			Qureg qc = q.clone();
+			generic_gate(qc, generic_control_mat(2, mat), randBitVec);
+			oldAmp = VectorXcf(qc);
 
+			generic_toffoli(q, mat, c1, c2, t);
 			newAmp = VectorXcf(q);
 
-			c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
-			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl((base & c1) && (base & c2),
-				oldAmp, newAmp, base, t, mat);
+			ASSERT_MAT(oldAmp, newAmp);
+			//c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
+			//for (qubase base : Range<>(1 << nqubit))
+			//	test_generic_ctrl((base & c1) && (base & c2),
+			//	oldAmp, newAmp, base, t, mat);
 		}
 	}
 }
@@ -179,17 +194,22 @@ TEST(Qugate, SimpleNcnot)
 			rand_shuffle(rand_unique(randBitVec, NCNOT, nqubit));
 			t = randBitVec[randBitVec.size() - 1];
 
+			Qureg qc = q.clone();
+			generic_gate(qc, toffoli_mat(NCNOT-1), randBitVec);
+			oldAmp = VectorXcf(qc);
+
 			ncnot(q,
 				  vector<int>(randBitVec.begin(), randBitVec.begin() + randBitVec.size() - 1),
 				  t);
-
 			newAmp = VectorXcf(q);
 
+			ASSERT_MAT(oldAmp, newAmp);
+			/*
 			vector<qubase> ctrlBasis;
 			for (int i = 0; i < randBitVec.size() - 1; ++i)
 				ctrlBasis.push_back(q.to_qubase(randBitVec[i]));
-			t = q.to_qubase(t);
 
+			t = q.to_qubase(t);
 			bool isCtrlOn;
 			for (qubase base : Range<>(1 << nqubit))
 			{
@@ -201,7 +221,7 @@ TEST(Qugate, SimpleNcnot)
 					break;
 				}
 				test_generic_ctrl(isCtrlOn, oldAmp, newAmp, base, t, pauli_X_mat());
-			}
+			} */
 		}
 	}
 }
@@ -223,7 +243,7 @@ TEST(Qugate, GenericNcnot)
 		VectorXcf oldAmp, newAmp;
 		qubase t; // ctrl and target
 		for (Qureg& q : QQs)
-		for (int trial : Range<>(20))
+		for (int trial : Range<>(10))
 		{
 			Matrix2cf mat = rand_cxmat(2, 2);
 			oldAmp = VectorXcf(q);
@@ -231,12 +251,17 @@ TEST(Qugate, GenericNcnot)
 			rand_shuffle(rand_unique(randBitVec, NCNOT, nqubit));
 			t = randBitVec[randBitVec.size() - 1];
 
+			Qureg qc = q.clone();
+			generic_gate(qc, generic_control_mat(NCNOT - 1, mat), randBitVec);
+			oldAmp = VectorXcf(qc);
+
 			generic_ncontrol(q, mat,
 							 vector<int>(randBitVec.begin(), randBitVec.begin() + randBitVec.size() - 1),
 							 t);
-
 			newAmp = VectorXcf(q);
 
+			ASSERT_MAT(oldAmp, newAmp);
+			/*
 			vector<qubase> ctrlBasis;
 			for (int i = 0; i < randBitVec.size() - 1; ++i)
 				ctrlBasis.push_back(q.to_qubase(randBitVec[i]));
@@ -253,7 +278,7 @@ TEST(Qugate, GenericNcnot)
 					break;
 				}
 				test_generic_ctrl(isCtrlOn, oldAmp, newAmp, base, t, mat);
-			}
+			} */
 		}
 	}
 }
@@ -280,14 +305,19 @@ TEST(Qugate, CtrlPhaseShift)
 			// generate two random bits
 			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
 			c = randBitVec[0]; t = randBitVec[1];
-
 			float randTheta = rand_float(-PI / 2, PI / 2);
+
+			Qureg qc = q.clone();
+			generic_gate(qc, control_phase_shift_mat(randTheta), c, t);
+			oldAmp = VectorXcf(qc);
+
 			control_phase_shift(q, randTheta, c, t);
 			newAmp = VectorXcf(q);
 
-			c = q.to_qubase(c); t = q.to_qubase(t);
-			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, phase_shift_mat(randTheta));
+			ASSERT_MAT(oldAmp, newAmp);
+			//c = q.to_qubase(c); t = q.to_qubase(t);
+			//for (qubase base : Range<>(1 << nqubit))
+			//	test_generic_ctrl(base & c, oldAmp, newAmp, base, t, phase_shift_mat(randTheta));
 		}
 	}
 }

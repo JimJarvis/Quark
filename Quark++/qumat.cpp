@@ -114,9 +114,9 @@ MatrixXcf Qumat::toffoli_mat(int nctrl)
 MatrixXcf Qumat::generic_control_mat(int nctrl, const Matrix2cf& mat)
 {
 	size_t size = 1 << (nctrl + 1);
-	MatrixXcf GenericControlMat = MatrixXcf::Identity(size, size);
-	GenericControlMat.block(size - 2, size - 2, 2, 2) = mat;
-	return GenericControlMat;
+	MatrixXcf GenericCtrlMat = MatrixXcf::Identity(size, size);
+	GenericCtrlMat.block(size - 2, size - 2, 2, 2) = mat;
+	return GenericCtrlMat;
 }
 
 Matrix2cf Qumat::pauli_X_mat()
@@ -133,8 +133,8 @@ Matrix2cf Qumat::pauli_Y_mat()
 	static Matrix2cf pauliYMat;
 	INIT_ONCE(
 		pauliYMat <<
-			CX(0), CX(0, -1),
-			CX(0, 1), CX(0)
+			0, CX(0, -1),
+			CX(0, 1), 0
 	)
 	return pauliYMat;
 }
@@ -156,8 +156,8 @@ Matrix2cf Qumat::rot_X_mat(float theta)
 	float s = sin(theta);
 	static Matrix2cf RotXMat;
 	RotXMat <<
-		CX(c), CX(0, -s),
-		CX(0, -s), CX(c);
+		c, CX(0, -s),
+		CX(0, -s), c;
 	return RotXMat;
 }
 
@@ -168,8 +168,8 @@ Matrix2cf Qumat::rot_Y_mat(float theta)
 	float s = sin(theta);
 	static Matrix2cf RotYMat;
 	RotYMat <<
-		CX(c), CX(-s),
-		CX(s), CX(c);
+		c, -s,
+		s, c;
 	return RotYMat;
 }
 
@@ -178,8 +178,8 @@ Matrix2cf Qumat::rot_Z_mat(float theta)
 	CX x = expi(theta / 2);
 	static Matrix2cf RotZMat;
 	RotZMat <<
-		conj(x), CX(0),
-		CX(0), x;
+		conj(x), 0,
+		0, x;
 	return RotZMat;
 }
 
@@ -188,8 +188,8 @@ Matrix2cf Qumat::phase_scale_mat(float theta)
 	CX x = expi(theta);
 	static Matrix2cf PhaseScaleMat;
 	PhaseScaleMat <<
-		x, CX(0),
-		CX(0), x;
+		x, 0,
+		0, x;
 	return PhaseScaleMat;
 }
 
@@ -198,7 +198,15 @@ Matrix2cf Qumat::phase_shift_mat(float theta)
 	CX x = expi(theta);
 	static Matrix2cf PhaseScaleMat;
 	PhaseScaleMat <<
-		CX(1), CX(0),
-		CX(0), x;
+		1, 0,
+		0, x;
 	return PhaseScaleMat;
+}
+
+Matrix4cf Qumat::control_phase_shift_mat(float theta)
+{
+	static Matrix4cf CtrlPhaseShiftMat;
+	CtrlPhaseShiftMat = Matrix4cf::Identity(4, 4);
+	CtrlPhaseShiftMat(3, 3) = expi(theta);
+	return CtrlPhaseShiftMat;
 }

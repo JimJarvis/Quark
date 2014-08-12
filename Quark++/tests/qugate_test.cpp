@@ -112,7 +112,7 @@ TEST(Qugate, GenericGateN)
 		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		for (Qureg& q : QQs)
-		for (int trial : Range<>(20))
+		for (int trial : Range<>(10))
 		{
 			rand_shuffle(rand_unique(tars, NQUBIT, nqubit));
 			Qureg qc1 = q.clone();
