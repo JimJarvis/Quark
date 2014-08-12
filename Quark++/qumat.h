@@ -14,7 +14,10 @@ namespace Qumat // quantum matrices
 	 *	Kronecker product
 	 * Result Qureg is dense only when both q1 and q2 are dense.
 	 */
-	Qureg operator*(Q1, Q2);
+	INLINE Qureg operator&(Q1, Q2)
+	{
+		return kronecker(q1, q2, q1.dense && q2.dense);
+	}
 
 	void normalize(Q);
 
@@ -25,6 +28,12 @@ namespace Qumat // quantum matrices
 	MatrixXcf hadamard_mat(int nqubit);
 
 	MatrixXcf kronecker_mat(const MatrixXcf& A, const MatrixXcf& B);
+
+	INLINE MatrixXcf 
+		operator&(const MatrixXcf& A, const MatrixXcf& B)
+	{
+		return kronecker_mat(A, B);
+	}
 
 	Matrix4cf cnot_mat();
 

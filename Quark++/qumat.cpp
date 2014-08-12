@@ -34,12 +34,6 @@ Qureg Qumat::kronecker(Q1, Q2, bool resultDense)
 	return qans;
 }
 
-Qureg Qumat::operator*(Q1, Q2)
-{
-	return kronecker(q1, q2, q1.dense && q2.dense);
-}
-
-
 /**********************************************/
 /*********** Eigen  ***********/
 /**********************************************/
