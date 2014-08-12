@@ -78,10 +78,29 @@ INLINE CX rand_cx(float low, float high)
 }
 
 // +- symmetric value
-INLINE CX rand_cx(float symm)
+INLINE CX rand_cx(float symm = 1)
 {
 	return CX(rand_float(-symm, symm), 
 			  rand_float(-symm, symm));
+}
+
+template<int row, int col>
+INLINE Matrix<CX, row, col> rand_cxmat(float symm = 1)
+{
+	Matrix<CX, row, col> m;
+	for (int i = 0; i < row ; ++i)
+		for (int j = 0; j < col; ++j)
+			m(i, j) = rand_cx(symm);
+	return m;
+}
+
+INLINE MatrixXcf rand_cxmat(int row, int col, float symm = 1)
+{
+	MatrixXcf m(row, col);
+	for (int i = 0; i < row ; ++i)
+		for (int j = 0; j < col; ++j)
+			m(i, j) = rand_cx(symm);
+	return m;
 }
 
 /*

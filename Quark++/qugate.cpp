@@ -63,8 +63,6 @@ INLINE void generic_sparse_update(
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = q.to_bit(tar);
-	CX a0, a1;
-	qubase base1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -93,101 +91,57 @@ void Qugate::hadamard(Q)
 /**********************************************/
 /*********** Multi-controlled gates  ***********/
 /**********************************************/
-/*
-	*	Macro to avoid code copying
-	*/
-#define ControlDenseNot \
-	std::swap(amp[base ^ t], amp[base]);
-#define ControlSparseNot \
-{ \
-	base1 = base ^ t; \
-	if (q.contains_base(base1)) \
-	{ \
-		/* don't flip (swap) twice */ \
-		if (base & t) \
-			std::swap(q[base], q[base1]); \
-	} \
-	else \
-	{ \
-		q.add_base(base1, q[base]); \
-		q[base] = 0; \
-	} \
-}
-#define ControlDenseGeneric \
-{ \
-	base1 = base ^ t; \
-	a = amp[base]; \
-	a1 = amp[base1]; \
-	amp[base] = a * mat(0, 0) + a1 * mat(0, 1); \
-	amp[base1] = a * mat(1, 0) + a1 * mat(1, 1); \
-}
-#define ControlSparseGeneric \
-{ \
-	base1 = base ^ t; \
-	if (q.contains_base(base1)) \
-	{ \
-		/* don't flip (swap) twice */ \
-		if (base & t) \
-		{ \
-			a = q[base]; \
-			a1 = q[base1]; \
-			q[base] = a * mat(0, 0) + a1 * mat(0, 1); \
-			q[base1] = a * mat(1, 0) + a1 * mat(1, 1); \
-		} \
-	} \
-	else \
-	{ \
-		a = q[base]; \
-		q.add_base(base1, a * mat(1, 0)); \
-		q[base] = a * mat(0, 0); \
-	} \
+// common helper
+INLINE void cnot_sparse_update(Q, qubase& base, qubase& t)
+{
+	qubase base1 = base ^ t;
+	if (q.contains_base(base1))
+	{
+		/* don't flip (swap) twice */
+		if (base & t)
+			std::swap(q[base], q[base1]);
+	}
+	else
+	{
+		q.add_base(base1, q[base]);
+		q[base] = 0;
+	}
 }
 
 void Qugate::cnot(Q, int ctrl, int tar)
 {
 	qubase c = q.to_bit(ctrl);
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
-				ControlDenseNot
+				std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
 			if (base & c)
-				ControlSparseNot
-		}
-	}
+				cnot_sparse_update(q, base, t);
 }
 
 void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 {
 	qubase c = q.to_bit(ctrl);
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
-	CX a, a1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
-				ControlDenseGeneric
+			if (base & c) // base & t: don't flip (swap)  twice
+				generic_dense_update(amp, base, t, mat);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
 			if (base & c)
-				ControlSparseGeneric
-		}
-	}
+				generic_sparse_update(q, base, t, mat);
 }
 
 void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
@@ -195,23 +149,18 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 	qubase c1 = q.to_bit(ctrl1);
 	qubase c2 = q.to_bit(ctrl2);
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
 		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
-			ControlDenseNot
+			std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
 			if ((base & c1) && (base & c2))
-				ControlSparseNot
-		}
-	}
+				cnot_sparse_update(q, base, t);
 }
 
 void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
@@ -219,28 +168,22 @@ void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 	qubase c1 = q.to_bit(ctrl1);
 	qubase c2 = q.to_bit(ctrl2);
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
-	CX a, a1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
-			ControlDenseGeneric
+		if ((base & c1) && (base & c2)) // base & t: don't flip (swap)  twice
+			generic_dense_update(amp, base, t, mat);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
 			if ((base & c1) && (base & c2))
-				ControlSparseGeneric
-		}
-	}
+				generic_sparse_update(q, base, t, mat);
 }
 
-// helper: if a base needs to be processed or not
-INLINE bool ncnot_process(qubase base, vector<qubase>& ctrlBasis)
+// Helper: are the control bits on?
+INLINE bool ncnot_is_ctrl_on(qubase base, vector<qubase>& ctrlBasis)
 {
 	for (qubase& ctrl : ctrlBasis)
 		if (!(base & ctrl))
@@ -255,23 +198,18 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 	for (int ctrl : ctrls)
 		ctrlBasis.push_back(q.to_bit(ctrl));
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-			if (ncnot_process(base, ctrlBasis) && (base & t))
-				ControlDenseNot;
+			if (ncnot_is_ctrl_on(base, ctrlBasis) && (base & t))
+				std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
-			if (ncnot_process(base, ctrlBasis))
-				ControlSparseNot
-		}
-	}
+			if (ncnot_is_ctrl_on(base, ctrlBasis))
+				cnot_sparse_update(q, base, t);
 }
 
 void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
@@ -281,22 +219,16 @@ void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
 	for (int ctrl : ctrls)
 		ctrlBasis.push_back(q.to_bit(ctrl));
 	qubase t = q.to_bit(tar);
-	qubase base1; // base1 is flipped base
-	CX a, a1;
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-			if (ncnot_process(base, ctrlBasis) && (base & t))
-				ControlDenseGeneric
+			if (ncnot_is_ctrl_on(base, ctrlBasis))
+				generic_dense_update(amp, base, t, mat);
 	}
 	else // sparse
-	{
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-		{
-			if (ncnot_process(base, ctrlBasis))
-				ControlSparseGeneric
-		}
-	}
+			if (ncnot_is_ctrl_on(base, ctrlBasis))
+				generic_sparse_update(q, base, t, mat);
 }
