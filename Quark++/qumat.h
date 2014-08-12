@@ -49,6 +49,13 @@ namespace Qumat // quantum matrices
 	 */
 	MatrixXcf toffoli_mat(int nctrl);
 
+	/*
+	 *	nctrl == 1 is CNOT
+	 * nctrl == 2 is regular toffoli
+	 * Identity matrix with the lower right corner == mat
+	 */
+	MatrixXcf generic_control_mat(int nctrl, const Matrix2cf& mat);
+
 	Matrix2cf pauli_X_mat();
 	Matrix2cf pauli_Y_mat();
 	Matrix2cf pauli_Z_mat();

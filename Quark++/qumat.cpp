@@ -101,12 +101,22 @@ Matrix<CX, 8, 8> Qumat::toffoli_mat()
 
 MatrixXcf Qumat::toffoli_mat(int nctrl)
 {
+	static MatrixXcf ToffoliMat;
+	INIT_ONCE(
 	size_t size = 1 << (nctrl + 1);
-	MatrixXcf ToffoliMat 
-		= MatrixXcf::Identity(size, size);
+	ToffoliMat = MatrixXcf::Identity(size, size);
 	ToffoliMat.block(size - 2, size - 2, 2, 2) 
 		= MatrixXcf::Identity(2, 2).colwise().reverse();
+	)
 	return ToffoliMat;
+}
+
+MatrixXcf Qumat::generic_control_mat(int nctrl, const Matrix2cf& mat)
+{
+	size_t size = 1 << (nctrl + 1);
+	MatrixXcf GenericControlMat = MatrixXcf::Identity(size, size);
+	GenericControlMat.block(size - 2, size - 2, 2, 2) = mat;
+	return GenericControlMat;
 }
 
 Matrix2cf Qumat::pauli_X_mat()

@@ -85,11 +85,11 @@ TEST(Qugate, GenericGate2)
 
 			// Apply mat1 and mat2 at the same time by Matrix4cf
 			Qureg qc3 = q.clone();
-			generic_gate(qc3, (Matrix4cf) kronecker_mat(mat1, mat2), tar1, tar2);
+			generic_gate(qc3, kronecker_mat(mat1, mat2), tar1, tar2);
 			VectorXcf newAmp3 = VectorXcf(qc3);
 
 			// Apply mat2 and mat1 at the same time by Matrix4cf
-			generic_gate(q, (Matrix4cf) kronecker_mat(mat2, mat1), tar2, tar1);
+			generic_gate(q, kronecker_mat(mat2, mat1), tar2, tar1);
 			VectorXcf newAmp4 = VectorXcf(q);
 
 			ASSERT_MAT(newAmp1, newAmp2, "mat1 then mat2 VS mat2 then mat1");

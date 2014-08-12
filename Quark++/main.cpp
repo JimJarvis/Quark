@@ -145,20 +145,11 @@ int main(int argc, char **argv)
 	v1 << 3, -2, 
 		4, -1, 
 		1, 0;
-	MatrixXcf m1(2, 3);
-	m1 << 10, 20, 30,
-		40, 50, 60;
-	pr(kronecker_mat(v1, m1));
+	MatrixXcf m1(2, 2);
+	m1 << 10, 20,
+		40, 50;
 
-	ptitle("Toffoli");
-	test_toffoli();
-
-	qq = dummy_amp(3, true);
-	toffoli(qq, 2, 0, 1);
-	pr(qq);
-	qq = dummy_amp(3, false);
-	toffoli(qq, 2, 0, 1);
-	pr(qq);
+	pr(generic_control_mat(3, m1));
 
 	return 0;
 }

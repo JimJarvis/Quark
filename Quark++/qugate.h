@@ -5,13 +5,13 @@
 
 namespace Qugate
 {
-	void generic_gate(Q, Matrix2cf&, int tar);
+	void generic_gate(Q, const Matrix2cf&, int tar);
 
-	void generic_gate(Q, Matrix4cf&, int tar1, int tar2);
+	void generic_gate(Q, const Matrix4cf&, int tar1, int tar2);
 	/*
 	 *	Works with arbitrary number of target qubits
 	 */
-	void generic_gate(Q, MatrixXcf&, vector<int>& tars);
+	void generic_gate(Q, const MatrixXcf&, vector<int>& tars);
 
 	///////************** Single-qubit gates **************///////
 	void hadamard(Q, int tar);
@@ -29,13 +29,13 @@ namespace Qugate
 	void phase_shift(Q, float theta, int tar);
 
 	///////************** Controlled gates **************///////
-	void generic_control(Q, Matrix2cf&, int ctrl, int tar);
+	void generic_control(Q, const Matrix2cf&, int ctrl, int tar);
 	void cnot(Q, int ctrl, int tar);
 
-	void generic_toffoli(Q, Matrix2cf&, int ctrl1, int ctrl2, int tar);
+	void generic_toffoli(Q, const Matrix2cf&, int ctrl1, int ctrl2, int tar);
 	void toffoli(Q, int ctrl1, int ctrl2, int tar);
 
-	void generic_ncontrol(Q, Matrix2cf&, vector<int>& ctrls, int tar);
+	void generic_ncontrol(Q, const Matrix2cf&, vector<int>& ctrls, int tar);
 	void ncnot(Q, vector<int>& ctrls, int tar);
 
 	void control_phase_shift(Q, float theta, int ctrl, int tar);

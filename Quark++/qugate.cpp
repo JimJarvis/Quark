@@ -14,7 +14,7 @@ using namespace Qumat;
 /**********************************************/
 // Helper for generic gate
 INLINE void generic_dense_update(
-	vector<CX>& amp, qubase& base0, qubase& t, Matrix2cf& mat)
+	vector<CX>& amp, qubase& base0, qubase& t, const Matrix2cf& mat)
 {
 	if (!(base0 & t))
 	{
@@ -27,7 +27,7 @@ INLINE void generic_dense_update(
 }
 
 INLINE void generic_sparse_update(
-	Q, qubase& base0, qubase& t, Matrix2cf& mat)
+	Q, qubase& base0, qubase& t, const Matrix2cf& mat)
 {
 	qubase base1 = base0 ^ t;
 	CX a0, a1;
@@ -77,7 +77,7 @@ INLINE void cnot_sparse_update(Q, qubase& base, qubase& t)
 	}
 }
 
-void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
+void Qugate::generic_gate(Q, const Matrix2cf& mat, int tar)
 {
 	qubase t = q.to_qubase(tar);
 	if (q.dense)
@@ -213,7 +213,7 @@ void Qugate::phase_scale(Q, float theta, int tar)
 /**********************************************/
 /*********** Multi-qubit gates  ***********/
 /**********************************************/
-void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
+void Qugate::generic_gate(Q, const Matrix4cf& mat, int tar1, int tar2)
 {
 	qubase t1 = q.to_qubase(tar1);
 	qubase t2 = q.to_qubase(tar2);
@@ -299,7 +299,7 @@ INLINE void flipped_basis(vector<qubase>& basis, qubase& base0, vector<qubase>& 
 	}
 }
 
-void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
+void Qugate::generic_gate(Q, const MatrixXcf& mat, vector<int>& tars)
 {
 	if (mat.rows() != 1 << tars.size())
 		throw QuantumException(
@@ -369,7 +369,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 				cnot_sparse_update(q, base, t);
 }
 
-void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
+void Qugate::generic_control(Q, const Matrix2cf& mat, int ctrl, int tar)
 {
 	qubase c = q.to_qubase(ctrl);
 	qubase t = q.to_qubase(tar);
@@ -406,7 +406,7 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 				cnot_sparse_update(q, base, t);
 }
 
-void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
+void Qugate::generic_toffoli(Q, const Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 {
 	qubase c1 = q.to_qubase(ctrl1);
 	qubase c2 = q.to_qubase(ctrl2);
@@ -455,7 +455,7 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 				cnot_sparse_update(q, base, t);
 }
 
-void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
+void Qugate::generic_ncontrol(Q, const Matrix2cf& mat, vector<int>& ctrls, int tar)
 {
 	vector<qubase> ctrlBasis = to_qubasis(q, ctrls);
 	qubase t = q.to_qubase(tar);
