@@ -62,7 +62,7 @@ INLINE void generic_sparse_update(
 
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
-	qubase t = q.to_bit(tar);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -90,8 +90,8 @@ void Qugate::hadamard(Q)
 ///////************** Multi-qubit gate **************///////
 void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
 {
-	qubase t1 = q.to_bit(tar1);
-	qubase t2 = q.to_bit(tar2);
+	qubase t1 = q.to_qubase(tar1);
+	qubase t2 = q.to_qubase(tar2);
 	Vector4cf a, newa;
 	vector<qubase> basis(4);
 	if (q.dense)
@@ -145,7 +145,7 @@ INLINE vector<qubase> to_qubasis(Q, vector<int>& tars)
 	vector<qubase> basis;
 	basis.reserve(tars.size());
 	for (int tar : tars)
-		basis.push_back(q.to_bit(tar));
+		basis.push_back(q.to_qubase(tar));
 	return basis;
 }
 
@@ -236,8 +236,8 @@ INLINE void cnot_sparse_update(Q, qubase& base, qubase& t)
 
 void Qugate::cnot(Q, int ctrl, int tar)
 {
-	qubase c = q.to_bit(ctrl);
-	qubase t = q.to_bit(tar);
+	qubase c = q.to_qubase(ctrl);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -254,8 +254,8 @@ void Qugate::cnot(Q, int ctrl, int tar)
 
 void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 {
-	qubase c = q.to_bit(ctrl);
-	qubase t = q.to_bit(tar);
+	qubase c = q.to_qubase(ctrl);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -272,9 +272,9 @@ void Qugate::generic_control(Q, Matrix2cf& mat, int ctrl, int tar)
 
 void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 {
-	qubase c1 = q.to_bit(ctrl1);
-	qubase c2 = q.to_bit(ctrl2);
-	qubase t = q.to_bit(tar);
+	qubase c1 = q.to_qubase(ctrl1);
+	qubase c2 = q.to_qubase(ctrl2);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -291,9 +291,9 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 
 void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 {
-	qubase c1 = q.to_bit(ctrl1);
-	qubase c2 = q.to_bit(ctrl2);
-	qubase t = q.to_bit(tar);
+	qubase c1 = q.to_qubase(ctrl1);
+	qubase c2 = q.to_qubase(ctrl2);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -322,8 +322,8 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 	vector<qubase> ctrlBasis;
 	ctrlBasis.reserve(ctrls.size());
 	for (int ctrl : ctrls)
-		ctrlBasis.push_back(q.to_bit(ctrl));
-	qubase t = q.to_bit(tar);
+		ctrlBasis.push_back(q.to_qubase(ctrl));
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
@@ -341,7 +341,7 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
 {
 	vector<qubase> ctrlBasis = to_qubasis(q, ctrls);
-	qubase t = q.to_bit(tar);
+	qubase t = q.to_qubase(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;

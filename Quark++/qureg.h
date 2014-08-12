@@ -156,7 +156,7 @@ public:
 	 *	Get a bit string representing a target qubit
 	 * Most significant bit
 	 */
-	INLINE qubase to_bit(int tar)
+	INLINE qubase to_qubase(int tar)
 	{
 		return qubase(1) << (nqubit - 1 - tar);
 	}

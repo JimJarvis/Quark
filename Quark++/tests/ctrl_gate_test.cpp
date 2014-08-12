@@ -43,7 +43,7 @@ TEST(Qugate, SimpleCnot)
 			cnot(q, c, t);
 			newAmp = VectorXcf(q);
 
-			c = q.to_bit(c); t = q.to_bit(t);
+			c = q.to_qubase(c); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
 				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, idrev2);
 		}
@@ -76,7 +76,7 @@ TEST(Qugate, GenericCnot)
 			generic_control(q, mat, c, t);
 			newAmp = VectorXcf(q);
 
-			c = q.to_bit(c); t = q.to_bit(t);
+			c = q.to_qubase(c); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
 				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, mat);
 		}
@@ -112,7 +112,7 @@ TEST(Qugate, SimpleToffoli)
 
 			newAmp = VectorXcf(q);
 
-			c1 = q.to_bit(c1); c2 = q.to_bit(c2); t = q.to_bit(t);
+			c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
 				test_generic_ctrl((base & c1) && (base & c2),
 				oldAmp, newAmp, base, t, idrev2);
@@ -149,7 +149,7 @@ TEST(Qugate, GenericToffoli)
 
 			newAmp = VectorXcf(q);
 
-			c1 = q.to_bit(c1); c2 = q.to_bit(c2); t = q.to_bit(t);
+			c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
 				test_generic_ctrl((base & c1) && (base & c2),
 				oldAmp, newAmp, base, t, mat);
@@ -190,8 +190,8 @@ TEST(Qugate, SimpleNcnot)
 
 			vector<qubase> ctrlBasis;
 			for (int i = 0; i < randBitVec.size() - 1; ++i)
-				ctrlBasis.push_back(q.to_bit(randBitVec[i]));
-			t = q.to_bit(t);
+				ctrlBasis.push_back(q.to_qubase(randBitVec[i]));
+			t = q.to_qubase(t);
 
 			bool isCtrlOn;
 			for (qubase base : Range<>(1 << nqubit))
@@ -242,8 +242,8 @@ TEST(Qugate, GenericNcnot)
 
 			vector<qubase> ctrlBasis;
 			for (int i = 0; i < randBitVec.size() - 1; ++i)
-				ctrlBasis.push_back(q.to_bit(randBitVec[i]));
-			t = q.to_bit(t);
+				ctrlBasis.push_back(q.to_qubase(randBitVec[i]));
+			t = q.to_qubase(t);
 
 			bool isCtrlOn;
 			for (qubase base : Range<>(1 << nqubit))

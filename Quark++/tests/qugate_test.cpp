@@ -42,7 +42,7 @@ TEST(Qugate, GenericGate1)
 			Matrix2cf mat = rand_cxmat(2, 2);
 			VectorXcf oldAmp = VectorXcf(q);
 			generic_gate(q, mat, tar);
-			t = q.to_bit(tar);
+			t = q.to_qubase(tar);
 			VectorXcf newAmp = VectorXcf(q);
 			for (qubase base : Range<>(1 << nqubit))
 			{
@@ -73,7 +73,7 @@ TEST(Qugate, GenericGate2)
 			Matrix4cf mat = rand_cxmat(4, 4);
 			VectorXcf oldAmp = VectorXcf(q);
 			generic_gate(q, mat, tar1, tar2);
-			t1 = q.to_bit(tar1); t2 = q.to_bit(tar2);
+			t1 = q.to_qubase(tar1); t2 = q.to_qubase(tar2);
 			VectorXcf newAmp = VectorXcf(q);
 			for (qubase base : Range<>(1 << nqubit))
 			{
