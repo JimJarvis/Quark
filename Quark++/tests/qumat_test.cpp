@@ -10,7 +10,7 @@ MatrixXcf hadamard_recursive(int nqubit)
 			hadamard_mat(), hadamard_recursive(nqubit - 1));
 }
 
-TEST(Qumat, Eigen_Kronecker_Hadamard)
+TEST(Qumat, EigenKroneckerHadamard)
 {
 	for (int nqubit : QubitRange(1))
 		ASSERT_MAT(
@@ -19,7 +19,7 @@ TEST(Qumat, Eigen_Kronecker_Hadamard)
 			_S + "Fail at qubit" + nqubit);
 }
 
-TEST(Qumat, Qureg_Kronecker)
+TEST(Qumat, QuregKronecker)
 {
 	for (int nqubit : QubitRange(1))
 	{

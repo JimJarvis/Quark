@@ -25,9 +25,9 @@ TEST(Qugate, Hadamard)
 	}
 }
 
-TEST(Qugate, Generic_Gate_1)
+TEST(Qugate, GenericGate1)
 {
-	Vector2cf oldAmp, newAmp;
+	Vector2cf oldBitAmp, newBitAmp;
 	for (int nqubit : QubitRange(2))
 	{
 		Qureg qd = rand_qureg_dense(nqubit, 1);
@@ -35,22 +35,21 @@ TEST(Qugate, Generic_Gate_1)
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 		Qureg QQs[] = { qd, qs1, qs2 };
 
-		VectorXcf oldAmp, newAmp;
 		qubase t;
 		for (Qureg& q : QQs)
 		for (int tar : Range<>(nqubit))
 		{
 			Matrix2cf mat = rand_cxmat(2, 2);
-			oldAmp = VectorXcf(q);
+			VectorXcf oldAmp = VectorXcf(q);
 			generic_gate(q, mat, tar);
 			t = q.to_bit(tar);
-			newAmp = VectorXcf(q);
+			VectorXcf newAmp = VectorXcf(q);
 			for (qubase base : Range<>(1 << nqubit))
 			{
 				if (base & t) base ^= t;
-				oldAmp << oldAmp(base), oldAmp(base ^ t);
-				newAmp << newAmp(base), newAmp(base ^ t);
-				ASSERT_MAT(mat * oldAmp, newAmp);
+				oldBitAmp << oldAmp(base), oldAmp(base ^ t);
+				newBitAmp << newAmp(base), newAmp(base ^ t);
+				ASSERT_MAT(mat * oldBitAmp, newBitAmp);
 			}
 		}
 	}
