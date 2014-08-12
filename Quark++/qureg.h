@@ -84,7 +84,7 @@ public:
 	/*
 	 * Iterate over all basis from 0 to 1<<nqubit
 	 */
-	INLINE Range<qubase> base_iter_d() { return Range<qubase>(size()); }
+	INLINE Range<qubase> base_iter_d() { return Range<qubase>(1 << nqubit); }
 
 	/**********************************************/
 	/*********** Sparse ONLY  ***********/

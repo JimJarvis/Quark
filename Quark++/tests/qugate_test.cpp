@@ -54,3 +54,36 @@ TEST(Qugate, GenericGate1)
 		}
 	}
 }
+
+TEST(Qugate, GenericGate2)
+{
+	Vector4cf oldBitAmp, newBitAmp;
+	for (int nqubit : QubitRange(3))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+		Qureg QQs[] = { qd, qs1, qs2 };
+
+		qubase t1, t2;
+		for (Qureg& q : QQs)
+		for (int tar1 : Range<>(nqubit-1))
+		for (int tar2 : Range<>(tar1+1, nqubit))
+		{
+			Matrix4cf mat = rand_cxmat(4, 4);
+			VectorXcf oldAmp = VectorXcf(q);
+			generic_gate(q, mat, tar1, tar2);
+			t1 = q.to_bit(tar1); t2 = q.to_bit(tar2);
+			VectorXcf newAmp = VectorXcf(q);
+			for (qubase base : Range<>(1 << nqubit))
+			{
+				if ((base & t1) || (base & t2)) continue; // symmetry
+				oldBitAmp << 
+					oldAmp(base), oldAmp(base ^ t1), oldAmp(base ^ t2), oldAmp(base ^ (t1 | t2));
+				newBitAmp << 
+					newAmp(base), newAmp(base ^ t1), newAmp(base ^ t2), newAmp(base ^ (t1 | t2));
+				ASSERT_MAT(mat * oldBitAmp, newBitAmp);
+			}
+		}
+	}
+}

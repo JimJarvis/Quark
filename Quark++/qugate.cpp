@@ -87,6 +87,132 @@ void Qugate::hadamard(Q)
 		hadamard(q, qi);
 }
 
+///////************** Multi-qubit gate **************///////
+void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
+{
+	qubase t1 = q.to_bit(tar1);
+	qubase t2 = q.to_bit(tar2);
+	Vector4cf a, newa;
+	vector<qubase> basis(4);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			// only process base with 00 at the given targets
+			if (!(base0 & t1) && !(base0 & t2))
+			{
+				basis[0] = base0;
+				basis[1] = base0 ^ t1;
+				basis[2] = base0 ^ t2;
+				basis[3] = base0 ^ (t1 | t2);
+				for (int i = 0; i < 4; ++i)
+					a(i) = amp[basis[i]];
+				newa = mat * a;
+				for (int i = 0; i < 4; ++i)
+					amp[basis[i]] = newa(i);
+			}
+	}
+	else // sparse
+		// Not-so-efficient implementation: pretend to be dense
+	for (qubase base0 : q.base_iter_d())
+		if (!(base0 & t1) && !(base0 & t2))
+		{
+			basis[0] = base0;
+			basis[1] = base0 ^ t1;
+			basis[2] = base0 ^ t2;
+			basis[3] = base0 ^ (t1 | t2);
+			for (int i = 0; i < 4 ; ++i)
+			{
+				qubase base = basis[i];
+				// if any of them doesn't exist, add
+				if (!q.contains_base(base))
+				{
+					q.add_base(base, CX(0));
+					a(i) = CX(0);
+				}
+				else
+					a(i) = q[base];
+			}
+			newa = mat * a;
+			for (int i = 0; i < 4; ++i)
+				q[basis[i]] = newa(i);
+		}
+}
+
+// Helper: get a vector of shifted qubase
+INLINE vector<qubase> to_qubasis(Q, vector<int>& tars)
+{
+	vector<qubase> basis;
+	basis.reserve(tars.size());
+	for (int tar : tars)
+		basis.push_back(q.to_bit(tar));
+	return basis;
+}
+
+// Helper: is the bits of 'base' at 'tar' positions all zero?
+INLINE bool is_tar_all_zero(qubase& base, vector<qubase>& tarBasis)
+{
+	for (qubase& tar : tarBasis)
+		if (base & tar) 
+			return false;
+	return true;
+}
+
+/*
+void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
+{
+	if (mat.rows() != 1 << tars.size())
+		throw QuantumException(
+			"Unitary matrix must have row/col width 2^(number of target bits)");
+
+	int N = mat.rows();
+	vector<qubase> tarBasis = to_qubasis(q, tars);
+	VectorXcf a(N), newa(N);
+	vector<qubase> basis(N);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			// only process base with 00 at the given targets
+		if (is_tar_all_zero(base0, tarBasis))
+		{
+			basis[0] = base0;
+			basis[1] = base0 ^ t1;
+			basis[2] = base0 ^ t2;
+			basis[3] = base0 ^ (t1 | t2);
+			for (int i = 0; i < 4; ++i)
+				a(i) = amp[basis[i]];
+			newa = mat * a;
+			for (int i = 0; i < 4; ++i)
+				amp[basis[i]] = newa(i);
+		}
+	}
+	else // sparse
+		// Not-so-efficient implementation: pretend to be dense
+	for (qubase base0 : q.base_iter_d())
+	if (!(base0 & t1) && !(base0 & t2))
+	{
+		basis[0] = base0;
+		basis[1] = base0 ^ t1;
+		basis[2] = base0 ^ t2;
+		basis[3] = base0 ^ (t1 | t2);
+		for (int i = 0; i < 4; ++i)
+		{
+			qubase base = basis[i];
+			// if any of them doesn't exist, add
+			if (!q.contains_base(base))
+			{
+				q.add_base(base, CX(0));
+				a(i) = CX(0);
+			}
+			else
+				a(i) = q[base];
+		}
+		newa = mat * a;
+		for (int i = 0; i < 4; ++i)
+			q[basis[i]] = newa(i);
+	}
+}*/
 
 /**********************************************/
 /*********** Multi-controlled gates  ***********/
@@ -183,7 +309,7 @@ void Qugate::generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar)
 }
 
 // Helper: are the control bits on?
-INLINE bool ncnot_is_ctrl_on(qubase base, vector<qubase>& ctrlBasis)
+INLINE bool is_ctrl_on(qubase base, vector<qubase>& ctrlBasis)
 {
 	for (qubase& ctrl : ctrlBasis)
 		if (!(base & ctrl))
@@ -202,33 +328,30 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-			if (ncnot_is_ctrl_on(base, ctrlBasis) && (base & t))
+			if (is_ctrl_on(base, ctrlBasis) && (base & t))
 				std::swap(amp[base ^ t], amp[base]);
 	}
 	else // sparse
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-			if (ncnot_is_ctrl_on(base, ctrlBasis))
+			if (is_ctrl_on(base, ctrlBasis))
 				cnot_sparse_update(q, base, t);
 }
 
 void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
 {
-	vector<qubase> ctrlBasis;
-	ctrlBasis.reserve(ctrls.size());
-	for (int ctrl : ctrls)
-		ctrlBasis.push_back(q.to_bit(ctrl));
+	vector<qubase> ctrlBasis = to_qubasis(q, ctrls);
 	qubase t = q.to_bit(tar);
 	if (q.dense)
 	{
 		auto& amp = q.amp;
 		for (qubase base : q.base_iter_d())
-			if (ncnot_is_ctrl_on(base, ctrlBasis))
+			if (is_ctrl_on(base, ctrlBasis))
 				generic_dense_update(amp, base, t, mat);
 	}
 	else // sparse
 		// Add new states to the end, if any
 		for (qubase base : q.base_iter())
-			if (ncnot_is_ctrl_on(base, ctrlBasis))
+			if (is_ctrl_on(base, ctrlBasis))
 				generic_sparse_update(q, base, t, mat);
 }

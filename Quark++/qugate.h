@@ -5,17 +5,19 @@
 
 namespace Qugate
 {
-	void generic_gate(Q, Matrix2cf& mat, int tar);
+	void generic_gate(Q, Matrix2cf&, int tar);
 
-	void generic_gate(Q, Matrix4cf& mat, int tar1, int tar2);
+	void generic_gate(Q, Matrix4cf&, int tar1, int tar2);
 
-	void generic_control(Q, Matrix2cf& mat, int ctrl, int tar);
+	void generic_gate(Q, MatrixXcf&, vector<int>& tars);
+
+	void generic_control(Q, Matrix2cf&, int ctrl, int tar);
 	void cnot(Q, int ctrl, int tar);
 
-	void generic_toffoli(Q, Matrix2cf& mat, int ctrl1, int ctrl2, int tar);
+	void generic_toffoli(Q, Matrix2cf&, int ctrl1, int ctrl2, int tar);
 	void toffoli(Q, int ctrl1, int ctrl2, int tar);
 
-	void generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar);
+	void generic_ncontrol(Q, Matrix2cf&, vector<int>& ctrls, int tar);
 	void ncnot(Q, vector<int>& ctrls, int tar);
 
 
