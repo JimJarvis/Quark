@@ -13,9 +13,31 @@ using namespace Eigen;
 ///////************** Test conventions **************///////
 #define QubitRange(start) Range<>(start, 8)
 #define QubaseRange(nqubit) Range<qubase>(1 << nqubit)
-#define ASSERT_CX_EQ(cx1, cx2, errpipe) \
+
+// The MSVC has a bug when parsing '__VA_ARGS__'. Workaround:
+#define VA_EXPAND(x) x
+// always return the fifth argument in place
+#define VARARG_INDEX(_0, _1, _2, _3, _4, _5, ...) _5
+// how many variadic parameters?
+#define VARARG_COUNT(...) VA_EXPAND(VARARG_INDEX(__VA_ARGS__, 5, 4, 3, 2, 1))
+#define VARARG_HELPER2(base, count, ...) base##_##count(__VA_ARGS__)
+#define VARARG_HELPER(base, count, ...) VARARG_HELPER2(base, count, __VA_ARGS__)
+#define VARARG(base, ...) VARARG_HELPER(base, VARARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+// Define DEBUG_MSG_1 or _2 or _n to define a debug message printout macro with n args
+// Warning: intelliSense might underline this as syntax error. Ignore it and compile. 
+#define ASSERT_CX_EQ(...) VARARG(ASSERT_CX_EQ,	 __VA_ARGS__)
+
+#define ASSERT_CX_EQ_2(cx1, cx2) \
+	ASSERT_NEAR(cx1.real(), cx2.real(), TOL); \
+	ASSERT_NEAR(cx1.imag(), cx2.imag(), TOL);
+
+#define ASSERT_CX_EQ_3(cx1, cx2, errpipe) \
 	ASSERT_NEAR(cx1.real(), cx2.real(), TOL) << errpipe; \
 	ASSERT_NEAR(cx1.imag(), cx2.imag(), TOL) << errpipe;
+
+#define ASSERT_CX_EQ_4(cx1, cx2, errpipe, tol) \
+	ASSERT_NEAR(cx1.real(), cx2.real(), tol) << errpipe; \
+	ASSERT_NEAR(cx1.imag(), cx2.imag(), tol) << errpipe;
 
 /*
 *	Error stream must be terminated by "Eend"
@@ -32,9 +54,10 @@ inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& e
 	for (size_t j = 0; j < c; ++j)
 	{
 		a1 = m1(i, j); a2 = m2(i, j);
+		// ignore intellisense error here
 		ASSERT_CX_EQ(a1, a2, 
 					 "Disagree at [" << i << ", " << j << "]: " 
-					 << m1(i, j) << " vs " << m2(i, j) << endl << errstr);
+					 << m1(i, j) << " vs " << m2(i, j) << endl << errstr, tol);
 	}
 }
 
