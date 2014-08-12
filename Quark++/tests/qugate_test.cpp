@@ -25,6 +25,39 @@ TEST(Qugate, Hadamard)
 	}
 }
 
+TEST(Qugate, Generic_Gate)
+{
+	static Matrix2cf mat;
+	mat << 2, CX(-1, .5), CX(.3, -.1), CX(2, -1);
+
+	Vector2cf oldAmp, newAmp;
+	for (int nqubit : QubitRange(2))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { qd, qs1, qs2 };
+
+		VectorXcf vec, vecNew;
+		qubase t;
+		for (Qureg& q : QQs)
+		for (int tar : Range<>(nqubit))
+		{
+			vec = VectorXcf(q);
+			generic_gate(q, mat, tar);
+			t = q.to_bit(tar);
+			vecNew = VectorXcf(q);
+			for (qubase base : Range<>(1 << nqubit))
+			{
+				if (base & t) base ^= t;
+				oldAmp << vec(base), vec(base ^ t);
+				newAmp << vecNew(base), vecNew(base ^ t);
+				ASSERT_MAT(mat * oldAmp, newAmp);
+			}
+		}
+	}
+}
 
 TEST(Qugate, Cnot)
 {
@@ -64,10 +97,19 @@ TEST(Qugate, Cnot)
 
 			for (qubase base : Range<>(1 << nqubit))
 			{
-				oldAmp << vec(base), vec(base ^ t);
-				newAmp << vecNew(base), vecNew(base ^ t);
+				if (base & t)
+				{
+					oldAmp << vec(base ^ t), vec(base);
+					newAmp << vecNew(base ^ t), vecNew(base);
+				}
+				else
+				{
+					oldAmp << vec(base), vec(base ^ t);
+					newAmp << vecNew(base), vecNew(base ^ t);
+				}
+
 				if (base & c)
-					ASSERT_MAT(mat * oldAmp, newAmp, "Controlled flip");
+					ASSERT_MAT(mat * oldAmp, newAmp);
 				else
 					ASSERT_MAT(oldAmp, newAmp, "Uncontrolled");
 			}
