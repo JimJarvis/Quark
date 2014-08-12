@@ -76,7 +76,7 @@ public:
 	/**********************************************/
 	/*********** Dense ONLY  ***********/
 	/**********************************************/
-	void set_base_d(qubase base, CX a)
+	INLINE void set_base_d(qubase base, CX a)
 	{
 		amp[base] = a;
 	}
@@ -84,7 +84,7 @@ public:
 	/*
 	 * Iterate over all basis from 0 to 1<<nqubit
 	 */
-	Range<qubase> base_iter_d() { return Range<qubase>(size()); }
+	INLINE Range<qubase> base_iter_d() { return Range<qubase>(size()); }
 
 	/**********************************************/
 	/*********** Sparse ONLY  ***********/
@@ -92,7 +92,7 @@ public:
 	/*
 	 *	Test if a base already exists in basis[]
 	 */
-	bool contains_base(qubase base)
+	INLINE bool contains_base(qubase base)
 	{
 		return basemap.find(base) != basemap.end();
 	}
@@ -100,22 +100,27 @@ public:
 	/*
 	 *	Add a base. Processes hashmap. Sparse ONLY. 
 	 */
-	void add_base(qubase base, CX a);
+	INLINE void add_base(qubase base, CX a)
+	{
+		basemap[base] = amp.size();
+		basis.push_back(base);
+		amp.push_back(a);
+	}
 
 	/*
 	 *	Get base stored internally at index i
 	 */
-	qubase& get_base(size_t i) { return basis[i]; }
+	INLINE qubase& get_base(size_t i) { return basis[i]; }
 
 	/*
 	 * Read index from basemap and get amplitude
 	 */
-	CX& operator[](qubase base) { return amp[basemap[base]]; }
+	INLINE CX& operator[](qubase base) { return amp[basemap[base]]; }
 
 	/*
 	 *	For-each loop over basis[]. You can append to basis[] as you iterate
 	 */
-	VecRange<qubase> base_iter() { return VecRange<qubase>(basis); }
+	INLINE VecRange<qubase> base_iter() { return VecRange<qubase>(basis); }
 
 	/*
 	 *	Sort the basis vectors. 
@@ -139,19 +144,19 @@ public:
 	/*
 	*	Size of complex amplitude vector
 	*/
-	size_t size() { return amp.size(); }
+	INLINE size_t size() { return amp.size(); }
 
 	/*
 	 *	Get base stored at an internal index
 	 * dense and sparse
 	 */
-	qubase& get_base_d_s(size_t i) { return dense ? i : basis[i]; }
+	INLINE qubase& get_base_d_s(size_t i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Get a bit string representing a target qubit
 	 * Most significant bit
 	 */
-	qubase to_bit(int tar)
+	INLINE qubase to_bit(int tar)
 	{
 		return qubase(1) << (nqubit - 1 - tar);
 	}

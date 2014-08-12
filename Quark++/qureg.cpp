@@ -32,13 +32,6 @@ Qureg::Qureg(bool _dense, int _nqubit, qubase initBase, size_t reservedSize, boo
 	}
 }
 
-void Qureg::add_base(qubase base, CX a)
-{
-	basemap[base] = amp.size();
-	basis.push_back(base);
-	amp.push_back(a);
-}
-
 // Remove near-zero amplitudes
 Qureg& Qureg::purge()
 {
