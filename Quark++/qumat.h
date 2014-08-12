@@ -43,6 +43,14 @@ namespace Qumat // quantum matrices
 	 * nctrl == 2 is regular toffoli
 	 */
 	MatrixXcf toffoli_mat(int nctrl);
+
+	Matrix2cf pauli_X_mat();
+	Matrix2cf pauli_Y_mat();
+	Matrix2cf pauli_Z_mat();
+
+	Matrix2cf rot_X_mat();
+	Matrix2cf rot_Y_mat();
+	Matrix2cf rot_Z_mat();
 }
 
 #endif // qumat_h__

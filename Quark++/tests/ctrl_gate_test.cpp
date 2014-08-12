@@ -20,7 +20,6 @@ TEST(Qugate, SimpleCnot)
 {
 	// pre-alloc for 2 rand bits
 	vector<int> randBitVec(2);
-	static Matrix2cf idrev2 = Matrix2cf::Identity(2, 2).colwise().reverse();
 
 	for (int nqubit : QubitRange(2))
 	{
@@ -45,7 +44,7 @@ TEST(Qugate, SimpleCnot)
 
 			c = q.to_qubase(c); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
-				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, idrev2);
+				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, pauli_X_mat());
 		}
 	}
 }
@@ -87,7 +86,6 @@ TEST(Qugate, SimpleToffoli)
 {
 	// pre-alloc for 3 rand bits
 	vector<int> randBitVec(3);
-	static Matrix2cf idrev2 = Matrix2cf::Identity(2, 2).colwise().reverse();
 
 	for (int nqubit : QubitRange(3))
 	{
@@ -115,7 +113,7 @@ TEST(Qugate, SimpleToffoli)
 			c1 = q.to_qubase(c1); c2 = q.to_qubase(c2); t = q.to_qubase(t);
 			for (qubase base : Range<>(1 << nqubit))
 				test_generic_ctrl((base & c1) && (base & c2),
-				oldAmp, newAmp, base, t, idrev2);
+				oldAmp, newAmp, base, t, pauli_X_mat());
 		}
 	}
 }
@@ -162,7 +160,6 @@ TEST(Qugate, SimpleNcnot)
 	// pre-alloc for 3 rand bits
 	const int NCNOT = 6;
 	vector<int> randBitVec(NCNOT);
-	static Matrix2cf idrev2 = Matrix2cf::Identity(2, 2).colwise().reverse();
 
 	for (int nqubit : Range<>(NCNOT, 9))
 	{
@@ -203,7 +200,7 @@ TEST(Qugate, SimpleNcnot)
 					isCtrlOn = false;
 					break;
 				}
-				test_generic_ctrl(isCtrlOn, oldAmp, newAmp, base, t, idrev2);
+				test_generic_ctrl(isCtrlOn, oldAmp, newAmp, base, t, pauli_X_mat());
 			}
 		}
 	}

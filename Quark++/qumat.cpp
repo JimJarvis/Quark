@@ -57,7 +57,6 @@ Matrix2cf Qumat::hadamard_mat()
 		HadamardMat <<
 			_sqrt2, _sqrt2,
 			_sqrt2, -_sqrt2;
-		init = true;
 	)
 	return HadamardMat;
 }
@@ -108,4 +107,13 @@ MatrixXcf Qumat::toffoli_mat(int nctrl)
 	ToffoliMat.block(size - 2, size - 2, 2, 2) 
 		= MatrixXcf::Identity(2, 2).colwise().reverse();
 	return ToffoliMat;
+}
+
+Matrix2cf Qumat::pauli_X_mat()
+{
+	static Matrix2cf PualiXMat;
+	INIT_ONCE(
+		PualiXMat = Matrix2cf::Identity(2, 2).colwise().reverse();
+	)
+	return PualiXMat;
 }

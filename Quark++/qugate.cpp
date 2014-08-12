@@ -60,6 +60,23 @@ INLINE void generic_sparse_update(
 	}
 }
 
+// Helper for cnot family and pauli_X
+INLINE void cnot_sparse_update(Q, qubase& base, qubase& t)
+{
+	qubase base1 = base ^ t;
+	if (q.contains_base(base1))
+	{
+		/* don't flip (swap) twice */
+		if (base & t)
+			std::swap(q[base], q[base1]);
+	}
+	else
+	{
+		q.add_base(base1, q[base]);
+		q[base] = 0;
+	}
+}
+
 void Qugate::generic_gate(Q, Matrix2cf& mat, int tar)
 {
 	qubase t = q.to_qubase(tar);
@@ -87,7 +104,29 @@ void Qugate::hadamard(Q)
 		hadamard(q, qi);
 }
 
-///////************** Multi-qubit gate **************///////
+/*
+ *	Explicitly expand the code for optimization
+ */
+void Qugate::pauli_X(Q, int tar)
+{
+	qubase t = q.to_qubase(tar);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			// only process base with 0 at the given target
+			if (!(base0 & t))
+				swap(amp[base0], amp[base0 ^ t]);
+	}
+	else // sparse
+		// Add new states to the end, if any
+	for (qubase base0 : q.base_iter())
+		cnot_sparse_update(q, base0, t);
+}
+
+/**********************************************/
+/*********** Multi-qubit gates  ***********/
+/**********************************************/
 void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
 {
 	qubase t1 = q.to_qubase(tar1);
@@ -226,23 +265,6 @@ void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
 /**********************************************/
 /*********** Multi-controlled gates  ***********/
 /**********************************************/
-// common helper
-INLINE void cnot_sparse_update(Q, qubase& base, qubase& t)
-{
-	qubase base1 = base ^ t;
-	if (q.contains_base(base1))
-	{
-		/* don't flip (swap) twice */
-		if (base & t)
-			std::swap(q[base], q[base1]);
-	}
-	else
-	{
-		q.add_base(base1, q[base]);
-		q[base] = 0;
-	}
-}
-
 void Qugate::cnot(Q, int ctrl, int tar)
 {
 	qubase c = q.to_qubase(ctrl);

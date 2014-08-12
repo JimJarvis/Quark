@@ -140,3 +140,32 @@ TEST(Qugate, GenericGateN)
 		}
 	}
 }
+
+TEST(Qugate, PauliX)
+{
+	Vector2cf oldBitAmp, newBitAmp;
+	for (int nqubit : QubitRange(2))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		qubase t;
+		for (Qureg& q : QQs)
+		for (int tar : Range<>(nqubit))
+		{
+			VectorXcf oldAmp = VectorXcf(q);
+			pauli_X(q, tar);
+			t = q.to_qubase(tar);
+			VectorXcf newAmp = VectorXcf(q);
+			for (qubase base : Range<>(1 << nqubit))
+			{
+				if (base & t) continue; // symmetry
+				oldBitAmp << oldAmp(base), oldAmp(base ^ t);
+				newBitAmp << newAmp(base), newAmp(base ^ t);
+				ASSERT_MAT(pauli_X_mat() * oldBitAmp, newBitAmp);
+			}
+		}
+	}
+}
