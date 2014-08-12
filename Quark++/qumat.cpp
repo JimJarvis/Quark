@@ -111,9 +111,30 @@ MatrixXcf Qumat::toffoli_mat(int nctrl)
 
 Matrix2cf Qumat::pauli_X_mat()
 {
-	static Matrix2cf PualiXMat;
+	static Matrix2cf pauliXMat;
 	INIT_ONCE(
-		PualiXMat = Matrix2cf::Identity(2, 2).colwise().reverse();
+		pauliXMat = Matrix2cf::Identity(2, 2).colwise().reverse();
 	)
-	return PualiXMat;
+	return pauliXMat;
+}
+
+Matrix2cf Qumat::pauli_Y_mat()
+{
+	static Matrix2cf pauliYMat;
+	INIT_ONCE(
+		pauliYMat <<
+			CX(0), CX(0, -1),
+			CX(0, 1), CX(0)
+	)
+	return pauliYMat;
+}
+
+Matrix2cf Qumat::pauli_Z_mat()
+{
+	static Matrix2cf pauliZMat;
+	INIT_ONCE(
+		pauliZMat = Matrix2cf::Identity(2, 2);
+		pauliZMat(1, 1) = -1;
+	)
+	return pauliZMat;
 }

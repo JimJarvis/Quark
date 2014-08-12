@@ -124,6 +124,44 @@ void Qugate::pauli_X(Q, int tar)
 		cnot_sparse_update(q, base0, t);
 }
 
+void Qugate::pauli_Y(Q, int tar)
+{
+	generic_gate(q, pauli_Y_mat(), tar);
+}
+
+/*
+*	Explicitly expand the code for optimization
+*/
+void Qugate::pauli_Z(Q, int tar)
+{
+	qubase t = q.to_qubase(tar);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			// only process base with 0 at the given target
+			if (!(base0 & t))
+				amp[base0 ^ t] *= -1;
+	}
+	else // sparse
+		// Add new states to the end, if any
+	for (qubase base0 : q.base_iter())
+	{
+		qubase base1 = base0 ^ t;
+		if (q.contains_base(base1))
+		{
+			if (!(base0 & t))
+				q[base1] *= -1;
+		}
+		else
+		{
+			if (base0 & t)
+				q[base0] *= -1;
+		}
+	}
+
+}
+
 /**********************************************/
 /*********** Multi-qubit gates  ***********/
 /**********************************************/

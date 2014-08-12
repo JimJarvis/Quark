@@ -141,30 +141,44 @@ TEST(Qugate, GenericGateN)
 	}
 }
 
-TEST(Qugate, PauliX)
+TEST(Qugate, PauliXYZ)
 {
-	Vector2cf oldBitAmp, newBitAmp;
-	for (int nqubit : QubitRange(2))
-	{
-		Qureg qd = rand_qureg_dense(nqubit, 1);
-		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
-		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
-		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+	std::function<void(Qureg&, int)> 
+		pauliFuncs[] = { pauli_X, pauli_Y, pauli_Z };
 
-		qubase t;
-		for (Qureg& q : QQs)
-		for (int tar : Range<>(nqubit))
+	std::function<Matrix2cf()> 
+		verifyMats[] = { pauli_X_mat, pauli_Y_mat, pauli_Z_mat };
+
+	Vector2cf oldBitAmp, newBitAmp;
+
+	for (int fi = 0; fi < 3; ++fi)
+	{
+		auto pauliFunc = pauliFuncs[fi];
+		auto verifyMat = verifyMats[fi];
+
+		for (int nqubit : QubitRange(2))
 		{
-			VectorXcf oldAmp = VectorXcf(q);
-			pauli_X(q, tar);
-			t = q.to_qubase(tar);
-			VectorXcf newAmp = VectorXcf(q);
-			for (qubase base : Range<>(1 << nqubit))
+			Qureg qd = rand_qureg_dense(nqubit, 1);
+			Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+			Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+			Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+			qubase t;
+			for (Qureg& q : QQs)
+			for (int tar : Range<>(nqubit))
 			{
-				if (base & t) continue; // symmetry
-				oldBitAmp << oldAmp(base), oldAmp(base ^ t);
-				newBitAmp << newAmp(base), newAmp(base ^ t);
-				ASSERT_MAT(pauli_X_mat() * oldBitAmp, newBitAmp);
+				VectorXcf oldAmp = VectorXcf(q);
+				pauliFunc(q, tar);
+				t = q.to_qubase(tar);
+				VectorXcf newAmp = VectorXcf(q);
+				for (qubase base : Range<>(1 << nqubit))
+				{
+					if (base & t) continue; // symmetry
+					oldBitAmp << oldAmp(base), oldAmp(base ^ t);
+					newBitAmp << newAmp(base), newAmp(base ^ t);
+					ASSERT_MAT(verifyMat() * oldBitAmp, newBitAmp, 
+							   fi == 0 ? "pauliX" : fi == 1 ? "pauliY" : "pauliZ");
+				}
 			}
 		}
 	}
