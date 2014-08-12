@@ -149,7 +149,7 @@ INLINE vector<qubase> to_qubasis(Q, vector<int>& tars)
 	return basis;
 }
 
-// Helper: is the bits of 'base' at 'tar' positions all zero?
+// Helper for generic_gate: is the bits of 'base' at 'tar' positions all zero?
 INLINE bool is_tar_all_zero(qubase& base, vector<qubase>& tarBasis)
 {
 	for (qubase& tar : tarBasis)
@@ -158,7 +158,22 @@ INLINE bool is_tar_all_zero(qubase& base, vector<qubase>& tarBasis)
 	return true;
 }
 
-/*
+// Helper for generic_gate: bit positions of an int decides which target bits to flip
+// fill out 'basis' parameter
+INLINE void flipped_basis(vector<qubase>& basis, qubase& base0, vector<qubase>& tarBasis)
+{
+	// basis.size() is 2^n, where n = tarBasis.size()
+	const int n = tarBasis.size();
+	for (size_t i = 0; i < basis.size(); ++i)
+	{
+		qubase base = base0;
+		for (int b = 0; b < n ; ++b)
+			if (i & (1 << b))
+				base ^= tarBasis[n-b-1]; // Most significant bit 
+		basis[i] = base;
+	}
+}
+
 void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
 {
 	if (mat.rows() != 1 << tars.size())
@@ -176,27 +191,21 @@ void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
 			// only process base with 00 at the given targets
 		if (is_tar_all_zero(base0, tarBasis))
 		{
-			basis[0] = base0;
-			basis[1] = base0 ^ t1;
-			basis[2] = base0 ^ t2;
-			basis[3] = base0 ^ (t1 | t2);
-			for (int i = 0; i < 4; ++i)
+			flipped_basis(basis, base0, tarBasis);
+			for (int i = 0; i < N; ++i)
 				a(i) = amp[basis[i]];
 			newa = mat * a;
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < N; ++i)
 				amp[basis[i]] = newa(i);
 		}
 	}
 	else // sparse
 		// Not-so-efficient implementation: pretend to be dense
 	for (qubase base0 : q.base_iter_d())
-	if (!(base0 & t1) && !(base0 & t2))
+	if (is_tar_all_zero(base0, tarBasis))
 	{
-		basis[0] = base0;
-		basis[1] = base0 ^ t1;
-		basis[2] = base0 ^ t2;
-		basis[3] = base0 ^ (t1 | t2);
-		for (int i = 0; i < 4; ++i)
+		flipped_basis(basis, base0, tarBasis);
+		for (int i = 0; i < N; ++i)
 		{
 			qubase base = basis[i];
 			// if any of them doesn't exist, add
@@ -209,10 +218,10 @@ void Qugate::generic_gate(Q, MatrixXcf& mat, vector<int>& tars)
 				a(i) = q[base];
 		}
 		newa = mat * a;
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < N; ++i)
 			q[basis[i]] = newa(i);
 	}
-}*/
+}
 
 /**********************************************/
 /*********** Multi-controlled gates  ***********/

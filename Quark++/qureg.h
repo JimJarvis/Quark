@@ -9,7 +9,7 @@
 #define Q2 Qureg& q2
 
 /*
- * Qubits start from least significant bit. 
+ * Qubits start from most significant bit. 
  */
 class Qureg
 {
@@ -209,7 +209,7 @@ public:
 	}
 
 	/*
-	*	Add scratch bits to 'this'. (Add to most significant bit)
+	*	Add scratch bits to 'this'. (Add to least significant bits)
 	*/
 	Qureg& operator+=(int scratchNqubit);
 

@@ -57,7 +57,6 @@ TEST(Qugate, GenericGate1)
 
 TEST(Qugate, GenericGate2)
 {
-	Vector4cf newAmp1, newAmp2, newAmp3, newAmp4;
 	for (int nqubit : QubitRange(3))
 	{
 		Qureg qd = rand_qureg_dense(nqubit, 1);
@@ -96,6 +95,48 @@ TEST(Qugate, GenericGate2)
 			ASSERT_MAT(newAmp1, newAmp2, "mat1 then mat2 VS mat2 then mat1");
 			ASSERT_MAT(newAmp1, newAmp3, "mat1 then mat2 VS mat1+mat2");
 			ASSERT_MAT(newAmp3, newAmp4, "mat1+mat2 VS mat2+mat1");
+		}
+	}
+}
+
+TEST(Qugate, GenericGateN)
+{
+	const int NQUBIT = 5;
+	vector<int> tars(NQUBIT);
+	vector<Matrix2cf> mats(NQUBIT);
+	for (int nqubit : QubitRange(NQUBIT))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 1, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			rand_shuffle(rand_unique(tars, NQUBIT, nqubit));
+			Qureg qc1 = q.clone();
+			MatrixXcf kroneckeredMat;
+			bool first = true;
+			for (int i = 0; i < NQUBIT; ++i)
+			{
+				Matrix2cf mat = rand_cxmat(2, 2, .5);
+				if (first)
+				{
+					kroneckeredMat = mat;
+					first = false;
+				}
+				else
+					kroneckeredMat = kroneckeredMat & mat;
+				// Apply single-qubit gate
+				generic_gate(qc1, mat, tars[i]);
+			}
+			VectorXcf newAmp1 = VectorXcf(qc1);
+
+			generic_gate(q, kroneckeredMat, tars);
+			VectorXcf newAmp2 = VectorXcf(q);
+
+			ASSERT_MAT(newAmp1, newAmp2);
 		}
 	}
 }
