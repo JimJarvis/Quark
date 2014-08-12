@@ -60,6 +60,17 @@ Qureg& Qureg::purge()
 	return *this;
 }
 
+Qureg Qureg::clone()
+{
+	Qureg qc;
+	qc.nqubit = this->nqubit;
+	qc.dense = this->dense;
+	qc.amp = this->amp;
+	qc.basis = this->basis;
+	qc.basemap = this->basemap;
+	return qc;
+}
+
 #define BIT_PRINT
 #ifdef BIT_PRINT
 #define PRINT_KET(ket) bits2str(ket, nqubit)

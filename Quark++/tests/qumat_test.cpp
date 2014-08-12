@@ -46,3 +46,18 @@ TEST(Qumat, QuregKronecker)
 		}
 	}
 }
+
+/*
+ *	Shows that applying gates in any order shouldn't matter
+ */
+TEST(Qumat, KroneckerOrder)
+{
+	Matrix2cf m1 = Matrix2cf::Identity(2, 2);
+	Matrix2cf m2 = rand_cxmat(2, 2);
+	Matrix2cf m3 = rand_cxmat(2, 2);
+	MatrixXcf res1 = (m1 & m1 & m3) * (m1 & m2 & m1);
+	MatrixXcf res2 = (m1 & m2 & m1) * (m1 & m1 & m3);
+	MatrixXcf res3 = m1 & (m2 & m3);
+	ASSERT_MAT(res1, res2);
+	ASSERT_MAT(res1, res3);
+}

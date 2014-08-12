@@ -91,7 +91,7 @@ void test_rand_unique()
 int main(int argc, char **argv)
 {
 	init();
-	pr((qureg1 * qureg3).sort());
+	pr((qureg1 & qureg3).sort());
 	//eigen_demo();
 	//test_cnot();
 

@@ -102,8 +102,8 @@ void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
 			if (!(base0 & t1) && !(base0 & t2))
 			{
 				basis[0] = base0;
-				basis[1] = base0 ^ t1;
-				basis[2] = base0 ^ t2;
+				basis[1] = base0 ^ t2;
+				basis[2] = base0 ^ t1;
 				basis[3] = base0 ^ (t1 | t2);
 				for (int i = 0; i < 4; ++i)
 					a(i) = amp[basis[i]];
@@ -118,8 +118,8 @@ void Qugate::generic_gate(Q, Matrix4cf& mat, int tar1, int tar2)
 		if (!(base0 & t1) && !(base0 & t2))
 		{
 			basis[0] = base0;
-			basis[1] = base0 ^ t1;
-			basis[2] = base0 ^ t2;
+			basis[1] = base0 ^ t2;
+			basis[2] = base0 ^ t1;
 			basis[3] = base0 ^ (t1 | t2);
 			for (int i = 0; i < 4 ; ++i)
 			{

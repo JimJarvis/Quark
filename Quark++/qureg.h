@@ -173,6 +173,11 @@ public:
 	INLINE size_t size() { return amp.size(); }
 
 	/*
+	 *	Explicit copying
+	 */
+	Qureg clone();
+
+	/*
 	 *	Get base stored at an internal index
 	 * dense and sparse
 	 */

@@ -55,37 +55,47 @@ TEST(Qugate, GenericGate1)
 	}
 }
 
-//TEST(Qugate, GenericGate2)
-//{
-//	Vector4cf oldBitAmp, newBitAmp;
-//	for (int nqubit : QubitRange(3))
-//	{
-//		Qureg qd = rand_qureg_dense(nqubit, 1);
-//		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
-//		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
-//		Qureg QQs[] = { qd, qs1, qs2 };
-//
-//		qubase t1, t2;
-//		for (Qureg& q : QQs)
-//		for (int tar1 : Range<>(nqubit-1))
-//		for (int tar2 : Range<>(tar1+1, nqubit))
-//		{
-//			Matrix2cf mat1 = rand_cxmat(2, 2);
-//			Matrix2cf mat2 = rand_cxmat(2, 2);
-//			//VectorXcf oldAmp = VectorXcf(q);
-//			generic_gate(q, (Matrix4cf) kronecker_mat(mat1, mat2), tar1, tar2);
-//			t1 = q.to_qubase(tar1); t2 = q.to_qubase(tar2);
-//			VectorXcf newAmp1 = VectorXcf(q);
-//			VectorXcf newAmp1 = VectorXcf(q);
-//			for (qubase base : Range<>(1 << nqubit))
-//			{
-//				if ((base & t1) || (base & t2)) continue; // symmetry
-//				oldBitAmp << 
-//					oldAmp(base), oldAmp(base ^ t1), oldAmp(base ^ t2), oldAmp(base ^ (t1 | t2));
-//				newBitAmp << 
-//					newAmp(base), newAmp(base ^ t1), newAmp(base ^ t2), newAmp(base ^ (t1 | t2));
-//				ASSERT_MAT(mat * oldBitAmp, newBitAmp);
-//			}
-//		}
-//	}
-//}
+TEST(Qugate, GenericGate2)
+{
+	Vector4cf newAmp1, newAmp2, newAmp3, newAmp4;
+	for (int nqubit : QubitRange(3))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 1, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		for (Qureg& q : QQs)
+		for (int tar1 : Range<>(nqubit-1))
+		for (int tar2 : Range<>(tar1+1, nqubit))
+		{
+			Matrix2cf mat1 = rand_cxmat(2, 2, .5);
+			Matrix2cf mat2 = rand_cxmat(2, 2, .5);
+
+			// Apply mat1 first, then mat2
+			Qureg qc1 = q.clone();
+			generic_gate(qc1, mat1, tar1);
+			generic_gate(qc1, mat2, tar2);
+			VectorXcf newAmp1 = VectorXcf(qc1);
+
+			// Apply mat2 first, then mat1
+			Qureg qc2 = q.clone();
+			generic_gate(qc2, mat2, tar2);
+			generic_gate(qc2, mat1, tar1);
+			VectorXcf newAmp2 = VectorXcf(qc2);
+
+			// Apply mat1 and mat2 at the same time by Matrix4cf
+			Qureg qc3 = q.clone();
+			generic_gate(qc3, (Matrix4cf) kronecker_mat(mat1, mat2), tar1, tar2);
+			VectorXcf newAmp3 = VectorXcf(qc3);
+
+			// Apply mat2 and mat1 at the same time by Matrix4cf
+			generic_gate(q, (Matrix4cf) kronecker_mat(mat2, mat1), tar2, tar1);
+			VectorXcf newAmp4 = VectorXcf(q);
+
+			ASSERT_MAT(newAmp1, newAmp2, "mat1 then mat2 VS mat2 then mat1");
+			ASSERT_MAT(newAmp1, newAmp3, "mat1 then mat2 VS mat1+mat2");
+			ASSERT_MAT(newAmp3, newAmp4, "mat1+mat2 VS mat2+mat1");
+		}
+	}
+}
