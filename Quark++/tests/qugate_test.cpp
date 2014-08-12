@@ -25,10 +25,16 @@ TEST(Qugate, Hadamard)
 	}
 }
 
+
 TEST(Qugate, Cnot)
 {
 	// pre-alloc for 2 rand bits
 	vector<int> randBitVec(2);
+	Vector2cf oldAmp, newAmp;
+	static Matrix2cf idrev2 = Matrix2cf::Identity(2, 2).colwise().reverse();
+	static Matrix2cf mat;
+	mat << 2, CX(-1, .5), CX(.3, -.1), CX(2, -1);
+
 	for (int nqubit : QubitRange(2))
 	{
 		Qureg qd = rand_qureg_dense(nqubit, 1);
@@ -49,17 +55,21 @@ TEST(Qugate, Cnot)
 			t = randBitVec[1];
 
 			// Apply CNOT
-			cnot(q, c, t);
+			//cnot(q, c, t);
+			generic_control(q, mat, c, t);
 			vecNew = VectorXcf(q);
 
 			c = q.to_bit(c);
 			t = q.to_bit(t);
-			
+
 			for (qubase base : Range<>(1 << nqubit))
 			{
-				ASSERT_CX_EQ(vec(base), 
-							 vecNew((base & c) ? base ^ t : base), 
-							 "base is " << bits2str(base));
+				oldAmp << vec(base), vec(base ^ t);
+				newAmp << vecNew(base), vecNew(base ^ t);
+				if (base & c)
+					ASSERT_MAT(mat * oldAmp, newAmp, "Controlled flip");
+				else
+					ASSERT_MAT(oldAmp, newAmp, "Uncontrolled");
 			}
 		}
 	}
