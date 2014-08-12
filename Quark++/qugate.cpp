@@ -134,8 +134,26 @@ void Qugate::pauli_Y(Q, int tar)
 *  1   0
 *  0   scale
 */
+// For Pauli_Z, phase_shift and cond_phase_shift
 template<typename FloatType> // plain float or CX
-INLINE void bit1_scale(Q, int tar, FloatType s)
+INLINE void bit1_scale_sparse_update(Q, qubase& base0, qubase& t, const FloatType& s)
+{
+	qubase base1 = base0 ^ t;
+	if (q.contains_base(base1))
+	{
+		if (!(base0 & t))
+			q[base1] *= s;
+	}
+	else
+	{
+		if (base0 & t)
+			q[base0] *= s;
+	}
+}
+
+// For Pauli_Z and phase_shift
+template<typename FloatType> // plain float or CX
+INLINE void bit1_scale(Q, int tar, const FloatType& s)
 {
 	qubase t = q.to_qubase(tar);
 	if (q.dense)
@@ -149,19 +167,7 @@ INLINE void bit1_scale(Q, int tar, FloatType s)
 	else // sparse
 		// Add new states to the end, if any
 	for (qubase base0 : q.base_iter())
-	{
-		qubase base1 = base0 ^ t;
-		if (q.contains_base(base1))
-		{
-			if (!(base0 & t))
-				q[base1] *= s;
-		}
-		else
-		{
-			if (base0 & t)
-				q[base0] *= s;
-		}
-	}
+		bit1_scale_sparse_update<FloatType>(q, base0, t, s);
 }
 
 void Qugate::pauli_Z(Q, int tar)
@@ -465,4 +471,23 @@ void Qugate::generic_ncontrol(Q, Matrix2cf& mat, vector<int>& ctrls, int tar)
 		for (qubase base : q.base_iter())
 			if (is_ctrl_on(base, ctrlBasis))
 				generic_sparse_update(q, base, t, mat);
+}
+
+void Qugate::control_phase_shift(Q, float theta, int ctrl, int tar)
+{
+	const CX phase = expi(theta);
+	qubase c = q.to_qubase(ctrl);
+	qubase t = q.to_qubase(tar);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base : q.base_iter_d())
+		if ((base & c) && !(base & t)) // base & t: don't flip (swap)  twice
+			amp[base ^ t] *= phase;
+	}
+	else // sparse
+		// Add new states to the end, if any
+	for (qubase base : q.base_iter())
+		if (base & c)
+			bit1_scale_sparse_update<CX>(q, base, t, phase);
 }

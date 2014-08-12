@@ -14,6 +14,9 @@ namespace Qugate
 	void generic_gate(Q, MatrixXcf&, vector<int>& tars);
 
 	///////************** Single-qubit gates **************///////
+	void hadamard(Q, int tar);
+	void hadamard(Q);
+
 	void pauli_X(Q, int tar);
 	void pauli_Y(Q, int tar);
 	void pauli_Z(Q, int tar);
@@ -35,9 +38,7 @@ namespace Qugate
 	void generic_ncontrol(Q, Matrix2cf&, vector<int>& ctrls, int tar);
 	void ncnot(Q, vector<int>& ctrls, int tar);
 
-	void hadamard(Q, int tar);
-	void hadamard(Q);
-
+	void control_phase_shift(Q, float theta, int ctrl, int tar);
 }
 
 #endif // qugate_h__

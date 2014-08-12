@@ -257,3 +257,37 @@ TEST(Qugate, GenericNcnot)
 		}
 	}
 }
+
+TEST(Qugate, CtrlPhaseShift)
+{
+	// pre-alloc for 2 rand bits
+	vector<int> randBitVec(2);
+
+	for (int nqubit : QubitRange(2))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		VectorXcf oldAmp, newAmp;
+		qubase c, t; // ctrl and target
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			oldAmp = VectorXcf(q);
+			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
+			c = randBitVec[0]; t = randBitVec[1];
+
+			float randTheta = rand_float(-PI / 2, PI / 2);
+			control_phase_shift(q, randTheta, c, t);
+			newAmp = VectorXcf(q);
+
+			c = q.to_qubase(c); t = q.to_qubase(t);
+			for (qubase base : Range<>(1 << nqubit))
+				test_generic_ctrl(base & c, oldAmp, newAmp, base, t, phase_shift_mat(randTheta));
+		}
+	}
+}

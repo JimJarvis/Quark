@@ -184,15 +184,15 @@ TEST(Qugate, PauliXYZ)
 	}
 }
 
-TEST(Qugate, PhaseScale)
+TEST(Qugate, PhaseScaleShiftRot)
 {
 	std::function<void(Qureg&, float, int)>
-		phaseFuncs[] = { phase_scale, phase_shift};
+		phaseFuncs[] = { phase_scale, phase_shift, rot_X, rot_Y, rot_Z };
 
 	std::function<Matrix2cf(float)>
-		verifyMats[] = { phase_scale_mat, phase_shift_mat };
+		verifyMats[] = { phase_scale_mat, phase_shift_mat, rot_X_mat, rot_Y_mat, rot_Z_mat };
 
-	for (int fi = 0; fi < 2; ++fi)
+	for (int fi = 0; fi < 5; ++fi)
 	{
 		auto phaseFunc = phaseFuncs[fi];
 		auto verifyMat = verifyMats[fi];
