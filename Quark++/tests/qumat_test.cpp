@@ -30,7 +30,7 @@ TEST(Qumat, QuregKronecker)
 		Qureg qs1 = rand_qureg_sparse(nqubit, sparse, 1, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, sparse/2 + 1, 2);
 
-		Qureg QQs[] = { qd1, qd2, qs1, qs2 };
+		Qureg QQs[] = { move(qd1), move(qd2), move(qs1), move(qs2) };
 
 		VectorXcf vec1, vec2, qvecProd;
 		for (Qureg& q1 : QQs)

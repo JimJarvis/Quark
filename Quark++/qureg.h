@@ -31,6 +31,12 @@ private:
 	 */
 	Qureg(bool dense, int nqubit, qubase initBase, size_t reservedSize, bool init);
 
+	/*
+	 *	Disallow copying. Use clone() explicitly when needed.
+	 */
+	Qureg(const Qureg&);
+	Qureg& operator=(const Qureg&);
+
 public:
 	int nqubit; // number of qubits
 	bool dense; // if we don't store basis[] explicitly
@@ -40,6 +46,26 @@ public:
 	 *	Dummy ctor for reference declaration
 	 */
 	Qureg() {}
+
+	/*
+	 *	Move constructor
+	 */
+	Qureg(Qureg&& other) :
+		nqubit(other.nqubit),
+		dense(other.dense),
+		amp(std::move(other.amp)),
+		basemap(std::move(other.basemap)),
+		basis(std::move(other.basis)) { }
+
+	Qureg& operator=(Qureg&& other)
+	{
+		nqubit = other.nqubit;
+		dense = other.dense;
+		amp = std::move(other.amp);
+		basemap = std::move(other.basemap);
+		basis = std::move(other.basis);
+		return *this;
+	}
 
 	/**********************************************
 	* Creation ctors  *

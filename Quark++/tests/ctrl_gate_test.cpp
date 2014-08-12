@@ -28,7 +28,7 @@ TEST(Qugate, SimpleCnot)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase c, t; // ctrl and target
@@ -60,7 +60,7 @@ TEST(Qugate, GenericCnot)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase c, t; // ctrl and target
@@ -95,7 +95,7 @@ TEST(Qugate, SimpleToffoli)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase c1, c2, t; // ctrl and target
@@ -131,7 +131,7 @@ TEST(Qugate, GenericToffoli)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase c1, c2, t; // ctrl and target
@@ -170,7 +170,7 @@ TEST(Qugate, SimpleNcnot)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase t; // ctrl and target
@@ -221,7 +221,7 @@ TEST(Qugate, GenericNcnot)
 		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
 		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
 
-		Qureg QQs[] = { qd, qs1, qs2 };
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
 
 		VectorXcf oldAmp, newAmp;
 		qubase t; // ctrl and target
