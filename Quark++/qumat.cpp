@@ -138,3 +138,39 @@ Matrix2cf Qumat::pauli_Z_mat()
 	)
 	return pauliZMat;
 }
+
+Matrix2cf Qumat::rot_X_mat(float theta)
+{
+	theta *= 0.5;
+	float c = cos(theta);
+	float s = sin(theta);
+	static Matrix2cf RotXMat;
+	RotXMat <<
+		CX(c), CX(0, -s),
+		CX(0, -s), CX(c);
+	return RotXMat;
+}
+
+Matrix2cf Qumat::rot_Y_mat(float theta)
+{
+	theta *= 0.5;
+	float c = cos(theta);
+	float s = sin(theta);
+	static Matrix2cf RotYMat;
+	RotYMat <<
+		CX(c), CX(-s),
+		CX(s), CX(c);
+	return RotYMat;
+}
+
+Matrix2cf Qumat::rot_Z_mat(float theta)
+{
+	theta *= 0.5;
+	float c = cos(theta);
+	float s = sin(theta);
+	static Matrix2cf RotZMat;
+	RotZMat <<
+		CX(c, -s), CX(0),
+		CX(0), CX(c, s);
+	return RotZMat;
+}

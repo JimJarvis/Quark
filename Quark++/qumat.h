@@ -48,9 +48,9 @@ namespace Qumat // quantum matrices
 	Matrix2cf pauli_Y_mat();
 	Matrix2cf pauli_Z_mat();
 
-	Matrix2cf rot_X_mat();
-	Matrix2cf rot_Y_mat();
-	Matrix2cf rot_Z_mat();
+	Matrix2cf rot_X_mat(float theta);
+	Matrix2cf rot_Y_mat(float theta);
+	Matrix2cf rot_Z_mat(float theta);
 }
 
 #endif // qumat_h__

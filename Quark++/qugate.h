@@ -18,9 +18,9 @@ namespace Qugate
 	void pauli_Y(Q, int tar);
 	void pauli_Z(Q, int tar);
 
-	void rot_X(Q, int tar);
-	void rot_Y(Q, int tar);
-	void rot_Z(Q, int tar);
+	void rot_X(Q, float theta, int tar);
+	void rot_Y(Q, float theta, int tar);
+	void rot_Z(Q, float theta, int tar);
 
 	///////************** Controlled gates **************///////
 	void generic_control(Q, Matrix2cf&, int ctrl, int tar);

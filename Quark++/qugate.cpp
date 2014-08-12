@@ -162,6 +162,21 @@ void Qugate::pauli_Z(Q, int tar)
 
 }
 
+void Qugate::rot_X(Q, float theta, int tar)
+{
+	generic_gate(q, rot_X_mat(theta), tar);
+}
+
+void Qugate::rot_Y(Q, float theta, int tar)
+{
+	generic_gate(q, rot_Y_mat(theta), tar);
+}
+
+void Qugate::rot_Z(Q, float theta, int tar)
+{
+	generic_gate(q, rot_Z_mat(theta), tar);
+}
+
 /**********************************************/
 /*********** Multi-qubit gates  ***********/
 /**********************************************/
