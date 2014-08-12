@@ -177,6 +177,21 @@ void Qugate::rot_Z(Q, float theta, int tar)
 	generic_gate(q, rot_Z_mat(theta), tar);
 }
 
+void Qugate::phase_scale(Q, float theta, int tar)
+{
+	const CX phase = expi(theta);
+	qubase t = q.to_qubase(tar);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			amp[base0] *= phase;
+	}
+	else // sparse
+		for (qubase base0 : q.base_iter())
+			q[base0] *= phase;
+}
+
 /**********************************************/
 /*********** Multi-qubit gates  ***********/
 /**********************************************/

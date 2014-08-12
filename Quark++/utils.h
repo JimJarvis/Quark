@@ -31,6 +31,7 @@ typedef unsigned long long qubase;
 
 // Amplitude tolerance: smaller than this will be considered 0
 #define TOL 1e-7
+#define PI 3.1415926535897932384626434
 
 // Force inline
 #ifdef _MSC_VER

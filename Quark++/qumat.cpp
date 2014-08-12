@@ -165,12 +165,20 @@ Matrix2cf Qumat::rot_Y_mat(float theta)
 
 Matrix2cf Qumat::rot_Z_mat(float theta)
 {
-	theta *= 0.5;
-	float c = cos(theta);
-	float s = sin(theta);
+	CX x = expi(theta / 2);
 	static Matrix2cf RotZMat;
 	RotZMat <<
-		CX(c, -s), CX(0),
-		CX(0), CX(c, s);
+		conj(x), CX(0),
+		CX(0), x;
 	return RotZMat;
+}
+
+Matrix2cf Qumat::phase_scale_mat(float theta)
+{
+	CX x = expi(theta);
+	static Matrix2cf PhaseScaleMat;
+	PhaseScaleMat <<
+		x, CX(0),
+		CX(0), x;
+	return PhaseScaleMat;
 }

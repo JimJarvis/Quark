@@ -183,3 +183,28 @@ TEST(Qugate, PauliXYZ)
 		}
 	}
 }
+
+TEST(Qugate, PhaseScale)
+{
+	for (int nqubit : QubitRange(2))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		qubase t;
+		for (Qureg& q : QQs)
+		for (int tar : Range<>(nqubit))
+		{
+			float randTheta = rand_float(-PI/2, PI/2);
+			Qureg qc = q.clone();
+			generic_gate(qc, phase_scale_mat(randTheta), tar);
+			VectorXcf newAmp1 = VectorXcf(qc);
+
+			phase_scale(q, randTheta, tar);
+			VectorXcf newAmp2 = VectorXcf(qc);
+			ASSERT_MAT(newAmp1, newAmp2);
+		}
+	}
+}

@@ -22,6 +22,8 @@ namespace Qugate
 	void rot_Y(Q, float theta, int tar);
 	void rot_Z(Q, float theta, int tar);
 
+	void phase_scale(Q, float theta, int tar);
+
 	///////************** Controlled gates **************///////
 	void generic_control(Q, Matrix2cf&, int ctrl, int tar);
 	void cnot(Q, int ctrl, int tar);
