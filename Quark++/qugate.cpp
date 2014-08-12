@@ -130,9 +130,12 @@ void Qugate::pauli_Y(Q, int tar)
 }
 
 /*
-*	Explicitly expand the code for optimization
+* Helper for pauli_Z and phase_shift that has single-bit matrix:
+*  1   0
+*  0   scale
 */
-void Qugate::pauli_Z(Q, int tar)
+template<typename FloatType> // plain float or CX
+INLINE void bit1_scale(Q, int tar, FloatType s)
 {
 	qubase t = q.to_qubase(tar);
 	if (q.dense)
@@ -141,7 +144,7 @@ void Qugate::pauli_Z(Q, int tar)
 		for (qubase base0 : q.base_iter_d())
 			// only process base with 0 at the given target
 			if (!(base0 & t))
-				amp[base0 ^ t] *= -1;
+				amp[base0 ^ t] *= s;
 	}
 	else // sparse
 		// Add new states to the end, if any
@@ -151,15 +154,24 @@ void Qugate::pauli_Z(Q, int tar)
 		if (q.contains_base(base1))
 		{
 			if (!(base0 & t))
-				q[base1] *= -1;
+				q[base1] *= s;
 		}
 		else
 		{
 			if (base0 & t)
-				q[base0] *= -1;
+				q[base0] *= s;
 		}
 	}
+}
 
+void Qugate::pauli_Z(Q, int tar)
+{
+	bit1_scale<float>(q, tar, -1);
+}
+
+void Qugate::phase_shift(Q, float theta, int tar)
+{
+	bit1_scale<CX>(q, tar, expi(theta));
 }
 
 void Qugate::rot_X(Q, float theta, int tar)

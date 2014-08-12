@@ -58,6 +58,7 @@ namespace Qumat // quantum matrices
 	Matrix2cf rot_Z_mat(float theta);
 
 	Matrix2cf phase_scale_mat(float theta);
+	Matrix2cf phase_shift_mat(float theta);
 }
 
 #endif // qumat_h__

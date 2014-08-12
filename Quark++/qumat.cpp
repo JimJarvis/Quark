@@ -182,3 +182,13 @@ Matrix2cf Qumat::phase_scale_mat(float theta)
 		CX(0), x;
 	return PhaseScaleMat;
 }
+
+Matrix2cf Qumat::phase_shift_mat(float theta)
+{
+	CX x = expi(theta);
+	static Matrix2cf PhaseScaleMat;
+	PhaseScaleMat <<
+		CX(1), CX(0),
+		CX(0), x;
+	return PhaseScaleMat;
+}
