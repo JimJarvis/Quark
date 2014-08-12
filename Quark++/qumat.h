@@ -69,6 +69,9 @@ namespace Qumat // quantum matrices
 
 	// Identity matrix with lower right corner == phase_shift_mat
 	Matrix4cf control_phase_shift_mat(float theta);
+
+	Matrix4cf swap_mat();
+	Matrix<CX, 8, 8> cswap_mat();
 }
 
 #endif // qumat_h__

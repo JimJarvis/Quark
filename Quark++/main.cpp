@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 	m1 << 10, 20,
 		40, 50;
 
-	pr(generic_control_mat(3, m1));
+	pr(cswap_mat());
 
 	return 0;
 }

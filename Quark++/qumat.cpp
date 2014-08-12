@@ -210,3 +210,26 @@ Matrix4cf Qumat::control_phase_shift_mat(float theta)
 	CtrlPhaseShiftMat(3, 3) = expi(theta);
 	return CtrlPhaseShiftMat;
 }
+
+Matrix4cf Qumat::swap_mat()
+{
+	static Matrix4cf SwapMat;
+	INIT_ONCE(
+		SwapMat <<
+			1, 0, 0, 0,
+			0, 0, 1, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 1;
+	)
+	return SwapMat;
+}
+
+Matrix<CX, 8, 8> Qumat::cswap_mat()
+{
+	static Matrix<CX, 8, 8> CswapMat;
+	INIT_ONCE(
+		CswapMat = Matrix<CX, 8, 8>::Identity(8, 8);
+		CswapMat.block(5, 5, 2, 2) = Matrix2cf::Identity(2, 2).colwise().reverse();
+	)
+	return CswapMat;
+}
