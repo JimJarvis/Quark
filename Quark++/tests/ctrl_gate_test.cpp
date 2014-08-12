@@ -6,16 +6,9 @@ void test_generic_ctrl(
 	bool isCtrlOn, VectorXcf& oldAmp, VectorXcf& newAmp, qubase& base, qubase& t, Matrix2cf& mat)
 {
 	Vector2cf oldBitAmp, newBitAmp;
-	if (base & t)
-	{
-		oldBitAmp << oldAmp(base ^ t), oldAmp(base);
-		newBitAmp << newAmp(base ^ t), newAmp(base);
-	}
-	else
-	{
-		oldBitAmp << oldAmp(base), oldAmp(base ^ t);
-		newBitAmp << newAmp(base), newAmp(base ^ t);
-	}
+	if (base & t) return; // only process base with target 0, because of symmetry
+	oldBitAmp << oldAmp(base), oldAmp(base ^ t);
+	newBitAmp << newAmp(base), newAmp(base ^ t);
 
 	if (isCtrlOn)
 		ASSERT_MAT(mat * oldBitAmp, newBitAmp, "Controlled");

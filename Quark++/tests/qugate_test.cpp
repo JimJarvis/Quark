@@ -46,7 +46,7 @@ TEST(Qugate, GenericGate1)
 			VectorXcf newAmp = VectorXcf(q);
 			for (qubase base : Range<>(1 << nqubit))
 			{
-				if (base & t) base ^= t;
+				if (base & t) continue; // symmetry
 				oldBitAmp << oldAmp(base), oldAmp(base ^ t);
 				newBitAmp << newAmp(base), newAmp(base ^ t);
 				ASSERT_MAT(mat * oldBitAmp, newBitAmp);
