@@ -497,25 +497,24 @@ void Qugate::control_phase_shift(Q, float theta, int ctrl, int tar)
 INLINE void swap_sparse_update(Q, const qubase& base, const qubase& t1, const qubase& t2)
 {
 	// only process base with 00 at the given target
-	if (!(base & t1) && !(base & t2) && q.contains_base(base))
+	if (!(base & t1) && !(base & t2))
 	{
-
-	}
-	qubase base1 = base ^ t1;
-	qubase base2 = base ^ t2;
-	bool hasBase1 = q.contains_base(base1);
-	bool hasBase2 = q.contains_base(base2);
-	if (!(base & t1) && !(base & t2)) // 00 case
-	if (q.contains_base(base1))
-	{
-		/* don't flip (swap) twice */
-		if (base & t1)
-			std::swap(q[base], q[base1]);
-	}
-	else
-	{
-		q.add_base(base1, q[base]);
-		q[base] = 0;
+		qubase base1 = base ^ t1;
+		qubase base2 = base ^ t2;
+		bool hasBase1 = q.contains_base(base1);
+		bool hasBase2 = q.contains_base(base2);
+		if (hasBase1 && hasBase2)
+			std::swap(q[base1], q[base2]);
+		else if (hasBase1 && !hasBase2)
+		{
+			q.add_base(base2, q[base1]);
+			q[base1] = 0;
+		}
+		else if (hasBase2 && !hasBase1)
+		{
+			q.add_base(base1, q[base2]);
+			q[base2] = 0;
+		}
 	}
 }
 
@@ -539,5 +538,20 @@ void Qugate::swap(Q, int tar1, int tar2)
 
 void Qugate::cswap(Q, int ctrl, int tar1, int tar2)
 {
-
+	qubase t1 = q.to_qubase(tar1);
+	qubase t2 = q.to_qubase(tar2);
+	qubase c = q.to_qubase(ctrl);
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		for (qubase base0 : q.base_iter_d())
+			// only process base with 00 at the given target
+		if (!(base0 & t1) && !(base0 & t2) && (base0 & c))
+			std::swap(amp[base0 ^ t1], amp[base0 ^ t2]);
+	}
+	else // sparse
+		// Inefficient: pretend to be dense and loop all over
+	for (qubase base0 : q.base_iter_d())
+		if (base0 & c)
+			swap_sparse_update(q, base0, t1, t2);
 }
