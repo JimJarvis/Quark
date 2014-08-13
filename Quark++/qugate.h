@@ -39,6 +39,11 @@ namespace Qugate
 	void ncnot(Q, vector<int>& ctrls, int tar);
 
 	void control_phase_shift(Q, float theta, int ctrl, int tar);
+
+	///////************** Swap gates **************///////
+	void swap(Q, int tar1, int tar2);
+
+	void cswap(Q, int ctrl, int tar1, int tar2);
 }
 
 #endif // qugate_h__

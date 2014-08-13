@@ -19,8 +19,6 @@ namespace Qumat // quantum matrices
 		return kronecker(q1, q2, q1.dense && q2.dense);
 	}
 
-	void normalize(Q);
-
 	INLINE CX expi(float theta)
 	{
 		return CX(cos(theta), sin(theta));

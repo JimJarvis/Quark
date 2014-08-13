@@ -219,3 +219,72 @@ TEST(Qugate, PhaseScaleShiftRot)
 		}
 	}
 }
+
+TEST(Qugate, Swap)
+{
+	// pre-alloc for 2 rand bits
+	vector<int> randBitVec(2);
+
+	for (int nqubit : QubitRange(2))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		VectorXcf oldAmp, newAmp;
+		qubase t1, t2;
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			oldAmp = VectorXcf(q);
+			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, 2, nqubit));
+			t1 = randBitVec[0]; t2 = randBitVec[1];
+
+			Qureg qc = q.clone();
+			generic_gate(qc, swap_mat(), t1, t2);
+			oldAmp = VectorXcf(qc);
+
+			Qugate::swap(q, t1, t2);
+			newAmp = VectorXcf(q);
+
+			ASSERT_MAT(oldAmp, newAmp);
+		}
+	}
+}
+
+TEST(Qugate, Cswap)
+{
+	vector<int> randBitVec(3);
+
+	for (int nqubit : QubitRange(4))
+	{
+		Qureg qd = rand_qureg_dense(nqubit, 1);
+		Qureg qs1 = rand_qureg_sparse(nqubit, half_fill(nqubit), 2, false);
+		Qureg qs2 = rand_qureg_sparse(nqubit, half_fill(nqubit) / 2 + 1, 1, true);
+
+		Qureg QQs[] = { move(qd), move(qs1), move(qs2) };
+
+		VectorXcf oldAmp, newAmp;
+		qubase c, t1, t2; // ctrl and target
+		for (Qureg& q : QQs)
+		for (int trial : Range<>(20))
+		{
+			oldAmp = VectorXcf(q);
+			// generate two random bits
+			rand_shuffle(rand_unique(randBitVec, 3, nqubit));
+			c = randBitVec[0]; t1 = randBitVec[1]; t2 = randBitVec[2];
+
+			Qureg qc = q.clone();
+			generic_gate(qc, cswap_mat(), randBitVec);
+			oldAmp = VectorXcf(qc);
+
+			cswap(q, c, t1, t2);
+			newAmp = VectorXcf(q);
+
+			ASSERT_MAT(oldAmp, newAmp);
+		}
+	}
+}
