@@ -110,7 +110,7 @@ public:
 	/*
 	 * Iterate over all basis from 0 to 1<<nqubit
 	 */
-	INLINE Range<qubase> base_iter_d() { return Range<qubase>(1 << nqubit); }
+#define DENSE_ITER(base) for (qubase base = 0; base < (1<<q.nqubit); ++base)
 
 	/**********************************************/
 	/*********** Sparse ONLY  ***********/

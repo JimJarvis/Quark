@@ -64,10 +64,10 @@ inline void ASSERT_MAT(const MatrixXcf& m1, const MatrixXcf& m2, const string& e
 ///////************** Generate random qubits **************///////
 inline Qureg rand_qureg_dense(int nqubit, float symm)
 {
-	Qureg qd = Qureg::create<true>(nqubit);
-	for (qubase base : qd.base_iter_d())
-		qd.set_base_d(base, rand_cx(symm));
-	return qd;
+	Qureg q = Qureg::create<true>(nqubit);
+	DENSE_ITER(base)
+		q.set_base_d(base, rand_cx(symm));
+	return q;
 }
 
 /*

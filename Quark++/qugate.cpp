@@ -83,7 +83,7 @@ void Qugate::generic_gate(Q, const Matrix2cf& mat, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 0 at the given target
 			generic_dense_update(amp, base0, t, mat);
 	}
@@ -113,7 +113,7 @@ void Qugate::pauli_X(Q, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 0 at the given target
 			if (!(base0 & t))
 				std::swap(amp[base0], amp[base0 ^ t]);
@@ -159,7 +159,7 @@ INLINE void bit1_scale(Q, int tar, const FloatType& s)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 0 at the given target
 			if (!(base0 & t))
 				amp[base0 ^ t] *= s;
@@ -202,7 +202,7 @@ void Qugate::phase_scale(Q, float theta, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			amp[base0] *= phase;
 	}
 	else // sparse
@@ -222,7 +222,7 @@ void Qugate::generic_gate(Q, const Matrix4cf& mat, int tar1, int tar2)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 00 at the given targets
 			if (!(base0 & t1) && !(base0 & t2))
 			{
@@ -239,7 +239,7 @@ void Qugate::generic_gate(Q, const Matrix4cf& mat, int tar1, int tar2)
 	}
 	else // sparse
 		// Not-so-efficient implementation: pretend to be dense
-	for (qubase base0 : q.base_iter_d())
+	DENSE_ITER(base0)
 		if (!(base0 & t1) && !(base0 & t2))
 		{
 			basis[0] = base0;
@@ -312,7 +312,7 @@ void Qugate::generic_gate(Q, const MatrixXcf& mat, vector<int>& tars)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 00 at the given targets
 		if (is_tar_all_zero(base0, tarBasis))
 		{
@@ -326,7 +326,7 @@ void Qugate::generic_gate(Q, const MatrixXcf& mat, vector<int>& tars)
 	}
 	else // sparse
 		// Not-so-efficient implementation: pretend to be dense
-	for (qubase base0 : q.base_iter_d())
+	DENSE_ITER(base0)
 	if (is_tar_all_zero(base0, tarBasis))
 	{
 		flipped_basis(basis, base0, tarBasis);
@@ -358,7 +358,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 			if ((base & c) && (base & t)) // base & t: don't flip (swap)  twice
 				std::swap(amp[base ^ t], amp[base]);
 	}
@@ -376,7 +376,7 @@ void Qugate::generic_control(Q, const Matrix2cf& mat, int ctrl, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 			if (base & c) // base & t: don't flip (swap)  twice
 				generic_dense_update(amp, base, t, mat);
 	}
@@ -395,7 +395,7 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 		if ((base & c1) && (base & c2) && (base & t)) // base & t: don't flip (swap)  twice
 			std::swap(amp[base ^ t], amp[base]);
 	}
@@ -414,7 +414,7 @@ void Qugate::generic_toffoli(Q, const Matrix2cf& mat, int ctrl1, int ctrl2, int 
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 		if ((base & c1) && (base & c2)) // base & t: don't flip (swap)  twice
 			generic_dense_update(amp, base, t, mat);
 	}
@@ -444,7 +444,7 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 			if (is_ctrl_on(base, ctrlBasis) && (base & t))
 				std::swap(amp[base ^ t], amp[base]);
 	}
@@ -462,7 +462,7 @@ void Qugate::generic_ncontrol(Q, const Matrix2cf& mat, vector<int>& ctrls, int t
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 			if (is_ctrl_on(base, ctrlBasis))
 				generic_dense_update(amp, base, t, mat);
 	}
@@ -481,7 +481,7 @@ void Qugate::control_phase_shift(Q, float theta, int ctrl, int tar)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base : q.base_iter_d())
+		DENSE_ITER(base)
 		if ((base & c) && !(base & t)) // base & t: don't flip (swap)  twice
 			amp[base ^ t] *= phase;
 	}
@@ -525,14 +525,14 @@ void Qugate::swap(Q, int tar1, int tar2)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 		// only process base with 00 at the given target
 		if (!(base0 & t1) && !(base0 & t2))
 			std::swap(amp[base0 ^ t1], amp[base0 ^ t2]);
 	}
 	else // sparse
 	// Inefficient: pretend to be dense and loop all over
-	for (qubase base0 : q.base_iter_d())
+	DENSE_ITER(base0)
 		swap_sparse_update(q, base0, t1, t2);
 }
 
@@ -544,14 +544,14 @@ void Qugate::cswap(Q, int ctrl, int tar1, int tar2)
 	if (q.dense)
 	{
 		auto& amp = q.amp;
-		for (qubase base0 : q.base_iter_d())
+		DENSE_ITER(base0)
 			// only process base with 00 at the given target
 		if (!(base0 & t1) && !(base0 & t2) && (base0 & c))
 			std::swap(amp[base0 ^ t1], amp[base0 ^ t2]);
 	}
 	else // sparse
 		// Inefficient: pretend to be dense and loop all over
-	for (qubase base0 : q.base_iter_d())
+	DENSE_ITER(base0)
 		if (base0 & c)
 			swap_sparse_update(q, base0, t1, t2);
 }
