@@ -66,7 +66,7 @@ INLINE double rand_double()
 	return (double)rand() / RAND_MAX;
 }
 
-INLINE float rand_float(float low, float high)
+INLINE float rand_float(float low = 0, float high = 1)
 {
 	float f = (float) rand() / RAND_MAX;
 	return low + f * (high - low);

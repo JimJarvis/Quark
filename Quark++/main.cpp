@@ -149,16 +149,13 @@ int main(int argc, char **argv)
 	m1 << 10, 20,
 		40, 50;
 
-	srand(time(0));
-	Qureg q = Qureg::create<true>(6, qubase(19));
+	Qureg q = Qureg::create<false>(3, 1, qubase(0));
+	//q = Qureg::create<true>(3, qubase(0));
 	hadamard(q);
-	pvec(q.amp);
-	vector<int> hist(64); // histogram
 
-	for (int i : Range<>(6400))
-		++hist[q.measure()];
-
-	pvec(hist);
+	rand_seed();
+	pr("printed " << measure(q, 0));
+	pr(q);
 
 	return 0;
 

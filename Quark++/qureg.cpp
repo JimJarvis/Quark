@@ -55,8 +55,8 @@ Qureg& Qureg::purge()
 			basemap.erase(base);
 	}
 	// update with new vectors
-	amp = purgedAmp;
-	basis = purgedBasis;
+	amp = move(purgedAmp);
+	basis = move(purgedBasis);
 	return *this;
 }
 
@@ -145,20 +145,20 @@ Qureg::operator VectorXcf()
 	return vec;
 }
 
-qubase Qureg::measure()
+qubase measure(Q)
 {
-	float prob = rand_float(0, 1);
-	if (dense)
-		for (qubase base = 0; base < 1 << nqubit; ++base)
+	float prob = rand_float();
+	if (q.dense)
+		DENSE_ITER(base)
 		{
-			prob -= norm(amp[base]);
+			prob -= norm(q.amp[base]);
 			if (prob <= 0)
 				return base;
 		}
 	else
-		for (qubase& base : base_iter())
+		for (qubase& base : q.base_iter())
 		{
-			prob -= norm((*this)[base]);
+			prob -= norm(q[base]);
 			if (prob <= 0)
 				return base;
 		}
@@ -167,7 +167,54 @@ qubase Qureg::measure()
 	throw QuantumException("Measurement fails, probability doesn't sum up to 1.");
 }
 
-int Qureg::measure(int tar)
+int measure(Q, int tar)
 {
-	return 0;
+	int result = 0;
+	float prob = 0; // probability of being 1
+	qubase t = q.to_qubase(tar);
+
+	// get probability of this target bit collapsing to 0 or 1
+	if (q.dense)
+	{
+		auto& amp = q.amp;
+		DENSE_ITER(base)
+			if (base & t) // target bit 1
+				prob += norm(amp[base]);
+		if (prob > rand_float())
+			result = 1;
+		float newNorm = result == 1 ? sqrt(prob) : sqrt(1 - prob);
+		// eliminate all states that don't agree
+		DENSE_ITER(base)
+			if (((base & t) != 0) == result)
+				amp[base] /= newNorm;
+			else
+				amp[base] = CX(0);
+	}
+	else // sparse
+	{
+		for (qubase& base : q.base_iter())
+			if (base & t) // target bit 1
+				prob += norm(q[base]);
+		if (prob > rand_float())
+			result = 1;
+		float newNorm = result == 1 ? sqrt(prob) : sqrt(1 - prob);
+
+		vector<CX> newAmp;
+		newAmp.reserve(q.amp.capacity() / 2);
+		vector<qubase> newBasis;
+		newBasis.reserve(q.basis.capacity() / 2);
+		size_t s = 0; // new size
+		for (qubase& base : q.base_iter())
+			if (((base & t) != 0) == result)
+			{
+				newAmp.push_back(q[base] / newNorm);
+				newBasis.push_back(base);
+				q.basemap[base] = s++;
+			}
+			else // eliminate that base
+				q.basemap.erase(base);
+		q.amp = move(newAmp);
+		q.basis = move(newBasis);
+	}
+	return result;
 }

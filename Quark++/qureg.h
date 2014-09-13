@@ -221,12 +221,12 @@ public:
 	/*
 	 *	Measure the whole register
 	 */
-	qubase measure();
+	friend qubase measure(Q);
 
 	/*
 	 *	Return either 0 or 1
 	 */
-	int measure(int tar);
+	friend int measure(Q, int tar);
 };
 
 
