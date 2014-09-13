@@ -219,6 +219,18 @@ INLINE int bitwise_dot(uint64_t b1, uint64_t b2)
 	return bit_count(b1 & b2) % 2;
 }
 
+/*
+ *	Norm of a vector
+ */
+template<typename T>
+INLINE T norm(vector<T> x)
+{
+	T ans = 0;
+	for (T& val : x)
+		ans += val * val;
+	return sqrt(ans);
+}
+
 ///////************** For-range loop iterables **************///////
 /*
  * inclusive/exclusive: 

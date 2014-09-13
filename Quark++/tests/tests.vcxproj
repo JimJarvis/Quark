@@ -152,6 +152,7 @@
     <ClCompile Include="..\qumat.cpp" />
     <ClCompile Include="..\qureg.cpp" />
     <ClCompile Include="ctrl_gate_test.cpp" />
+    <ClCompile Include="other_test.cpp" />
     <ClCompile Include="qugate_test.cpp" />
     <ClCompile Include="qumat_test.cpp" />
   </ItemGroup>
