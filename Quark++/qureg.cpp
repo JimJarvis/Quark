@@ -144,3 +144,30 @@ Qureg::operator VectorXcf()
 			vec(base) = contains_base(base) ? (*this)[base] : 0;
 	return vec;
 }
+
+qubase Qureg::measure()
+{
+	float prob = rand_float(0, 1);
+	if (dense)
+		for (qubase base = 0; base < 1 << nqubit; ++base)
+		{
+			prob -= norm(amp[base]);
+			if (prob <= 0)
+				return base;
+		}
+	else
+		for (qubase& base : base_iter())
+		{
+			prob -= norm((*this)[base]);
+			if (prob <= 0)
+				return base;
+		}
+
+	// should never be here
+	throw QuantumException("Measurement fails, probability doesn't sum up to 1.");
+}
+
+int Qureg::measure(int tar)
+{
+	return 0;
+}

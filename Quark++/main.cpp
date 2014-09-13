@@ -149,7 +149,17 @@ int main(int argc, char **argv)
 	m1 << 10, 20,
 		40, 50;
 
-	pr(cswap_mat());
+	srand(time(0));
+	Qureg q = Qureg::create<true>(6, qubase(19));
+	hadamard(q);
+	pvec(q.amp);
+	vector<int> hist(64); // histogram
+
+	for (int i : Range<>(6400))
+		++hist[q.measure()];
+
+	pvec(hist);
 
 	return 0;
+
 }

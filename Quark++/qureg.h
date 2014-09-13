@@ -218,7 +218,15 @@ public:
 	 */
 	operator VectorXcf();
 
-	///////************** Qugate **************///////
+	/*
+	 *	Measure the whole register
+	 */
+	qubase measure();
+
+	/*
+	 *	Return either 0 or 1
+	 */
+	int measure(int tar);
 };
 
 
