@@ -1,6 +1,6 @@
 #include "tests.h"
 
-TEST(Algor, Deutsch)
+TEST(Algor, DeutschJosza)
 {
 	for (int nbit : Range<>(1, 7))
 		for (uint64_t secret_u : Range<uint64_t>(1 << nbit))

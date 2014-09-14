@@ -219,6 +219,21 @@ int measure(Q, int tar)
 	return result;
 }
 
+uint64_t measure_top(Q, int topN, bool destructive)
+{
+	if (destructive)
+	{
+		// partial measurement: discard the last output bits
+		uint64_t result = 0;
+		for (int qi = 0; qi < topN; ++qi)
+			// going from msb to lsb
+			result |= measure(q, qi) << (topN - 1 - qi);
+		return result;
+	}
+	else
+		return measure(q) >> (q.nqubit - topN);
+}
+
 
 // Apply to n most significant bits
 void apply_oracle(Q, oracle_function oracle, int inputQubits)

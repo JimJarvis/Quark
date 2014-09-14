@@ -230,6 +230,11 @@ public:
 	 *	Return either 0 or 1
 	 */
 	friend int measure(Q, int tar);
+	/*
+	 *	top n qubits
+	 * destructive, if true (which is physically the case) will alter the qureg state
+	 */
+	friend uint64_t measure_top(Q, int topN, bool destructive = true);
 
 	/*
 	 *	Apply an int -> int classical oracle on this register

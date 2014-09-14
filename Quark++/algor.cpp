@@ -37,17 +37,14 @@ uint64_t deutsch_josza_parity(int nbit, uint64_t secret_u, bool dense)
 	for (int qi = 0; qi < nbit; ++qi)
 		hadamard(q, qi);
 
-	// Randomly choose a measurement scheme
-	if (rand_int(0, 2) == 0)
-		// full measurement: discard the last output bit
-		return measure(q) >> 1;
-	else
-	{
-		// partial measurement: discard the last output bit
-		uint64_t result = 0; 
-		for (int qi = 0; qi < nbit; ++qi)
-			// going from msb to lsb
-			result |= measure(q, qi) << (nbit-1 - qi);
-		return result;
-	}
+	// Check consistency of measurement schemes
+	// result from full measurement
+	uint64_t result_full = measure_top(q, nbit, false);
+	// result from partial measurement
+	uint64_t result_partial = measure_top(q, nbit);
+
+	if (result_full != result_partial)
+		throw QuantumException("Full measurement doesn't agree with partial measurement");
+
+	return result_full;
 }
