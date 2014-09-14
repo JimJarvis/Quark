@@ -16,6 +16,7 @@ namespace Qugate
 	///////************** Single-qubit gates **************///////
 	void hadamard(Q, int tar);
 	void hadamard(Q);
+	void hadamard_top(Q, int topQubits);
 
 	void pauli_X(Q, int tar);
 	void pauli_Y(Q, int tar);

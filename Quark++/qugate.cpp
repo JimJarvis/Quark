@@ -104,6 +104,12 @@ void Qugate::hadamard(Q)
 		hadamard(q, qi);
 }
 
+void Qugate::hadamard_top(Q, int topQubits)
+{
+	for (int qi = 0; qi < topQubits; ++qi)
+		hadamard(q, qi);
+}
+
 /*
  *	Explicitly expand the code for optimization
  */
