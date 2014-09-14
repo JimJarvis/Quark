@@ -1,6 +1,7 @@
 #include "qureg.h"
 #include "qumat.h"
 #include "qugate.h"
+#include "algor.h"
 #include "vld.h"
 using namespace Qumat;
 using namespace Qugate;
@@ -153,9 +154,14 @@ int main(int argc, char **argv)
 	//q = Qureg::create<true>(3, qubase(0));
 	hadamard(q);
 
-	rand_seed();
+	rand_seed(10);
 	pr("printed " << measure(q, 0));
 	pr(q);
+
+	ptitle("ALGORITHMS");
+	//for (int i = 0; i < 15 ; ++i)
+	//	deutsch_josza_parity(4, i);
+	pr(deutsch_josza_parity(2, 1, false));
 
 	return 0;
 

@@ -6,6 +6,7 @@
 #include "../qureg.h"
 #include "../qugate.h"
 #include "../qumat.h"
+#include "../algor.h"
 using namespace Qumat;
 using namespace Qugate;
 using namespace Eigen;
