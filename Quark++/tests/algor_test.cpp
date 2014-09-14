@@ -36,15 +36,14 @@ TEST(Algor, Simon)
 							results[y] = prob;
 				}
 
-				// should all be the same
+				uint64_t half_size = 1 << (nbit - 1);
+				ASSERT_EQ(results.size(), half_size) << "Should have exactly half non-zero states";
 				float equal_prob = 0;
 				for (auto& entry : results)
 				{
 					ASSERT_EQ(bitwise_dot(entry.first, period), 0) << "period * y == 0";
-					if (equal_prob == 0)
-						equal_prob = entry.second;
-					else
-						ASSERT_EQ(equal_prob, entry.second);
+					float expected_prob = 1.0 / half_size;
+					ASSERT_NEAR(entry.second, expected_prob, TOL) << "probability should be " << expected_prob;
 				}
 			}
 }
