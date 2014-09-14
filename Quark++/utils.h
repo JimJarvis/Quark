@@ -30,7 +30,7 @@ typedef unsigned long long qubase;
 #define pause std::cin.get()
 
 // Amplitude tolerance: smaller than this will be considered 0
-#define TOL 1e-7
+#define TOL 1.5e-7
 #define PI 3.1415926535897932384626434
 
 // Force inline
@@ -235,7 +235,7 @@ INLINE T norm(vector<T> x)
  *	Hashmap contains
  */
 template<typename Key, typename T>
-INLINE bool contains(unordered_map<Key, T> map, Key key)
+INLINE bool contains(unordered_map<Key, T>& map, Key key)
 {
 	return map.find(key) != map.end();
 }

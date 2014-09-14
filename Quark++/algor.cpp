@@ -17,12 +17,12 @@ uint64_t deutsch_josza_parity(int nbit, uint64_t secret_u, bool dense)
 	// return parity
 	oracle_function oracle = [=](uint64_t x)
 	{
-		uint64_t dot = x & secret_u;
+		/*uint64_t dot = x & secret_u;
 		uint64_t ans = 0;
 		for (int bi = 0; bi < nbit ; ++bi)
 			if (dot & (1 << bi))
-				ans = !ans;
-		return ans;
+				ans = !ans;*/
+		return bitwise_dot(x, secret_u);
 	};
 
 	// output bit init to 1, all others 0
