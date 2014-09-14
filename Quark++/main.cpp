@@ -161,7 +161,8 @@ int main(int argc, char **argv)
 	ptitle("ALGORITHMS");
 	//for (int i = 0; i < 15 ; ++i)
 	//	deutsch_josza_parity(4, i);
-	pr(deutsch_josza_parity(2, 1, false));
+	auto pair_result = simon_period(4, 1, true);
+	pr("Simon's " << pair_result.first << "\nPeriod = " << pair_result.second);
 
 	return 0;
 

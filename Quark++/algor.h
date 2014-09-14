@@ -13,11 +13,18 @@ uint64_t deutsch_josza_parity(int nbit, uint64_t secret_u, bool dense = true);
 /*
  *	Find s such that  f(x) = f(x [+] s) 
  * where [+] is the modulo addition operator
+ * return both processed Qureg for inspection and found period
+ * non-destructive measurement
  */
-void simon_period(uint64_t period);
+std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense = true);
 
 void shor_factorize(int prime1, int prime2);
 
 void grover_search(oracle_function);
+
+/*
+ *	Teleport: demo Bell state entanglement
+ */
+void teleportation();
 
 #endif // algor_h__

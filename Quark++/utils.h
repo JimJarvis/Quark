@@ -231,6 +231,15 @@ INLINE T norm(vector<T> x)
 	return sqrt(ans);
 }
 
+/*
+ *	Hashmap contains
+ */
+template<typename Key, typename T>
+INLINE bool contains(unordered_map<Key, T> map, Key key)
+{
+	return map.find(key) != map.end();
+}
+
 ///////************** For-range loop iterables **************///////
 /*
  * inclusive/exclusive: 

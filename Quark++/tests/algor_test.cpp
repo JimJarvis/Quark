@@ -13,3 +13,9 @@ TEST(Algor, DeutschJosza)
 					<< " at nbit " << nbit << "; dense " << bool(dense);
 			}
 }
+
+TEST(Algor, Simon)
+{
+	auto pair_result = simon_period(4, 1, true);
+	pr("Simon's " << pair_result.first << "\nPeriod = " << pair_result.second);
+}

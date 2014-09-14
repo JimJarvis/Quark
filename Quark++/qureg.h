@@ -123,7 +123,7 @@ public:
 	 */
 	INLINE bool contains_base(qubase base)
 	{
-		return basemap.find(base) != basemap.end();
+		return contains(basemap, base);
 	}
 
 	/*
@@ -234,14 +234,14 @@ public:
 	 *	top n qubits
 	 * destructive, if true (which is physically the case) will alter the qureg state
 	 */
-	friend uint64_t measure_top(Q, int topN, bool destructive = true);
+	friend uint64_t measure_top(Q, int topQubits, bool destructive = true);
 
 	/*
 	 *	Apply an int -> int classical oracle on this register
 	 * inputQubits: how many most significant bits to be taken as input
 	 * take |x>|b> and map to |x>|b xor f(x)>
 	 */
-	friend void apply_oracle(Q, oracle_function oracle, int inputQubits);
+	friend void apply_oracle(Q, oracle_function& oracle, int inputQubits);
 };
 
 
