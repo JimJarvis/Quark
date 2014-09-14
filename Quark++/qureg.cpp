@@ -107,16 +107,16 @@ string Qureg::to_string(bool nonZeroOnly)
 	return oss.str();
 }
 
-Qureg& Qureg::operator+=(int scratchQubit)
+Qureg& Qureg::operator+=(int scratchQubits)
 {
 	if (dense)
 	{
-		amp.resize(1 << (nqubit + scratchQubit), CX(0));
+		amp.resize(1 << (nqubit + scratchQubits), CX(0));
 		// Move old amplitudes over
 		// Do it in the reverse order to avoid conflict
 		for (size_t i = (1<<nqubit) - 1; i >= 0 ; --i)
 		{
-			amp[i << scratchQubit] = amp[i];
+			amp[i << scratchQubits] = amp[i];
 			amp[i] = 0;
 		}
 	}
@@ -126,10 +126,10 @@ Qureg& Qureg::operator+=(int scratchQubit)
 		{
 			size_t idx = basemap[base];
 			basemap.erase(base);
-			base <<= scratchQubit;
+			base <<= scratchQubits;
 			basemap[base] = idx;
 		}
-	nqubit += scratchQubit;
+	nqubit += scratchQubits;
 	return *this;
 }
 
@@ -217,4 +217,53 @@ int measure(Q, int tar)
 		q.basis = move(newBasis);
 	}
 	return result;
+}
+
+
+// Apply to n most significant bits
+void apply_oracle(Q, oracle_function oracle, int inputQubits)
+{
+	if (inputQubits >= q.nqubit)
+		throw QuantumException("inputQubits should not exceed total qubits");
+	int outputQubits = q.nqubit - inputQubits;
+	auto& amp = q.amp;
+	// needs a temporary amp that holds outputQubits' original amplitude
+	uint64_t outputSize = 1 << outputQubits;
+	if (q.dense)
+	{
+		vector<CX> tmpAmp(outputSize);
+		for (uint64_t input = 0; input < 1 << inputQubits; ++input)
+		{
+			uint64_t ans = oracle(input);
+			std::copy_n(&amp[input], outputSize, &tmpAmp[0]);
+			for (uint64_t output = 0; output < outputSize; ++output)
+			{
+				qubase newBase = (input << outputQubits) | (output ^ ans);
+				amp[newBase] = tmpAmp[output];
+			}
+		}
+	}
+	else
+	{
+		uint64_t outputMask = outputSize - 1; // all ones in the lower bits
+		vector<CX> newAmp;
+		newAmp.reserve(q.amp.capacity());
+		vector<qubase> newBasis;
+		newBasis.reserve(q.basis.capacity());
+		size_t s = 0; // new size
+
+		for (qubase& base : q.base_iter())
+		{
+			uint64_t input = base >> outputQubits; // most sig bits
+			uint64_t output = base & outputMask;
+			uint64_t ans = oracle(input);
+			newAmp.push_back(q[base]);
+			qubase newBase = input << outputQubits | (output ^ ans);
+			newBasis.push_back(newBase);
+			q.basemap.erase(base);
+			q.basemap[newBase] = s++;
+		}
+		q.amp = move(newAmp);
+		q.basis = move(newBasis);
+	}
 }

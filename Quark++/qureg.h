@@ -8,6 +8,9 @@
 #define Q1 Qureg& q1
 #define Q2 Qureg& q2
 
+/* Classical oracle function */
+typedef std::function<uint64_t (uint64_t)> oracle_function;
+
 /*
  * Qubits start from most significant bit. 
  */
@@ -211,22 +214,29 @@ public:
 	/*
 	*	Add scratch bits to 'this'. (Add to least significant bits)
 	*/
-	Qureg& operator+=(int scratchNqubit);
+	Qureg& operator+=(int scratchQubits);
 
 	/*
 	 *	Convert to a column vector of 2^nqubit size
 	 */
 	operator VectorXcf();
 
+	///////************** Quantum operations **************///////
 	/*
 	 *	Measure the whole register
 	 */
 	friend qubase measure(Q);
-
 	/*
 	 *	Return either 0 or 1
 	 */
 	friend int measure(Q, int tar);
+
+	/*
+	 *	Apply an int -> int classical oracle on this register
+	 * inputQubits: how many most significant bits to be taken as input
+	 * take |x>|b> and map to |x>|b xor f(x)>
+	 */
+	friend void apply_oracle(Q, oracle_function oracle, int inputQubits);
 };
 
 
