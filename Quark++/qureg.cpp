@@ -45,7 +45,7 @@ Qureg& Qureg::purge()
 	for (qubase& base : basis)
 	{
 		a = (*this)[base];
-		if (abs(a) > TOL)
+		if (norm(a) > TOL)
 		{
 			purgedAmp.push_back(a);
 			purgedBasis.push_back(base);
@@ -235,7 +235,7 @@ void apply_oracle(Q, oracle_function oracle, int inputQubits)
 		for (uint64_t input = 0; input < 1 << inputQubits; ++input)
 		{
 			uint64_t ans = oracle(input);
-			std::copy_n(&amp[input], outputSize, &tmpAmp[0]);
+			std::copy_n(&amp[input << outputQubits], outputSize, &tmpAmp[0]);
 			for (uint64_t output = 0; output < outputSize; ++output)
 			{
 				qubase newBase = (input << outputQubits) | (output ^ ans);
@@ -250,6 +250,7 @@ void apply_oracle(Q, oracle_function oracle, int inputQubits)
 		newAmp.reserve(q.amp.capacity());
 		vector<qubase> newBasis;
 		newBasis.reserve(q.basis.capacity());
+		decltype(q.basemap) newBasemap(q.basemap.size());
 		size_t s = 0; // new size
 
 		for (qubase& base : q.base_iter())
@@ -257,13 +258,15 @@ void apply_oracle(Q, oracle_function oracle, int inputQubits)
 			uint64_t input = base >> outputQubits; // most sig bits
 			uint64_t output = base & outputMask;
 			uint64_t ans = oracle(input);
+			if (norm(q[base]) < TOL)
+				continue;  // purge along the way
 			newAmp.push_back(q[base]);
 			qubase newBase = input << outputQubits | (output ^ ans);
 			newBasis.push_back(newBase);
-			q.basemap.erase(base);
-			q.basemap[newBase] = s++;
+			newBasemap[newBase] = s++;
 		}
 		q.amp = move(newAmp);
 		q.basis = move(newBasis);
+		q.basemap = move(newBasemap);
 	}
 }
