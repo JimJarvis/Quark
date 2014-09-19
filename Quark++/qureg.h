@@ -226,6 +226,12 @@ public:
 	 */
 	vector<qubase> non_zero_states();
 
+	/*
+	 *	Pairs of non-zero states and their corresponding probability, 
+	 * sorted in descending order
+	 */
+	vector<pair<qubase, float>> sorted_non_zero_states();
+
 	///////************** Quantum operations **************///////
 	/*
 	 *	Measure the whole register

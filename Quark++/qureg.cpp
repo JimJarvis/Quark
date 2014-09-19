@@ -159,6 +159,39 @@ vector<qubase> Qureg::non_zero_states()
 	return nonZeros;
 }
 
+vector<pair<qubase, float>> Qureg::sorted_non_zero_states()
+{
+	typedef pair<qubase, float> qentry;
+	auto cmp = [](const qentry& x1, const qentry& x2)
+	{
+		return x1.second < x2.second;
+	};
+	std::priority_queue<qentry, vector<qentry>, decltype(cmp)> que(cmp);
+
+	if (dense)
+		for (qubase base = 0; base < 1 << nqubit; ++base)
+		{
+			float prob = norm(amp[base]);
+			if (prob > TOL)
+				que.push(qentry(base, prob));
+		}
+	else
+		for (qubase& base : basis)
+		{
+			float prob = norm((*this)[base]);
+			if (prob > TOL)
+				que.push(qentry(base, prob));
+		}
+	
+	vector<qentry> sortedNonZeros;
+	while (!que.empty())
+	{
+		sortedNonZeros.push_back(que.top());
+		que.pop();
+	}
+	return sortedNonZeros;
+}
+
 qubase measure(Q)
 {
 	float prob = rand_float();
