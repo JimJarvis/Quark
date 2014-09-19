@@ -164,19 +164,23 @@ int main(int argc, char **argv)
 	auto pair_result = simon_period(4, 1, true);
 	pr("Simon's " << pair_result.first << "\nPeriod = " << pair_result.second);
 
-	int n = 2;
-	ptitle("qft");
-	for (int i = 0; i < 1<<n ; ++i)
-	{
-		q = Qureg::create<true>(n, qubase(i));
-		qft(q);
-		pr(q);
-	}
-	
-	ptitle("gold");
-	pr(qft_mat(n));
-
 	pr(exp_mod(65489, 251025, 894603));
+
+	ptitle("Shor");
+	//pr(smallest_period(2, 35));
+	//pr(smallest_period(3, 35));
+	//pr(smallest_period(4, 35));
+	//shor_factorize(6, 5, 7, false);
+
+	int nbit = 2;
+	int period = 3;
+	qq = qft_period(nbit, period, true);
+	pr(qq);
+	auto v = qq.non_zero_states();
+
+	pr("should be multiple of " << (1 << nbit) / period);
+	for (int i = 0; i < v.size(); ++i)
+		pr((v[i] >> nbit));
 
 	return 0;
 }

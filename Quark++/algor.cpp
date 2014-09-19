@@ -100,13 +100,62 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense)
 	return pair<Qureg, uint64_t>(move(q), result);
 }
 
+Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
+{
+	// output bit init to 1, all others 0
+	Qureg q = dense ? 
+		Qureg::create<true>(nbit * 2, qubase(0)) :
+		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
+
+	qft(q, 0, nbit);
+
+	apply_oracle(q, [=](uint64_t x){ return x % period; }, nbit);
+
+	qft(q, 0, nbit);
+
+	return q;
+}
+
+std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
+{
+	// output bit init to 1, all others 0
+	Qureg q0 = dense ? 
+		Qureg::create<true>(nbit * 2, qubase(0)) :
+		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
+
+	// top n qubits
+	qft(q0, 0, nbit);
+
+	int M = prime1 * prime2;
+	// randomly pick a base
+	for (int b : Range<>(2, M))
+	{
+		if (gcd(b, M) != 1)
+			continue;
+
+		Qureg q = q0.clone();
+
+		apply_oracle(q, shor_oracle(b, M), nbit);
+
+		qft(q, 0, nbit);
+
+		pr(q);
+
+		for (int i = 0; i < 10 ; ++i)
+		pr("b = " << b << " measure = " <<measure_top(q, nbit, false));
+		return std::pair<int, int>(0, 0);
+	}
+	return std::pair<int, int>(0, 0);
+}
+
+///////************** Helpers **************///////
 int gcd(int a, int b)
 {
 	int c;
 	while (a != 0)
 	{
-		c = a; 
-		a = b % a;  
+		c = a;
+		a = b % a;
 		b = c;
 	}
 	return b;
@@ -129,17 +178,18 @@ uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m)
 	return x;
 }
 
-
-oracle_function shor_oracle(int x, int M)
+oracle_function shor_oracle(int b, int M)
 {
 	return
-		[=](uint64_t i)
+		[=](uint64_t x)
 		{
-			return exp_mod(x, i, M);
+			return exp_mod(b, x, M);
 		};
 }
 
-std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2)
+int smallest_period(int b, int M)
 {
-	return pair<int, int>(0, 0);
+	int i = 1;
+	while (exp_mod(b, i, M) != 1) ++i;
+	return i;
 }

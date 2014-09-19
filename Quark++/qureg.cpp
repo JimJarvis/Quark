@@ -145,6 +145,20 @@ Qureg::operator VectorXcf()
 	return vec;
 }
 
+vector<qubase> Qureg::non_zero_states()
+{
+	vector<qubase> nonZeros;
+	if (dense)
+		for (qubase base = 0; base < 1<<nqubit ; ++base)
+			if (norm(amp[base]) > TOL)
+				nonZeros.push_back(base);
+	else
+		for (qubase& base : basis)
+			if (norm((*this)[base]) > TOL)
+				nonZeros.push_back(base);
+	return nonZeros;
+}
+
 qubase measure(Q)
 {
 	float prob = rand_float();
@@ -236,7 +250,7 @@ uint64_t measure_top(Q, int topQubits, bool destructive)
 
 
 // Apply to n most significant bits
-void apply_oracle(Q, oracle_function& oracle, int inputQubits)
+void apply_oracle(Q, const oracle_function& oracle, int inputQubits)
 {
 	if (inputQubits >= q.nqubit)
 		throw QuantumException("inputQubits should not exceed total qubits");

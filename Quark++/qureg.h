@@ -221,6 +221,11 @@ public:
 	 */
 	operator VectorXcf();
 
+	/*
+	 *	Vector of states with non-zero amplitude
+	 */
+	vector<qubase> non_zero_states();
+
 	///////************** Quantum operations **************///////
 	/*
 	 *	Measure the whole register
@@ -241,7 +246,7 @@ public:
 	 * inputQubits: how many most significant bits to be taken as input
 	 * take |x>|b> and map to |x>|b xor f(x)>
 	 */
-	friend void apply_oracle(Q, oracle_function& oracle, int inputQubits);
+	friend void apply_oracle(Q, const oracle_function& oracle, int inputQubits);
 };
 
 
