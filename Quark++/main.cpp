@@ -176,5 +176,7 @@ int main(int argc, char **argv)
 	ptitle("gold");
 	pr(qft_mat(n));
 
+	pr(exp_mod(65489, 251025, 894603));
+
 	return 0;
 }

@@ -18,7 +18,25 @@ uint64_t deutsch_josza_parity(int nbit, uint64_t secret_u, bool dense = true);
  */
 std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense = true);
 
-void shor_factorize(int prime1, int prime2);
+// classical gcd
+int gcd(int, int);
+
+/*
+ *	Modular exponentiation
+ * b^e mod m
+ */
+uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m);
+
+// 
+/*
+ *	produce a shor's algorithm oracle
+ * f(x) = b^x mod M, where M is the int to be factored
+ */
+oracle_function shor_oracle(int b, int M);
+/*
+ *	Return the factorized result
+ */
+std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2);
 
 void grover_search(oracle_function);
 

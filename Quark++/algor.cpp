@@ -99,3 +99,47 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense)
 
 	return pair<Qureg, uint64_t>(move(q), result);
 }
+
+int gcd(int a, int b)
+{
+	int c;
+	while (a != 0)
+	{
+		c = a; 
+		a = b % a;  
+		b = c;
+	}
+	return b;
+}
+
+uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m)
+{
+	int remainder;
+	uint64_t x = 1;
+
+	while (e != 0)
+	{
+		remainder = e % 2;
+		e >>= 1;
+
+		if (remainder == 1)
+			x = (x * b) % m;
+		b = (b * b) % m; // New base equal b^2 % m
+	}
+	return x;
+}
+
+
+oracle_function shor_oracle(int x, int M)
+{
+	return
+		[=](uint64_t i)
+		{
+			return exp_mod(x, i, M);
+		};
+}
+
+std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2)
+{
+	return pair<int, int>(0, 0);
+}
