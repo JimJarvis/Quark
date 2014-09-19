@@ -86,8 +86,8 @@ string Qureg::to_string(bool nonZeroOnly)
 	for (size_t i = 0; i < size(); ++i)
 	{
 		CX a = dense ? amp[i] : (*this)[get_base(i)];
-		float magnitude = abs(a);
-		if (nonZeroOnly && magnitude < TOL)
+		float prob = norm(a);
+		if (nonZeroOnly && prob < TOL)
 			continue;
 
 		if (actualPrints != 0)
@@ -99,7 +99,7 @@ string Qureg::to_string(bool nonZeroOnly)
 		oss << "|" << PRINT_KET(get_base_d_s(i)) << "> ";
 		oss << a.real() << "+"
 			<< a.imag() << "i"
-			<< " (" << magnitude << ")";
+			<< " (" << prob << ")";
 
 		++actualPrints;
 	}

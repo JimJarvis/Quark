@@ -111,6 +111,10 @@ Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 
 	apply_oracle(q, [=](uint64_t x){ return x % period; }, nbit);
 
+	// This measurement shouldn't really matter
+	for (int tar = nbit + 1; tar < nbit * 2; ++tar)
+		measure(q, tar);
+
 	qft(q, 0, nbit);
 
 	return q;
