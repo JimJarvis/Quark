@@ -45,6 +45,11 @@ namespace Qugate
 	void swap(Q, int tar1, int tar2);
 
 	void cswap(Q, int ctrl, int tar1, int tar2);
+
+	///////************** QFT **************///////
+	// tarQubits: number of qubits to be operated on
+	void qft(Q, int tarStart, int tarQubits);
+	inline void qft(Q) { qft(q, 0, q.nqubit); }
 }
 
 #endif // qugate_h__

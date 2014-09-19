@@ -561,3 +561,31 @@ void Qugate::cswap(Q, int ctrl, int tar1, int tar2)
 		if (base0 & c)
 			swap_sparse_update(q, base0, t1, t2);
 }
+
+///////************** QFT **************///////
+// recursive QFT subroutine
+void qft_sub(Q, int tarStart, int tarQubits)
+{
+	// base case
+	if (tarQubits == 1)
+	{
+		hadamard(q, tarStart);
+		return;
+	}
+
+	// recurse
+	qft_sub(q, tarStart, tarQubits - 1);
+	
+	int tarLast = tarStart + tarQubits - 1;
+	for (int tar = tarStart; tar < tarLast ; ++tar)
+		control_phase_shift(q, PI / (1 << (tarLast - tar)), tarLast, tar);
+	hadamard(q, tarLast);
+}
+
+// QFT has the effect of reversing the bits
+void Qugate::qft(Q, int tarStart, int tarQubits)
+{
+	qft_sub(q, tarStart, tarQubits);
+	for (int tar = tarStart; tar < tarStart + tarQubits / 2; ++tar)
+		swap(q, tar, tarStart + tarQubits - 1 - tar);
+}

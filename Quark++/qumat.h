@@ -70,6 +70,8 @@ namespace Qumat // quantum matrices
 
 	Matrix4cf swap_mat();
 	Matrix<CX, 8, 8> cswap_mat();
+
+	MatrixXcf qft_mat(int nqubit);
 }
 
 #endif // qumat_h__

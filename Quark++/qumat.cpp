@@ -233,3 +233,15 @@ Matrix<CX, 8, 8> Qumat::cswap_mat()
 	)
 	return CswapMat;
 }
+
+MatrixXcf Qumat::qft_mat(int nqubit)
+{
+	int N = 1 << nqubit;
+	float scalor = 1.0 / sqrt(N);
+	CX w = expi(2 * PI / N);
+	MatrixXcf QftMat(N, N);
+	for (int i = 0; i < N ; ++i)
+		for (int j = 0; j < N; ++j)
+			QftMat(i, j) = std::pow(w, i * j % N) * scalor;
+	return QftMat;
+}

@@ -30,7 +30,7 @@ typedef unsigned long long qubase;
 #define pause std::cin.get()
 
 // Amplitude tolerance: smaller than this will be considered 0
-#define TOL 1.5e-7
+#define TOL 2e-7
 #define PI 3.1415926535897932384626434
 
 // Force inline

@@ -164,6 +164,17 @@ int main(int argc, char **argv)
 	auto pair_result = simon_period(4, 1, true);
 	pr("Simon's " << pair_result.first << "\nPeriod = " << pair_result.second);
 
-	return 0;
+	int n = 2;
+	ptitle("qft");
+	for (int i = 0; i < 1<<n ; ++i)
+	{
+		q = Qureg::create<true>(n, qubase(i));
+		qft(q);
+		pr(q);
+	}
+	
+	ptitle("gold");
+	pr(qft_mat(n));
 
+	return 0;
 }
