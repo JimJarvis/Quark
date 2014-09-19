@@ -172,15 +172,20 @@ int main(int argc, char **argv)
 	//pr(smallest_period(4, 35));
 	//shor_factorize(6, 5, 7, false);
 
-	int nbit = 5;
-	int period = 3;
-	qq = qft_period(nbit, period, true);
-	pr(qq);
-	auto v = qq.sorted_non_zero_states();
+	//int nbit = 9;
+	//int period = 29;
+	//qq = qft_period(nbit, period, true);
+	//auto v = qq.sorted_non_zero_states();
 
-	pr("should be multiple of " << (1 << nbit) / period);
-	for (int i = 0; i < v.size(); ++i)
-		pr((v[i].first >> nbit) << "\t" << v[i].second);
+	//pr("should be multiple of " << (1 << nbit)*1.0 / period);
+	//pr("1/r = " << 1.0 / period);
+	//for (int i = 0; i < v.size() / 4; ++i)
+	//{
+	//	int base = v[i].first >> nbit;
+	//	pr(base << setprecision(5) << "\t" << (1.0*base*period/(1<<nbit)) << "\t\t" << v[i].second);
+	//}
+
+	shor_factorize(7, 3, 5);
 
 	return 0;
 }

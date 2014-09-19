@@ -164,6 +164,9 @@ vector<pair<qubase, float>> Qureg::sorted_non_zero_states()
 	typedef pair<qubase, float> qentry;
 	auto cmp = [](const qentry& x1, const qentry& x2)
 	{
+		// if probabiliy same, we sort the basis ascendingly
+		if (abs(x1.second - x2.second) < TOL)
+			return x1.first > x2.first;
 		return x1.second < x2.second;
 	};
 	std::priority_queue<qentry, vector<qentry>, decltype(cmp)> que(cmp);

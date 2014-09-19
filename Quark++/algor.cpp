@@ -109,7 +109,7 @@ Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 
 	qft(q, 0, nbit);
 
-	apply_oracle(q, [=](uint64_t x){ return x % period; }, nbit);
+	apply_oracle(q, [=](uint64_t x){ return x % period + 1; }, nbit);
 
 	// This measurement shouldn't really matter
 	for (int tar = nbit + 1; tar < nbit * 2; ++tar)
@@ -132,7 +132,7 @@ std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
 
 	int M = prime1 * prime2;
 	// randomly pick a base
-	for (int b : Range<>(2, M))
+	for (int b : Range<>(2, M / 2))
 	{
 		if (gcd(b, M) != 1)
 			continue;
@@ -141,13 +141,25 @@ std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
 
 		apply_oracle(q, shor_oracle(b, M), nbit);
 
+		// This measurement shouldn't really matter
+		for (int tar = nbit + 1; tar < nbit * 2; ++tar)
+			measure(q, tar);
+
 		qft(q, 0, nbit);
 
-		pr(q);
-
-		for (int i = 0; i < 10 ; ++i)
-		pr("b = " << b << " measure = " <<measure_top(q, nbit, false));
-		return std::pair<int, int>(0, 0);
+		// verification
+		int period = smallest_period(b, M);
+		auto sorted = q.sorted_non_zero_states();
+		pr("Smallest period: " << b << " ^ " << period << " = 1 mod " << M);
+		pr("1/r = " << 1.0 / period);
+		pr("measurement should be multiple of " << (1 << nbit)*1.0 / period);
+		for (int i = 0; i < sorted.size(); ++i)
+		{
+			int base = sorted[i].first >> nbit;
+			float prob = sorted[i].second;
+			if (prob < 1e-4)  break;
+			pr(base << setprecision(5) << "\t" << (1.0*base*period / (1 << nbit)) << "\t\t" << prob);
+		}
 	}
 	return std::pair<int, int>(0, 0);
 }
