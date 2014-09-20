@@ -1,0 +1,49 @@
+import util;
+import gate;
+
+% keyboard input
+secret = int(
+    input("Secret 'u' for Deustch_Josza parity algorithm"));
+
+% two equivalent way for lambdas
+
+% quantum oracle
+ocfun = lambda x : { return bit_dot(x, secret); };
+ocfun = lambda x : bit_dot(x, secret);
+
+nbit = 5;
+
+% initialize a quantum register
+
+% dense mode, 6 qubits, initialize to state 1
+q = qureg nbit+1, 1;
+
+% or sparse mode. Mathematically equivalent
+q = qureg' nbit+1, 1;
+
+% apply hadamard gates
+for i = [: #q] :
+    had q, i;
+
+oracle q, ocfun, nbit;
+
+% using a library function from gate.qk
+had_multi q, 0, nbit;
+
+% measurement
+% single qubit measurement
+result = q ? 1; 
+
+% multi qubit measurement
+% NOTE here the colon does NOT denote a list. Overloaded syntax.
+result = q ? 0:5;
+result = q ? 4:; % from the 4th to the last qubit
+
+% measure the whole register
+result = q ?;
+
+% non-destructive measurement, 
+% doesn't make any physical sense, but makes simulation easier
+result = q ?' 1; 
+result = q ?' :5; % 0:5 implied
+result = q ?'; 

@@ -1,0 +1,48 @@
+% apply hadamard gate on a multiple of qubits
+def had_multi(q, lis)
+{
+    %{ if the list is empty, 
+      we apply had() to all bits
+    }%
+
+    if #lis == 0:
+        lis = [: #q];
+
+    for i = lis:
+        had q, i;
+}
+
+% overload the function
+def had_multi(q, start, size)
+{
+    had_multi(q, [start: start+size]);
+}
+
+% quantum fourier transformation
+% function parenthesis are optional
+
+def qft_sub q, start, size
+{
+    if size == 1:
+    {
+        had(q, start);
+        return;
+    }
+
+    % recurse
+    qft_sub(q, start, size-1);
+
+    last = start + size - 1;
+    for t = [start : last]:
+        c_phase_shift q, PI / 2**(last - t), last, t;
+
+    had(q, last);
+}
+
+% arg = <default>  optional argument
+def qft(q, start = 0, size = #q)
+{
+    qft_sub q start size;
+    for tar = [start : start + size/2]:
+        swap q, tar, tar+tarSize-1-tar;
+}
