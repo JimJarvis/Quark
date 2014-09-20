@@ -159,7 +159,7 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 					int p = to_frac(cfrac, size).num;
 					int P = p;
 					// 64-bit long long limit
-					while (P < M && P <= 64)
+					while (P < 128 && P < M)
 					{
 						if (P % 2 == 0
 							&& exp_mod(b, P, M) == 1)
