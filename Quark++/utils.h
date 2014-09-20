@@ -18,6 +18,7 @@
 #include <bitset>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <Eigen/Dense>
 #include "frac.h"
 
@@ -234,10 +235,10 @@ INLINE T norm(vector<T> x)
 }
 
 /*
- *	Hashmap contains
+ *	Hashmap/hashset contains
  */
-template<typename Key, typename T>
-INLINE bool contains(unordered_map<Key, T>& map, Key key)
+template<typename Hasher, typename Key>
+INLINE bool contains(Hasher& map, Key key)
 {
 	return map.find(key) != map.end();
 }

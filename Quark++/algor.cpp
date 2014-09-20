@@ -130,23 +130,54 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 	// top n qubits
 	qft(q0, 0, nbit);
 
-	// randomly pick a base
-	for (int b : Range<>(2, M))
+	// Don't try b's already tried
+	unordered_set<int> bTriedSet;
+	// If the hash set is more than 2/3 filled, we try all the rest values sequentially
+	bool hashMode = true;
+	vector<int> remainings; // b values we haven't tried yet
+	int b, i;
+	while (1)
 	{
-		// the random base must be co-prime with M
-		if (gcd(b, M) != 1)
-			continue;
+		if (hashMode && bTriedSet.size() < M * 2.0 / 3)
+		{
+			// the random picked base must be co-prime with M
+			b = rand_int(2, M);
 
+			if (contains(bTriedSet, b))
+				continue;
+			else
+				bTriedSet.insert(b);
+		}
+		else
+		{
+			// init the vector once
+			if (hashMode)
+			{
+				hashMode = false;
+				i = 0;
+				for (int btmp = 2; btmp < M ; ++btmp)
+					if (!contains(bTriedSet, btmp))
+						remainings.push_back(btmp);
+			}
+			if (i < remainings.size())
+				b = remainings[i++];
+			else
+				break; // we tried every b and failed. Break the infinite loop
+		}
+
+		if (gcd(b, M) != 1) continue;
+
+		// Shor's circuit goes here
 		Qureg q = q0.clone();
 
 		apply_oracle(q, shor_oracle(b, M), nbit);
 
 		qft(q, 0, nbit);
 
-		int trial = 0;
+		int mTrial = 0; // measurement trial
 		int measured;
 		
-		while (trial++ < 10)
+		while (mTrial++ < 10)
 			// If 0, measure again
 			if ((measured = measure_top(q, nbit, false)) != 0)
 			{
