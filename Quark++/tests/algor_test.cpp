@@ -101,11 +101,12 @@ TEST(Algor, Shor)
 		int nbit = entry[0];
 		int prime1 = entry[1];
 		int prime2 = entry[2];
+		int M = prime1 * prime2;
 
-		auto ans = shor_factorize(nbit, prime1 * prime2, false);
-		ASSERT_TRUE(prime1 == ans.first || prime1 == ans.second)
-			<< "M = " << prime1 * prime2 << " != " << ans.first << " * " << ans.second;
+		auto ans = shor_factorize(nbit, M, false);
+		ASSERT_TRUE((prime1 == ans.first || prime1 == ans.second) && ans.first * ans.second == M)
+			<< "M = " << M << " != " << ans.first << " * " << ans.second;
 
-		pr("Factorize " << prime1*prime2 << " = " << ans.first << " * " << ans.second);
+		pr("Factorize " << M << " = " << ans.first << " * " << ans.second);
 	}
 }
