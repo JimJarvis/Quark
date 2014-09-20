@@ -26,9 +26,9 @@ Qureg qft_period(int nbit, uint64_t period, bool dense = true);
 /*
  *	Return one of the factorized prime
  */
-int shor_factorize(int nbit, int prime1, int prime2, bool dense = true);
+std::pair<int, int> shor_factorize(int nbit, int M, bool dense = true);
 // Display internal steps
-void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense = true);
+void shor_factorize_verbose(int nbit, int M, bool dense = true);
 
 void grover_search(oracle_function);
 
@@ -43,6 +43,11 @@ void teleportation();
  * b^e mod m
  */
 uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m);
+
+/*
+ *	Compute a^p in long long
+ */
+uint64_t long_pow(uint64_t a, int p);
 
 /*
  *	produce a shor's algorithm oracle

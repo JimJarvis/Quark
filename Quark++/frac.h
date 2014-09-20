@@ -9,9 +9,9 @@
 #include <cmath>
 using namespace std;
 
-inline int64_t gcd(int64_t a, int64_t b)
+inline uint64_t gcd(uint64_t a, uint64_t b)
 {
-	int64_t c;
+	uint64_t c;
 	while (a != 0)
 	{
 		c = a;

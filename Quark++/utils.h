@@ -397,4 +397,10 @@ INLINE void ptitle(string title = "")
 template<typename T>
 INLINE void pvec(vector<T> vec) { pr(vec2str(vec)); }
 
+template<typename T, typename U>
+INLINE std::ostream& operator<<(std::ostream& oss, const std::pair<T, U>& p)
+{
+	return oss << "(" << p.first << ", " << p.second << ")";
+}
+
 #endif // utils_h__

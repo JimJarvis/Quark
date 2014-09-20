@@ -120,7 +120,7 @@ Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 	return q;
 }
 
-int shor_factorize(int nbit, int prime1, int prime2, bool dense)
+std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 {
 	// output bit init to 1, all others 0
 	Qureg q0 = dense ?
@@ -130,10 +130,10 @@ int shor_factorize(int nbit, int prime1, int prime2, bool dense)
 	// top n qubits
 	qft(q0, 0, nbit);
 
-	int M = prime1 * prime2;
 	// randomly pick a base
 	for (int b : Range<>(2, M))
 	{
+		// the random base must be co-prime with M
 		if (gcd(b, M) != 1)
 			continue;
 
@@ -144,24 +144,49 @@ int shor_factorize(int nbit, int prime1, int prime2, bool dense)
 		qft(q, 0, nbit);
 
 		int trial = 0;
-		int measured = 0;
-
-		// N / r
-		int N_r = 1;
+		int measured;
 		
-		// If 0, measure again
-		while (trial++ < 5)
+		while (trial++ < 10)
+			// If 0, measure again
 			if ((measured = measure_top(q, nbit, false)) != 0)
-				break;
-
-		
-
+			{
+				// Use continued fraction approximation of {N / measured = r / k}
+				ContFrac cfrac = to_cont_frac(Frac(1 << nbit, measured));
+				// We reduce the continued fraction more and more to get a simpler approximate fraction
+				for (int size = cfrac.size(); size >= 1 ; --size)
+				{
+					// the actual period can be a multiple of p
+					int p = to_frac(cfrac, size).num;
+					int P = p;
+					while (P < M)
+					{
+						if (P % 2 == 0
+							&& exp_mod(b, P, M) == 1)
+						{
+							// further check  b^(p/2) != +/-1 mod M
+							int check = exp_mod(b, P / 2, M);
+							if (check != 1 && check != M - 1)
+							{
+								//pr("Almost there b = " << b << "; p = " << p << "; P = " << P 
+								//   << "; cfrac = " << to_frac(cfrac, size) << " VS " << to_frac(cfrac));
+								// We almost found it. Might have some numerical overflow here:
+								int prime = gcd(M, long_pow(b, P / 2) - 1);
+								// due to overflow, prime might become +/-1
+								if (prime != 1 && prime != -1)
+									return pair<int, int>(prime, M / prime);
+							}
+						}
+						// Try the next multiple of p, the next candidate of a possible period hit
+						P += p;
+					}
+				}
+			}
 	}
 	// We failed!!! ;(
-	return 0;
+	return std::pair<int, int>(0, 0);
 }
 
-void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense)
+void shor_factorize_verbose(int nbit, int M, bool dense)
 {
 	// output bit init to 1, all others 0
 	Qureg q0 = dense ? 
@@ -171,7 +196,6 @@ void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense)
 	// top n qubits
 	qft(q0, 0, nbit);
 
-	int M = prime1 * prime2;
 	// randomly pick a base
 	for (int b : Range<>(2, M/2))
 	{
@@ -244,4 +268,15 @@ int smallest_period(int b, int M)
 	int i = 1;
 	while (exp_mod(b, i, M) != 1) ++i;
 	return i;
+}
+
+uint64_t long_pow(uint64_t a, int p)
+{
+	if (p == 1)
+		return a;
+	uint64_t partial = long_pow(a, p / 2);
+	if (p % 2 == 1)
+		return partial * partial * a;
+	else
+		return partial * partial;
 }

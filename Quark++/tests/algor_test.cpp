@@ -79,3 +79,32 @@ TEST(Algor, QftPeriod)
 				}
 			}
 }
+
+TEST(Algor, Shor)
+{
+	// Each entry is a 3-tuple: (nbit, prime1, prime2)
+	vector<vector<int>> trials =
+	{
+		{5, 3, 5},
+		{6, 13, 5},
+		{6, 11, 7},
+		{7, 19, 3},
+		{8, 17, 11},
+		{9, 29, 13},
+		//{9, 23, 19},
+		{11, 31, 37}
+	};
+
+	for (auto& entry : trials)
+	{
+		int nbit = entry[0];
+		int prime1 = entry[1];
+		int prime2 = entry[2];
+
+		auto ans = shor_factorize(nbit, prime1 * prime2, false);
+		ASSERT_TRUE(prime1 == ans.first || prime1 == ans.second)
+			<< "M = " << prime1 * prime2 << " != " << ans.first << " * " << ans.second;
+
+		pr("Factorize " << prime1*prime2 << " = " << ans.first << " * " << ans.second);
+	}
+}

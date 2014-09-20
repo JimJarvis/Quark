@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 	//for (int i = 0; i < 15 ; ++i)
 	//	deutsch_josza_parity(4, i);
 	auto pair_result = simon_period(4, 1, true);
-	pr("Simon's " << pair_result.first << "\nPeriod = " << pair_result.second);
+	pr("Simon's " "\nPeriod = " << pair_result.second);
 
 	pr(exp_mod(65489, 251025, 894603));
 
@@ -173,13 +173,8 @@ int main(int argc, char **argv)
 
 	ptitle("Continued Frac");
 
-	ContFrac vv = { 2, 3, -6, -1, 2, 7 };
-
-	pr(to_frac(vv));
-
-	pvec(to_cont_frac(to_frac(vv), vv.size()));
-
-	pr(to_frac(to_cont_frac(Frac(8192, 2567), 5)));
+	ptitle("SHOR");
+	//pr("ohohoh " << shor_factorize(11, 31 * 37, false));
 
 	return 0;
 }
