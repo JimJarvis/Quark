@@ -166,26 +166,16 @@ int main(int argc, char **argv)
 
 	pr(exp_mod(65489, 251025, 894603));
 
-	ptitle("Shor");
 	//pr(smallest_period(2, 35));
 	//pr(smallest_period(3, 35));
 	//pr(smallest_period(4, 35));
-	//shor_factorize(6, 5, 7, false);
+	//shor_factorize_verbose(7, 7, 11);
 
-	//int nbit = 9;
-	//int period = 29;
-	//qq = qft_period(nbit, period, true);
-	//auto v = qq.sorted_non_zero_states();
+	ptitle("Continued Frac");
 
-	//pr("should be multiple of " << (1 << nbit)*1.0 / period);
-	//pr("1/r = " << 1.0 / period);
-	//for (int i = 0; i < v.size() / 4; ++i)
-	//{
-	//	int base = v[i].first >> nbit;
-	//	pr(base << setprecision(5) << "\t" << (1.0*base*period/(1<<nbit)) << "\t\t" << v[i].second);
-	//}
+	vector<int> vv = { 2, 3 };
 
-	shor_factorize_verbose(7, 7, 11);
+	pr(to_frac(vv));
 
 	return 0;
 }

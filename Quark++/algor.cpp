@@ -132,7 +132,7 @@ int shor_factorize(int nbit, int prime1, int prime2, bool dense)
 
 	int M = prime1 * prime2;
 	// randomly pick a base
-	for (int b : Range<>(2, M / 2))
+	for (int b : Range<>(2, M))
 	{
 		if (gcd(b, M) != 1)
 			continue;
@@ -141,13 +141,23 @@ int shor_factorize(int nbit, int prime1, int prime2, bool dense)
 
 		apply_oracle(q, shor_oracle(b, M), nbit);
 
-		// This measurement shouldn't really matter
-		for (int tar = nbit + 1; tar < nbit * 2; ++tar)
-			measure(q, tar);
-
 		qft(q, 0, nbit);
 
+		int trial = 0;
+		int measured = 0;
+
+		// N / r
+		int N_r = 1;
+		
+		// If 0, measure again
+		while (trial++ < 5)
+			if ((measured = measure_top(q, nbit, false)) != 0)
+				break;
+
+		
+
 	}
+	// We failed!!! ;(
 	return 0;
 }
 
@@ -203,18 +213,6 @@ void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense)
 }
 
 ///////************** Helpers **************///////
-int gcd(int a, int b)
-{
-	int c;
-	while (a != 0)
-	{
-		c = a;
-		a = b % a;
-		b = c;
-	}
-	return b;
-}
-
 uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m)
 {
 	int remainder;

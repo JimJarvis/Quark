@@ -38,9 +38,6 @@ void grover_search(oracle_function);
 void teleportation();
 
 ///////************** Helper functions **************///////
-// classical gcd
-int gcd(int, int);
-
 /*
  *	Modular exponentiation
  * b^e mod m

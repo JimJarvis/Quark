@@ -19,6 +19,7 @@
 #include <queue>
 #include <unordered_map>
 #include <Eigen/Dense>
+#include "frac.h"
 
 using namespace std;
 using namespace Eigen;
