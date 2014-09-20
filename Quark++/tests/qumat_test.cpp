@@ -62,12 +62,17 @@ TEST(Qumat, KroneckerOrder)
 	ASSERT_MAT(res1, res3);
 }
 
-TEST(Qugate, Hadamard)
+typedef MatrixXcf(*GoldMatGenFunc)(int);
+typedef void(*GateFunc)(Qureg&);
+
+void large_unitary_gate_tester(
+	GoldMatGenFunc goldMat,
+	GateFunc gate)
 {
 	Qureg qq;
 	for (int nqubit : QubitRange(1))
 	{
-		MatrixXcf gold = hadamard_mat(nqubit);
+		MatrixXcf gold = (*goldMat)(nqubit);
 		// Each column should agree with hadamard mat
 		for (qubase base : QubaseRange(nqubit))
 		{
@@ -78,61 +83,32 @@ TEST(Qugate, Hadamard)
 			};
 			for (Qureg& qq : QQs)
 			{
-				hadamard(qq);
+				(*gate)(qq);
 				ASSERT_MAT(gold.col(base), VectorXcf(qq));
 				//_S + (qq.dense ? "Dense" : "Sparse")
 				//+ " disagree at base " + bits2str(base, nqubit));
 			}
 		}
 	}
+}
+
+TEST(Qugate, Hadamard)
+{
+	large_unitary_gate_tester(
+		static_cast<GoldMatGenFunc>(&hadamard_mat), 
+		static_cast<GateFunc>(&hadamard));
 }
 
 TEST(Qugate, QFT)
 {
-	Qureg qq;
-	for (int nqubit : QubitRange(1))
-	{
-		MatrixXcf gold = qft_mat(nqubit);
-		// Each column should agree with hadamard mat
-		for (qubase base : QubaseRange(nqubit))
-		{
-			Qureg QQs[2] =
-			{
-				Qureg::create<true>(nqubit, base),
-				Qureg::create<false>(nqubit, 1 << nqubit, base)
-			};
-			for (Qureg& qq : QQs)
-			{
-				qft(qq);
-				ASSERT_MAT(gold.col(base), VectorXcf(qq));
-				//_S + (qq.dense ? "Dense" : "Sparse")
-				//+ " disagree at base " + bits2str(base, nqubit));
-			}
-		}
-	}
+	large_unitary_gate_tester(
+		static_cast<GoldMatGenFunc>(&qft_mat), 
+		static_cast<GateFunc>(&qft));
 }
 
 TEST(Qugate, GroverDiffuse)
 {
-	Qureg qq;
-	for (int nqubit : QubitRange(1))
-	{
-		MatrixXcf gold = grover_diffuse_mat(nqubit);
-		// Each column should agree with hadamard mat
-		for (qubase base : QubaseRange(nqubit))
-		{
-			Qureg QQs[2] =
-			{
-				Qureg::create<true>(nqubit, base),
-				Qureg::create<false>(nqubit, 1 << nqubit, base)
-			};
-			for (Qureg& qq : QQs)
-			{
-				grover_diffuse(qq);
-				ASSERT_MAT(gold.col(base), VectorXcf(qq));
-				//_S + (qq.dense ? "Dense" : "Sparse")
-				//+ " disagree at base " + bits2str(base, nqubit));
-			}
-		}
-	}
+	large_unitary_gate_tester(
+		static_cast<GoldMatGenFunc>(&grover_diffuse_mat), 
+		static_cast<GateFunc>(&grover_diffuse));
 }
