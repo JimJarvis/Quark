@@ -141,3 +141,28 @@ TEST(Algor, Grover)
 					<< "Max probability should occur near iteration " << sqrtN;
 			}
 }
+
+TEST(Algor, Teleport)
+{
+	for (int trial : Range<>(10))
+		for (int dense : Range<>(2))
+		{
+			// Create a random state in A register
+			Qureg qa = dense ?
+				Qureg::create<true>(1, 0) :
+				Qureg::create<false>(1, 1<<1, 0);
+			// random ops
+			hadamard(qa);
+			rot_X(qa, rand_float(PI / 12, PI / 2), 0);
+			phase_shift(qa, rand_float(PI / 12, PI / 2), 0);
+
+			VectorXcf qaAmp(qa);
+
+			vector<CX> teleAmp = teleport(qa, dense);
+
+			for (int i : Range<>(2))
+			{
+				ASSERT_CX_EQ(qaAmp(i), teleAmp[i], "Teleportation fails", 5e-7);
+			}
+		}
+}

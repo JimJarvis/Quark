@@ -171,18 +171,5 @@ int main(int argc, char **argv)
 	//pr(smallest_period(4, 35));
 	//shor_factorize_verbose(7, 7, 11);
 
-	ptitle("Continued Frac");
-
-	ptitle("GROVER");
-	//pr("ohohoh " << shor_factorize(11, 31 * 37, false));
-
-	auto result = grover_search(7, 66, true);
-	int iter = 0;
-	for (auto p : result.second)
-	if (iter < ceil(sqrt(1<<7)))
-		pr("Iteration " << iter++ << " -> probability = " << p);
-	pr("\nFound key " << result.first);
-	pr("Search success");
-
 	return 0;
 }

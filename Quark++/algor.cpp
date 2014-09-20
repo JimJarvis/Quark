@@ -315,6 +315,39 @@ grover_search(int nbit, uint64_t key, bool dense /* = true */)
 	return pair<uint64_t, vector<float>>(ans, probAtKey);
 }
 
+// Pass in a single qubit and teleport!
+vector<CX> teleport(Qureg& qa, bool dense)
+{
+	// Create a bell state in B register
+	Qureg qb = dense ?
+		Qureg::create<true>(2, qubase(0)) :
+		Qureg::create<false>(2, 1<<2, qubase(0));
+
+	hadamard(qb, 0);
+	cnot(qb, 0, 1);
+
+	// Connect A and B
+	Qureg q = kronecker(qa, qb, dense);
+
+	cnot(q, 0, 1);
+	hadamard(q, 0);
+
+	int measure0 = measure(q, 0);
+	int measure1 = measure(q, 1);
+
+	if (measure1)
+		pauli_X(q, 2);
+	if (measure0)
+		pauli_Z(q, 2);
+
+	auto nonZeroStates = q.non_zero_states();
+	vector<CX> amp(2);
+	for (int i = 0; i < 2; ++i)
+		amp[i] = q.get_amp(nonZeroStates[i]);
+
+	return amp;
+}
+
 ///////************** Helpers **************///////
 uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m)
 {

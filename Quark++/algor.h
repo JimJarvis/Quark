@@ -37,8 +37,10 @@ std::pair<uint64_t, vector<float>> grover_search(int nbit, uint64_t key, bool de
 
 /*
  *	Teleport: demo Bell state entanglement
+ * Input a single-qubit register to teleport
+ * Return a vector of size 2 [a0, a1]: a0 * |0> + a1 * |1>
  */
-void teleportation();
+vector<CX> teleport(Qureg& singleQureg, bool dense = true);
 
 ///////************** Helper functions **************///////
 /*
