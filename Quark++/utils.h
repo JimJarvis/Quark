@@ -403,13 +403,17 @@ INLINE string operator+(size_t t, string s) { return concat_space(t, s); }
 
 INLINE void ptitle(string title = "") 
 { cout << "！！！！！！！！！！ " << title << " ！！！！！！！！！！！" << endl; }
-template<typename T>
-INLINE void pvec(vector<T> vec) { pr(vec2str(vec)); }
 
 template<typename T, typename U>
 INLINE std::ostream& operator<<(std::ostream& oss, const std::pair<T, U>& p)
 {
 	return oss << "(" << p.first << ", " << p.second << ")";
+}
+
+template<typename T>
+INLINE std::ostream& operator<<(std::ostream& oss, const std::vector<T>& v)
+{
+	return oss << vec2str(v);
 }
 
 #endif // utils_h__
