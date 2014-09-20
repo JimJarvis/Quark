@@ -589,3 +589,23 @@ void Qugate::qft(Q, int tarStart, int tarQubits)
 	for (int tar = tarStart; tar < tarStart + tarQubits / 2; ++tar)
 		swap(q, tar, tarStart + tarQubits - 1 - tar);
 }
+
+///////************** Grover's **************///////
+void Qugate::grover_diffuse(Q, int tarStart, int tarQubits)
+{
+	// base mask: only these states won't be inverted
+	qubase mask = 0;
+	for (int tar = tarStart; tar < tarStart + tarQubits; ++tar)
+		mask |= q.to_qubase(tar);
+
+	if (q.dense)
+		DENSE_ITER(base)
+			if (base & mask)
+				q.amp[base] *= -1;
+	else // sparse
+	{
+		for (qubase& base : q.base_iter())
+			if (base & mask)
+				q[base] *= -1;
+	}
+}

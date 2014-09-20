@@ -46,10 +46,14 @@ namespace Qugate
 
 	void cswap(Q, int ctrl, int tar1, int tar2);
 
-	///////************** QFT **************///////
+	///////************** Special gates **************///////
 	// tarQubits: number of qubits to be operated on
 	void qft(Q, int tarStart, int tarQubits);
 	inline void qft(Q) { qft(q, 0, q.nqubit); }
+
+	// diag([2; 0; 0; ...; 0]) - I, invert amplitude unless the state is 0^n 
+	void grover_diffuse(Q, int tarStart, int tarQubits);
+	inline void grover_diffuse(Q) { grover_diffuse(q, 0, q.nqubit); }
 }
 
 #endif // qugate_h__
