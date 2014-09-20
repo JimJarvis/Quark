@@ -104,9 +104,9 @@ void Qugate::hadamard(Q)
 		hadamard(q, qi);
 }
 
-void Qugate::hadamard_top(Q, int topQubits)
+void Qugate::hadamard_top(Q, int topSize)
 {
-	for (int qi = 0; qi < topQubits; ++qi)
+	for (int qi = 0; qi < topSize; ++qi)
 		hadamard(q, qi);
 }
 
@@ -564,38 +564,38 @@ void Qugate::cswap(Q, int ctrl, int tar1, int tar2)
 
 ///////************** QFT **************///////
 // recursive QFT subroutine
-void qft_sub(Q, int tarStart, int tarQubits)
+void qft_sub(Q, int tarStart, int tarSize)
 {
 	// base case
-	if (tarQubits == 1)
+	if (tarSize == 1)
 	{
 		hadamard(q, tarStart);
 		return;
 	}
 
 	// recurse
-	qft_sub(q, tarStart, tarQubits - 1);
+	qft_sub(q, tarStart, tarSize - 1);
 	
-	int tarLast = tarStart + tarQubits - 1;
+	int tarLast = tarStart + tarSize - 1;
 	for (int tar = tarStart; tar < tarLast ; ++tar)
 		control_phase_shift(q, PI / (1 << (tarLast - tar)), tarLast, tar);
 	hadamard(q, tarLast);
 }
 
 // QFT has the effect of reversing the bits
-void Qugate::qft(Q, int tarStart, int tarQubits)
+void Qugate::qft(Q, int tarStart, int tarSize)
 {
-	qft_sub(q, tarStart, tarQubits);
-	for (int tar = tarStart; tar < tarStart + tarQubits / 2; ++tar)
-		swap(q, tar, tarStart + tarQubits - 1 - tar);
+	qft_sub(q, tarStart, tarSize);
+	for (int tar = tarStart; tar < tarStart + tarSize / 2; ++tar)
+		swap(q, tar, tarStart + tarSize - 1 - tar);
 }
 
 ///////************** Grover's **************///////
-void Qugate::grover_diffuse(Q, int tarStart, int tarQubits)
+void Qugate::grover_diffuse(Q, int tarStart, int tarSize)
 {
 	// base mask: only these states won't be inverted
 	qubase mask = 0;
-	for (int tar = tarStart; tar < tarStart + tarQubits; ++tar)
+	for (int tar = tarStart; tar < tarStart + tarSize; ++tar)
 		mask |= q.to_qubase(tar);
 
 	if (q.dense)

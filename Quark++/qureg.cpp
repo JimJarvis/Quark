@@ -299,19 +299,19 @@ int measure(Q, int tar)
 	return result;
 }
 
-uint64_t measure_top(Q, int topQubits, bool destructive)
+uint64_t measure_top(Q, int topSize, bool destructive)
 {
 	if (destructive)
 	{
 		// partial measurement: discard the last output bits
 		uint64_t result = 0;
-		for (int qi = 0; qi < topQubits; ++qi)
+		for (int qi = 0; qi < topSize; ++qi)
 			// going from msb to lsb
-			result |= measure(q, qi) << (topQubits - 1 - qi);
+			result |= measure(q, qi) << (topSize - 1 - qi);
 		return result;
 	}
 	else
-		return measure(q) >> (q.nqubit - topQubits);
+		return measure(q) >> (q.nqubit - topSize);
 }
 
 
