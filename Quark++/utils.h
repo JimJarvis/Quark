@@ -238,9 +238,22 @@ INLINE T norm(vector<T> x)
  *	Hashmap/hashset contains
  */
 template<typename Hasher, typename Key>
-INLINE bool contains(Hasher& map, Key key)
+INLINE bool contains(const Hasher& hasher, Key key)
 {
-	return map.find(key) != map.end();
+	return hasher.find(key) != hasher.end();
+}
+
+/*
+ *	max index
+ */
+template<typename T>
+INLINE uint64_t max_index(const vector<T>& vec)
+{
+	//T mx = -std::numeric_limits<T>::infinity();
+	int mi = 0;
+	for (int i = 1; i < vec.size() ; ++i)
+		if (vec[i] > vec[mi]) mi = i;
+	return mi;
 }
 
 ///////************** For-range loop iterables **************///////
