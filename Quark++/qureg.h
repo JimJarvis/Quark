@@ -137,11 +137,6 @@ public:
 	}
 
 	/*
-	 *	Get base stored internally at index i
-	 */
-	INLINE qubase& get_base(size_t i) { return basis[i]; }
-
-	/*
 	 * Read index from basemap and get amplitude
 	 */
 	INLINE CX& operator[](qubase base) { return amp[basemap[base]]; }
@@ -184,7 +179,7 @@ public:
 	 *	Get base stored at an internal index
 	 * dense and sparse
 	 */
-	INLINE qubase& get_base_d_s(size_t i) { return dense ? i : basis[i]; }
+	INLINE qubase& get_base(size_t i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Get a bit string representing a target qubit
