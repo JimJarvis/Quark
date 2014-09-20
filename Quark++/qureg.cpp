@@ -215,7 +215,8 @@ qubase measure(Q)
 		}
 
 	// should never be here
-	throw QuantumException("Measurement fails, probability doesn't sum up to 1.");
+	//throw QuantumException("Measurement fails, probability doesn't sum up to 1.");
+	return 1 << q.nqubit; // return the last state
 }
 
 int measure(Q, int tar)

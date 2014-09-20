@@ -158,7 +158,8 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 					// the actual period can be a multiple of p
 					int p = to_frac(cfrac, size).num;
 					int P = p;
-					while (P < M)
+					// 64-bit long long limit
+					while (P < M && P <= 64)
 					{
 						if (P % 2 == 0
 							&& exp_mod(b, P, M) == 1)
