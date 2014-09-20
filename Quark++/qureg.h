@@ -232,6 +232,12 @@ public:
 	 */
 	vector<pair<qubase, float>> sorted_non_zero_states();
 
+	/*
+	 *	Get the sum of probability of all bases with 'prefix'
+	 * nbit: prefix length
+	 */
+	float prefix_prob(int nbit, qubase prefix);
+
 	///////************** Quantum operations **************///////
 	/*
 	 *	Measure the whole register

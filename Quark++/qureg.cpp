@@ -196,6 +196,30 @@ vector<pair<qubase, float>> Qureg::sorted_non_zero_states()
 	return sortedNonZeros;
 }
 
+float Qureg::prefix_prob(int nbit, qubase prefix)
+{
+	// mask = 11..100..0
+	qubase mask = 0;
+	for (int i = 0; i < nbit; ++i)
+		mask |= to_qubase(i);
+	prefix <<= nqubit - nbit;
+
+	float prob = 0;
+	if (dense)
+		for (qubase base = 0; base < 1 << nqubit; ++base)
+		{
+			if ((base & mask) == prefix)
+				prob += norm(amp[base]);
+		}
+	else
+		for (qubase& base : basis)
+		{
+			if ((base & mask) == prefix)
+				prob += norm((*this)[base]);
+		}
+	return prob;
+}
+
 qubase measure(Q)
 {
 	float prob = rand_float();
