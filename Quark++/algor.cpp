@@ -210,8 +210,10 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 									pr("Found period r = " << P);
 									pr("b ^ r = " << b << " ^ " << P << " = 1 mod " << M);
 									pr("b ^ (r/2) = " << b << " ^ " << P / 2 << " = " << check << " mod " << M);
+									int prime2 = gcd(M, b_P_1 + 2); // b^(P/2) + 1
 									pr("gcd(" << M << ", " << b_P_1 << ") = " << prime);
-									return pair<int, int>(prime, M / prime);
+									pr("gcd(" << M << ", " << b_P_1 + 2 << ") = " << prime2);
+									return pair<int, int>(prime, prime2 == 1 ? M / prime : prime2);
 								}
 							}
 						}
