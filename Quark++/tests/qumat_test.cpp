@@ -87,7 +87,6 @@ TEST(Qugate, Hadamard)
 	}
 }
 
-
 TEST(Qugate, QFT)
 {
 	Qureg qq;
@@ -105,6 +104,31 @@ TEST(Qugate, QFT)
 			for (Qureg& qq : QQs)
 			{
 				qft(qq);
+				ASSERT_MAT(gold.col(base), VectorXcf(qq));
+				//_S + (qq.dense ? "Dense" : "Sparse")
+				//+ " disagree at base " + bits2str(base, nqubit));
+			}
+		}
+	}
+}
+
+TEST(Qugate, GroverDiffuse)
+{
+	Qureg qq;
+	for (int nqubit : QubitRange(1))
+	{
+		MatrixXcf gold = grover_diffuse_mat(nqubit);
+		// Each column should agree with hadamard mat
+		for (qubase base : QubaseRange(nqubit))
+		{
+			Qureg QQs[2] =
+			{
+				Qureg::create<true>(nqubit, base),
+				Qureg::create<false>(nqubit, 1 << nqubit, base)
+			};
+			for (Qureg& qq : QQs)
+			{
+				grover_diffuse(qq);
 				ASSERT_MAT(gold.col(base), VectorXcf(qq));
 				//_S + (qq.dense ? "Dense" : "Sparse")
 				//+ " disagree at base " + bits2str(base, nqubit));

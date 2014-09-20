@@ -599,9 +599,11 @@ void Qugate::grover_diffuse(Q, int tarStart, int tarQubits)
 		mask |= q.to_qubase(tar);
 
 	if (q.dense)
+	{
 		DENSE_ITER(base)
 			if (base & mask)
 				q.amp[base] *= -1;
+	}
 	else // sparse
 	{
 		for (qubase& base : q.base_iter())

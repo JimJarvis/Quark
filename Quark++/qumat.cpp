@@ -245,3 +245,13 @@ MatrixXcf Qumat::qft_mat(int nqubit)
 			QftMat(i, j) = std::pow(w, i * j % N) * scalor;
 	return QftMat;
 }
+
+MatrixXcf Qumat::grover_diffuse_mat(int nqubit)
+{
+	int N = 1 << nqubit;
+	MatrixXcf GroverMat = MatrixXcf::Zero(N, N);
+	GroverMat(0, 0) = 1;
+	for (int i = 1; i < N; ++i)
+		GroverMat(i, i) = -1;
+	return GroverMat;
+}
