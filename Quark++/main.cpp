@@ -173,7 +173,7 @@ int main(int argc, char **argv)
 
 	ptitle("Continued Frac");
 
-	vector<int> vv = { 2, 3 };
+	vector<int64_t> vv = { 2, 3, -6, -1, 2, 7 };
 
 	pr(to_frac(vv));
 
