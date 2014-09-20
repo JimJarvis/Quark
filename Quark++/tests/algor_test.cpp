@@ -47,3 +47,33 @@ TEST(Algor, Simon)
 				}
 			}
 }
+
+TEST(Algor, QftPeriod)
+{
+	for (int nbit : Range<>(4, 8))
+		// N > 2 * r^2
+		for (int period = 2; period < sqrt(1<<(nbit - 2)) ; ++period)
+			for (int dense : Range<>(2))
+			{
+				Qureg q = qft_period(nbit, period, dense);
+				auto sorted = q.sorted_non_zero_states();
+
+				// Should be multiple of:  N / r  = 2^nbit / period
+				// The good measured values will approach the following expected probability
+				float expectProb = 1.0 / period;
+				for (int i = 0; i < sorted.size(); ++i)
+				{
+					float prob = sorted[i].second;
+					// This means the measurement will not be likely
+					if (prob < expectProb * 0.7)
+						continue;
+					qubase base = sorted[i].first >> nbit;
+
+					// {base(measured) * r / N} should be as close to an integer as possible
+					float k = (1.0 * base * period) / (1 << nbit);
+					ASSERT_NEAR(k, round(k), 0.01)
+						<< setprecision(3) << "Measured base = " << base << "\n1/period = " << 1.0 / period
+						<< "\nprob = " << prob << "\nrank in the sorted bases = " << i;
+				}
+			}
+}

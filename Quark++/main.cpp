@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 	//	pr(base << setprecision(5) << "\t" << (1.0*base*period/(1<<nbit)) << "\t\t" << v[i].second);
 	//}
 
-	shor_factorize(7, 3, 5);
+	shor_factorize(9, 23, 19);
 
 	return 0;
 }

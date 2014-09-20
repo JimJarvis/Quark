@@ -132,7 +132,7 @@ std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
 
 	int M = prime1 * prime2;
 	// randomly pick a base
-	for (int b : Range<>(2, M / 2))
+	for (int b : Range<>(2, M/2))
 	{
 		if (gcd(b, M) != 1)
 			continue;
@@ -157,7 +157,7 @@ std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
 		{
 			int base = sorted[i].first >> nbit;
 			float prob = sorted[i].second;
-			if (prob < 1e-4)  break;
+			if (prob < 0.5/period)  break;
 			pr(base << setprecision(5) << "\t" << (1.0*base*period / (1 << nbit)) << "\t\t" << prob);
 		}
 	}

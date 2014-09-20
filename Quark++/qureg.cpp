@@ -165,7 +165,8 @@ vector<pair<qubase, float>> Qureg::sorted_non_zero_states()
 	auto cmp = [](const qentry& x1, const qentry& x2)
 	{
 		// if probabiliy same, we sort the basis ascendingly
-		if (abs(x1.second - x2.second) < TOL)
+		//if (abs(x1.second - x2.second) < TOL)
+		if (x1.second == x2.second)
 			return x1.first > x2.first;
 		return x1.second < x2.second;
 	};
