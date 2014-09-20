@@ -213,7 +213,7 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 									int prime2 = gcd(M, b_P_1 + 2); // b^(P/2) + 1
 									pr("gcd(" << M << ", " << b_P_1 << ") = " << prime);
 									pr("gcd(" << M << ", " << b_P_1 + 2 << ") = " << prime2);
-									return pair<int, int>(prime, prime2);
+									return pair<int, int>(prime, prime2 == 1 ? M / prime : prime2);
 								}
 							}
 						}
