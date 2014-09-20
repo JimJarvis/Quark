@@ -202,10 +202,17 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 								//pr("Almost there b = " << b << "; p = " << p << "; P = " << P 
 								//   << "; cfrac = " << to_frac(cfrac, size) << " VS " << to_frac(cfrac));
 								// We almost found it. Might have some numerical overflow here:
-								int prime = gcd(M, long_pow(b, P / 2) - 1);
+								uint64_t b_P_1 = long_pow(b, P / 2) - 1;
+								int prime = gcd(M, b_P_1);
 								// due to overflow, prime might become +/-1
 								if (prime != 1 && prime != -1)
+								{
+									pr("Found period r = " << P);
+									pr("b ^ r = " << b << " ^ " << P << " = 1 mod " << M);
+									pr("b ^ (r/2) = " << b << " ^ " << P / 2 << " = " << check << " mod " << M);
+									pr("gcd(" << M << ", " << b_P_1 << ") = " << prime);
 									return pair<int, int>(prime, M / prime);
+								}
 							}
 						}
 						// Try the next multiple of p, the next candidate of a possible period hit
