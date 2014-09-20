@@ -103,10 +103,41 @@ TEST(Algor, Shor)
 		int prime2 = entry[2];
 		int M = prime1 * prime2;
 
+		pr("---------------");
 		auto ans = shor_factorize(nbit, M, false);
+
 		ASSERT_TRUE((prime1 == ans.first || prime1 == ans.second) && ans.first * ans.second == M)
 			<< "M = " << M << " != " << ans.first << " * " << ans.second;
 
-		pr("Factorize " << M << " = " << ans.first << " * " << ans.second);
+		pr("\nFactorize " << M << " = " << ans.first << " * " << ans.second);
 	}
+}
+
+TEST(Algor, Grover)
+{
+	for (int nbit : Range<>(3, 8))
+		for (int trial : Range<>(10))
+			for (int dense : Range<>(2))
+			{
+				uint64_t key = rand_int(0, 1 << nbit);
+
+				auto result = grover_search(nbit, key, dense);
+
+				uint64_t foundKey = result.first;
+				auto probHistory = result.second;
+
+				ASSERT_EQ(key, foundKey) << " Key not found!";
+
+				// The maximum probability should not be much less than 0.5
+				// and should be near the sqrt(N) iteration
+				int sqrtN = floor(sqrt(1 << nbit));
+
+				int maxIdx = max_index(result.second);
+
+				ASSERT_GT(probHistory[maxIdx], 0.40) 
+					<< " Max probability should be at least 0.4";
+
+				ASSERT_NEAR(maxIdx, sqrtN, 3) 
+					<< "Max probability should occur near iteration " << sqrtN;
+			}
 }
