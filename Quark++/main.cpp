@@ -173,9 +173,13 @@ int main(int argc, char **argv)
 
 	ptitle("Continued Frac");
 
-	vector<int64_t> vv = { 2, 3, -6, -1, 2, 7 };
+	ContFrac vv = { 2, 3, -6, -1, 2, 7 };
 
 	pr(to_frac(vv));
+
+	pvec(to_cont_frac(to_frac(vv), vv.size()));
+
+	pr(to_frac(to_cont_frac(Frac(8192, 2567), 5)));
 
 	return 0;
 }

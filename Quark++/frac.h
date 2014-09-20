@@ -70,7 +70,15 @@ public:
 		}
 	}
 
-	operator int() { return (num) / denom; }
+	Frac& operator=(const Frac& other)
+	{
+		this->num = other.num;
+		this->denom = other.denom;
+		return *this;
+	}
+
+	operator int() { return int(num / denom); }
+	operator int64_t() { return num / denom; }
 	operator float() { return ((float)num) / denom; }
 	operator double() { return ((double)num) / denom; }
 };
@@ -146,7 +154,7 @@ inline Frac operator*(const int64_t& lhs, const Frac& rhs)
 	return Frac(lhs*rhs.num, rhs.denom);
 }
 
-inline Frac operator*(const Frac& rhs, int64_t lhs)
+inline Frac operator*(const Frac& rhs, const int64_t& lhs)
 {
 	return Frac(lhs*rhs.num, rhs.denom);
 }
@@ -163,6 +171,18 @@ inline Frac operator/(const Frac& lhs, const Frac& rhs)
 {
 	return Frac(lhs.num*rhs.denom,
 				 lhs.denom*rhs.num);
+}
+
+inline Frac operator/(const Frac& lhs, const int64_t& rhs)
+{
+	return Frac(lhs.num,
+				lhs.denom*rhs);
+}
+
+inline Frac operator/(const int64_t& lhs, const Frac& rhs)
+{
+	return Frac(lhs*rhs.denom,
+				rhs.num);
 }
 
 // reciprocal
@@ -191,6 +211,26 @@ inline Frac to_frac(const ContFrac& cfrac, int size = 0)
 	for (int i = size - 2; i >= 1; --i)
 		ans = ~(ans + cfrac[i]);
 	return ans + cfrac[0];
+}
+
+/*
+ *	If size == 0, continue until 0
+ */
+inline ContFrac to_cont_frac(Frac frac, int size = 0)
+{
+	ContFrac cfrac;
+	if (size > 0)
+		cfrac.reserve(size);
+	int i = 0;
+	while (size < 1 || i < size)
+	{
+		cfrac.push_back(int64_t(frac));
+		frac -= cfrac[i];
+		if (frac.num == 0) break;
+		frac = ~frac;
+		++ i;
+	}
+	return cfrac;
 }
 
 #endif // frac_h__
