@@ -96,7 +96,7 @@ string Qureg::to_string(bool nonZeroOnly)
 			if (actualPrints % 4 == 0)
 				oss << "\n";
 		}
-		oss << "|" << PRINT_KET(get_base(i)) << "> ";
+		oss << "|" << PRINT_KET(get_base_internal(i)) << "> ";
 		oss << a.real() << "+"
 			<< a.imag() << "i"
 			<< " (" << prob << ")";
@@ -235,7 +235,7 @@ qubase measure(Q)
 				return base;
 		}
 	else
-		for (qubase& base : q.base_iter())
+		for (qubase& base : q.base_iter_s())
 		{
 			prob -= norm(q[base]);
 			if (prob <= 0)
@@ -272,7 +272,7 @@ int measure(Q, int tar)
 	}
 	else // sparse
 	{
-		for (qubase& base : q.base_iter())
+		for (qubase& base : q.base_iter_s())
 			if (base & t) // target bit 1
 				prob += norm(q[base]);
 		if (prob > rand_float())
@@ -284,7 +284,7 @@ int measure(Q, int tar)
 		vector<qubase> newBasis;
 		newBasis.reserve(q.basis.capacity() / 2);
 		size_t s = 0; // new size
-		for (qubase& base : q.base_iter())
+		for (qubase& base : q.base_iter_s())
 			if (((base & t) != 0) == result)
 			{
 				newAmp.push_back(q[base] / newNorm);
@@ -348,7 +348,7 @@ void apply_oracle(Q, const oracle_function& oracle, int inputQubits)
 		decltype(q.basemap) newBasemap(q.basemap.size());
 		size_t s = 0; // new size
 
-		for (qubase& base : q.base_iter())
+		for (qubase& base : q.base_iter_s())
 		{
 			uint64_t input = base >> outputQubits; // most sig bits
 			uint64_t output = base & outputMask;

@@ -23,7 +23,7 @@ Qureg Qumat::kronecker(Q1, Q2, bool resultDense)
 	for (int i1 = 0; i1 < size1; ++i1)
 		for (int i2 = 0; i2 < size2; ++i2)
 		{
-			qubase newBase = (q1.get_base(i1) << nqubit2) | q2.get_base(i2);
+			qubase newBase = (q1.get_base_internal(i1) << nqubit2) | q2.get_base_internal(i2);
 			CX newAmp = q1.amp[i1] * q2.amp[i2];
 			if (resultDense)
 				qans.amp[newBase] = newAmp;

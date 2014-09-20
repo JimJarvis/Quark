@@ -144,7 +144,7 @@ public:
 	/*
 	 *	For-each loop over basis[]. You can append to basis[] as you iterate
 	 */
-	INLINE VecRange<qubase> base_iter() { return VecRange<qubase>(basis); }
+	INLINE VecRange<qubase> base_iter_s() { return VecRange<qubase>(basis); }
 
 	/*
 	 *	Sort the basis vectors. 
@@ -179,7 +179,7 @@ public:
 	 *	Get base stored at an internal index
 	 * dense and sparse
 	 */
-	INLINE qubase& get_base(size_t i) { return dense ? i : basis[i]; }
+	INLINE qubase& get_base_internal(size_t i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Get a bit string representing a target qubit

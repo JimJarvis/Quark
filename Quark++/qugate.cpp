@@ -89,7 +89,7 @@ void Qugate::generic_gate(Q, const Matrix2cf& mat, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base0 : q.base_iter())
+		for (qubase base0 : q.base_iter_s())
 			generic_sparse_update(q, base0, t, mat);
 }
 
@@ -126,7 +126,7 @@ void Qugate::pauli_X(Q, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-	for (qubase base0 : q.base_iter())
+	for (qubase base0 : q.base_iter_s())
 		cnot_sparse_update(q, base0, t);
 }
 
@@ -172,7 +172,7 @@ INLINE void bit1_scale(Q, int tar, const FloatType& s)
 	}
 	else // sparse
 		// Add new states to the end, if any
-	for (qubase base0 : q.base_iter())
+	for (qubase base0 : q.base_iter_s())
 		bit1_scale_sparse_update<FloatType>(q, base0, t, s);
 }
 
@@ -212,7 +212,7 @@ void Qugate::phase_scale(Q, float theta, int tar)
 			amp[base0] *= phase;
 	}
 	else // sparse
-		for (qubase base0 : q.base_iter())
+		for (qubase base0 : q.base_iter_s())
 			q[base0] *= phase;
 }
 
@@ -370,7 +370,7 @@ void Qugate::cnot(Q, int ctrl, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if (base & c)
 				cnot_sparse_update(q, base, t);
 }
@@ -388,7 +388,7 @@ void Qugate::generic_control(Q, const Matrix2cf& mat, int ctrl, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if (base & c)
 				generic_sparse_update(q, base, t, mat);
 }
@@ -407,7 +407,7 @@ void Qugate::toffoli(Q, int ctrl1, int ctrl2, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if ((base & c1) && (base & c2))
 				cnot_sparse_update(q, base, t);
 }
@@ -426,7 +426,7 @@ void Qugate::generic_toffoli(Q, const Matrix2cf& mat, int ctrl1, int ctrl2, int 
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if ((base & c1) && (base & c2))
 				generic_sparse_update(q, base, t, mat);
 }
@@ -456,7 +456,7 @@ void Qugate::ncnot(Q, vector<int>& ctrls, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if (is_ctrl_on(base, ctrlBasis))
 				cnot_sparse_update(q, base, t);
 }
@@ -474,7 +474,7 @@ void Qugate::generic_ncontrol(Q, const Matrix2cf& mat, vector<int>& ctrls, int t
 	}
 	else // sparse
 		// Add new states to the end, if any
-		for (qubase base : q.base_iter())
+		for (qubase base : q.base_iter_s())
 			if (is_ctrl_on(base, ctrlBasis))
 				generic_sparse_update(q, base, t, mat);
 }
@@ -493,7 +493,7 @@ void Qugate::control_phase_shift(Q, float theta, int ctrl, int tar)
 	}
 	else // sparse
 		// Add new states to the end, if any
-	for (qubase base : q.base_iter())
+	for (qubase base : q.base_iter_s())
 		if (base & c)
 			bit1_scale_sparse_update<CX>(q, base, t, phase);
 }
@@ -606,7 +606,7 @@ void Qugate::grover_diffuse(Q, int tarStart, int tarQubits)
 	}
 	else // sparse
 	{
-		for (qubase& base : q.base_iter())
+		for (qubase& base : q.base_iter_s())
 			if (base & mask)
 				q[base] *= -1;
 	}
