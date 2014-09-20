@@ -365,6 +365,14 @@ INLINE string int2str(int a)
 	return oss.str();
 }
 
+INLINE int str2int(string s)
+{
+	istringstream iss(s);
+	int ans;
+	iss >> ans;
+	return ans;
+}
+
 template<typename T>
 string vec2str(vector<T> vec)
 {
