@@ -234,6 +234,11 @@ INLINE T norm(vector<T> x)
 	return sqrt(ans);
 }
 
+INLINE CX expi(float theta)
+{
+	return CX(cos(theta), sin(theta));
+}
+
 /*
  *	Hashmap/hashset contains
  */

@@ -19,11 +19,6 @@ namespace Qumat // quantum matrices
 		return kronecker(q1, q2, q1.dense && q2.dense);
 	}
 
-	INLINE CX expi(float theta)
-	{
-		return CX(cos(theta), sin(theta));
-	}
-
 	/**********************************************/
 	/*********** Eigen operations  ***********/
 	/**********************************************/
