@@ -24,13 +24,16 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense = 
 Qureg qft_period(int nbit, uint64_t period, bool dense = true);
 
 /*
- *	Return one of the factorized prime
+ *	Return both of the factorized prime
  */
 std::pair<int, int> shor_factorize(int nbit, int M, bool dense = true);
 // Display internal steps
 void shor_factorize_verbose(int nbit, int M, bool dense = true);
 
-void grover_search(oracle_function);
+/*
+ *	Return the found key and the sequence of probability at the key
+ */
+std::pair<uint64_t, vector<float>> grover_search(int nbit, uint64_t key, bool dense = true);
 
 /*
  *	Teleport: demo Bell state entanglement

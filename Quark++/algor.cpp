@@ -82,10 +82,9 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense)
 		return ftable[contains(ftable, x) ? x : x ^ period];
 	};
 
-	// output bit init to 1, all others 0
 	Qureg q = dense ? 
-		Qureg::create<true>(nbit * 2, qubase(1)) :
-		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(1));
+		Qureg::create<true>(nbit * 2, qubase(0)) :
+		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
 
 	hadamard_top(q, nbit);
 
@@ -102,7 +101,6 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense)
 
 Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 {
-	// output bit init to 1, all others 0
 	Qureg q = dense ? 
 		Qureg::create<true>(nbit * 2, qubase(0)) :
 		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
@@ -122,7 +120,6 @@ Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 
 std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 {
-	// output bit init to 1, all others 0
 	Qureg q0 = dense ?
 		Qureg::create<true>(nbit * 2, qubase(0)) :
 		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
@@ -229,7 +226,6 @@ std::pair<int, int> shor_factorize(int nbit, int M, bool dense)
 
 void shor_factorize_verbose(int nbit, int M, bool dense)
 {
-	// output bit init to 1, all others 0
 	Qureg q0 = dense ? 
 		Qureg::create<true>(nbit * 2, qubase(0)) :
 		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
@@ -275,6 +271,48 @@ void shor_factorize_verbose(int nbit, int M, bool dense)
 			pr(base << setprecision(5) << "\t" << (1.0*base*period / (1 << nbit)) << "\t\t" << prob);
 		}
 	}
+}
+
+std::pair<uint64_t, vector<float>> 
+grover_search(int nbit, uint64_t key, bool dense /* = true */)
+{
+	// the last output bit init to 1
+	Qureg q = dense ?
+		Qureg::create<true>(nbit + 1, qubase(1)) :
+		Qureg::create<false>(nbit + 1, 1 << nbit, qubase(1));
+
+	oracle_function oracle = [=](uint64_t x) { return x == key; };
+
+	int64_t N = 1 << nbit;
+	int sqrtN = floor(sqrt(N));
+
+	// Init by superposition
+	hadamard(q);
+
+	uint64_t ans;
+	vector<float> probAtKey(sqrtN * 2);
+
+	// optimal: PI / 4 * sqrt(N) times
+	for (int iter = 0; iter < sqrtN * 2; ++iter)
+	{
+		// phase inversion
+		apply_oracle(q, oracle, nbit);
+
+		// mean inversion
+		hadamard_top(q, nbit);
+		grover_diffuse(q);
+		hadamard_top(q, nbit);
+
+		if (iter == sqrtN)
+			// measure until we get the solution
+			do {
+				ans = measure_top(q, nbit, false);
+			} while (oracle(ans) == 0);
+
+			probAtKey[iter] = q.prefix_prob(nbit, key);
+	}
+
+	return pair<uint64_t, vector<float>>(ans, probAtKey);
 }
 
 ///////************** Helpers **************///////
