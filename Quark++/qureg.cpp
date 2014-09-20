@@ -149,13 +149,17 @@ vector<qubase> Qureg::non_zero_states()
 {
 	vector<qubase> nonZeros;
 	if (dense)
-		for (qubase base = 0; base < 1<<nqubit ; ++base)
+	{
+		for (qubase base = 0; base < 1 << nqubit; ++base)
 			if (norm(amp[base]) > TOL)
 				nonZeros.push_back(base);
+	}
 	else
+	{
 		for (qubase& base : basis)
 			if (norm((*this)[base]) > TOL)
 				nonZeros.push_back(base);
+	}
 	return nonZeros;
 }
 

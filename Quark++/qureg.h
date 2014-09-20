@@ -226,6 +226,12 @@ public:
 	 */
 	vector<qubase> non_zero_states();
 
+	INLINE CX get_amp(const qubase& base)
+	{
+		return dense ? amp[base] : 
+			contains_base(base) ? (*this)[base] : CX(0);
+	}
+
 	/*
 	 *	Pairs of non-zero states and their corresponding probability, 
 	 * sorted in descending order
