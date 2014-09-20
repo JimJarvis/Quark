@@ -72,6 +72,8 @@ namespace Qumat // quantum matrices
 	Matrix<CX, 8, 8> cswap_mat();
 
 	MatrixXcf qft_mat(int nqubit);
+
+	MatrixXcf grover_diffuse_mat(int nqubit);
 }
 
 #endif // qumat_h__
