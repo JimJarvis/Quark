@@ -120,7 +120,38 @@ Qureg qft_period(int nbit, uint64_t period, bool dense /* = true */)
 	return q;
 }
 
-std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
+int shor_factorize(int nbit, int prime1, int prime2, bool dense)
+{
+	// output bit init to 1, all others 0
+	Qureg q0 = dense ?
+		Qureg::create<true>(nbit * 2, qubase(0)) :
+		Qureg::create<false>(nbit * 2, 1 << nbit, qubase(0));
+
+	// top n qubits
+	qft(q0, 0, nbit);
+
+	int M = prime1 * prime2;
+	// randomly pick a base
+	for (int b : Range<>(2, M / 2))
+	{
+		if (gcd(b, M) != 1)
+			continue;
+
+		Qureg q = q0.clone();
+
+		apply_oracle(q, shor_oracle(b, M), nbit);
+
+		// This measurement shouldn't really matter
+		for (int tar = nbit + 1; tar < nbit * 2; ++tar)
+			measure(q, tar);
+
+		qft(q, 0, nbit);
+
+	}
+	return 0;
+}
+
+void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense)
 {
 	// output bit init to 1, all others 0
 	Qureg q0 = dense ? 
@@ -150,18 +181,25 @@ std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense)
 		// verification
 		int period = smallest_period(b, M);
 		auto sorted = q.sorted_non_zero_states();
+
+		pr("-------");
 		pr("Smallest period: " << b << " ^ " << period << " = 1 mod " << M);
-		pr("1/r = " << 1.0 / period);
-		pr("measurement should be multiple of " << (1 << nbit)*1.0 / period);
+		float expectProb = 1.0 / period;
+		pr("Measurement (m) should be multiple of " << (1 << nbit)*1.0 / period);
+		pr("Expected prob 1/r = " << expectProb);
+		pr("m\tm*r/N\t\tprob");
 		for (int i = 0; i < sorted.size(); ++i)
 		{
 			int base = sorted[i].first >> nbit;
 			float prob = sorted[i].second;
-			if (prob < 0.5/period)  break;
+
+			// The measurement is unlikely to happen
+			if (prob < expectProb * .7)  break;
+
+			// measured * r / N  should be very close to the nearest integer
 			pr(base << setprecision(5) << "\t" << (1.0*base*period / (1 << nbit)) << "\t\t" << prob);
 		}
 	}
-	return std::pair<int, int>(0, 0);
 }
 
 ///////************** Helpers **************///////

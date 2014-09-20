@@ -64,9 +64,11 @@ TEST(Algor, QftPeriod)
 				for (int i = 0; i < sorted.size(); ++i)
 				{
 					float prob = sorted[i].second;
+
 					// This means the measurement will not be likely
 					if (prob < expectProb * 0.7)
-						continue;
+						break;
+
 					qubase base = sorted[i].first >> nbit;
 
 					// {base(measured) * r / N} should be as close to an integer as possible

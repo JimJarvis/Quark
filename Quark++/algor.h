@@ -24,9 +24,11 @@ std::pair<Qureg, uint64_t> simon_period(int nbit, uint64_t period, bool dense = 
 Qureg qft_period(int nbit, uint64_t period, bool dense = true);
 
 /*
- *	Return the factorized result
+ *	Return one of the factorized prime
  */
-std::pair<int, int> shor_factorize(int nbit, int prime1, int prime2, bool dense = true);
+int shor_factorize(int nbit, int prime1, int prime2, bool dense = true);
+// Display internal steps
+void shor_factorize_verbose(int nbit, int prime1, int prime2, bool dense = true);
 
 void grover_search(oracle_function);
 
