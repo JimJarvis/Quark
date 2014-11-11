@@ -2,7 +2,7 @@
 #include "qumat.h"
 #include "qugate.h"
 #include "algor.h"
-#include "vld.h"
+// #include "vld.h"
 using namespace Qumat;
 using namespace Qugate;
 

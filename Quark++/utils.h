@@ -411,7 +411,7 @@ string concat_space(L left, R right)
 	return os.str();
 }
 // Must use a start symbol
-#define _S string()
+#define STR string()
 INLINE string operator+(string s, int i) { return concat_space(s, i); }
 INLINE string operator+(string s, float f) { return concat_space(s, f); }
 INLINE string operator+(string s, size_t t) { return concat_space(s, t); }

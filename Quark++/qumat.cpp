@@ -242,7 +242,7 @@ MatrixXcf Qumat::qft_mat(int nqubit)
 	MatrixXcf QftMat(N, N);
 	for (int i = 0; i < N ; ++i)
 		for (int j = 0; j < N; ++j)
-			QftMat(i, j) = std::pow(w, i * j % N) * scalor;
+			QftMat(i, j) = CX(std::pow(w, i * j % N)) * CX(scalor);
 	return QftMat;
 }
 

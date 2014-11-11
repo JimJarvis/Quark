@@ -72,35 +72,13 @@ public:
 
 	/**********************************************
 	* Creation ctors  *
+	* will be defined outside the class {}
 	**********************************************/
 	template<bool dense>
 	static Qureg create(int nqubit, unsigned long long = 0);
-	/*
-	 *	Create a dense Qureg, amp[initBase] = 1 while all others 0
-	 */
-	template<>
-	static Qureg create<true>(int nqubit, qubase initBase)
-	{
-		return Qureg(true, nqubit, initBase, 0, false);
-	}
-	/*
-	 *	Create a sparse Qureg, all amps = 0. 
-	 */
-	template<>
-	static Qureg create<false>(int nqubit, size_t reservedSize)
-	{
-		return Qureg(false, nqubit, 0, reservedSize, false);
-	}
+	
 	template<bool dense>
 	static Qureg create(int nqubit, size_t reservedSize, qubase initBase);
-	/*
-	 *	Create a dense Qureg, amp[initBase] = 1 while all others 0
-	 */
-	template<>
-	static Qureg create<false>(int nqubit, size_t reservedSize, qubase initBase)
-	{
-		return Qureg(false, nqubit, initBase, reservedSize, true);
-	}
 
 	/**********************************************/
 	/*********** Dense ONLY  ***********/
@@ -179,7 +157,7 @@ public:
 	 *	Get base stored at an internal index
 	 * dense and sparse
 	 */
-	INLINE qubase& get_base_internal(size_t i) { return dense ? i : basis[i]; }
+	INLINE qubase get_base_internal(size_t i) { return dense ? i : basis[i]; }
 
 	/*
 	 *	Get a bit string representing a target qubit
@@ -262,5 +240,32 @@ public:
 	friend void apply_oracle(Q, const oracle_function& oracle, int inputQubits);
 };
 
+
+// Move the specializations outside because GCC doesn't allow it
+/*
+*	Create a dense Qureg, amp[initBase] = 1 while all others 0
+*/
+template<>
+inline Qureg Qureg::create<true>(int nqubit, qubase initBase)
+{
+	return Qureg(true, nqubit, initBase, 0, false);
+}
+/*
+*	Create a sparse Qureg, all amps = 0.
+*/
+template<>
+inline Qureg Qureg::create<false>(int nqubit, unsigned long long reservedSize)
+{
+	return Qureg(false, nqubit, 0, reservedSize, false);
+}
+
+/*
+*	Create a dense Qureg, amp[initBase] = 1 while all others 0
+*/
+template<>
+inline Qureg Qureg::create<false>(int nqubit, size_t reservedSize, qubase initBase)
+{
+	return Qureg(false, nqubit, initBase, reservedSize, true);
+}
 
 #endif // qureg_h__

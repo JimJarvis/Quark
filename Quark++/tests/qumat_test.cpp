@@ -16,7 +16,7 @@ TEST(Qumat, EigenKroneckerHadamard)
 		ASSERT_MAT(
 			hadamard_recursive(nqubit),
 			hadamard_mat(nqubit),
-			_S + "Fail at qubit" + nqubit);
+			STR + "Fail at qubit" + nqubit);
 }
 
 TEST(Qumat, QuregKronecker)
@@ -85,7 +85,7 @@ void large_unitary_gate_tester(
 			{
 				(*gate)(qq);
 				ASSERT_MAT(gold.col(base), VectorXcf(qq));
-				//_S + (qq.dense ? "Dense" : "Sparse")
+				//STR + (qq.dense ? "Dense" : "Sparse")
 				//+ " disagree at base " + bits2str(base, nqubit));
 			}
 		}
