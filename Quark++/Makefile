@@ -6,12 +6,21 @@ LDFLAGS = $(CXXFLAGS)
 CFLAGS = $(CXXFLAGS)
 
 QUHEAD = qureg.h qugate.h qumat.h
+QUOBJ = qugate.o qureg.o qumat.o
 
-main: main.o algor.o qugate.o qureg.o qumat.o
+shor: shor.o $(QUOBJ)
 
-main.o: algor.h $(QUHEAD)
+grover: grover.o $(QUOBJ)
 
-algor.o: algor.h $(QUHEAD)
+basics: basics.o $(QUOBJ)
+
+# algor.o: algor.h $(QUHEAD)
+
+shor.o: $(QUHEAD)
+
+grover.o: $(QUHEAD)
+
+basics.o: $(QUHEAD)
 
 qugate.o: $(QUHEAD)
 
@@ -21,10 +30,10 @@ qureg.o: utils.h
 
 .PHONY: clean
 clean:
-	@rm -rf *~ *.o Quark
+	@rm -rf *~ *.o *.exe shor grover basics
 	@echo "cleaned"
 
 .PHONY: all
-all: clean main
+all: shor grover basics
 	@echo
 	@echo "Recompiled"
