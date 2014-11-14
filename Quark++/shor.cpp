@@ -26,15 +26,6 @@ uint64_t exp_mod(uint64_t b, uint64_t e, uint64_t m)
 	return x;
 }
 
-oracle_function shor_oracle(int b, int M)
-{
-	return
-		[=](uint64_t x)
-	{
-		return exp_mod(b, x, M);
-	};
-}
-
 int smallest_period(int b, int M)
 {
 	int i = 1;
@@ -64,57 +55,54 @@ int log2_int(int x)
 	return ans;
 }
 
+/*
+*	If size == 0, continue until 0
+*/
+vector<int64_t> to_continued_fraction(Frac frac, int size)
+{
+	vector<int64_t> cfrac;
+	if (size > 0)
+		cfrac.reserve(size);
+	int i = 0;
+	while (size < 1 || i < size)
+	{
+		cfrac.push_back(int64_t(frac));
+		frac -= cfrac[i];
+		if (frac.num == 0) break;
+		frac = Frac(frac.denom, frac.num);
+		++ i;
+	}
+	return cfrac;
+}
+
+int M = 17 * 13;
+int nbit = log2_int(M) + 1;
+
+// This is the user defined function that should be passed as an argument
+uint64_t shor_oracle(uint64_t x)
+{
+	return exp_mod(nbit, x, M);
+}
+
 int main(int argc, char **argv)
 {
-	int M = 17 * 13;
-	int nbit = log2_int(M) + 1;
-
 	Qureg q0 = Qureg::create<true>(nbit * 2, 0);
 
 	// top n qubits. This can be a user-library function
 	qft(q0, 0, nbit);
 
-	// Don't try b's already tried
-	unordered_set<int> bTriedSet;
-	// If the hash set is more than 2/3 filled, we try all the rest values sequentially
-	bool hashMode = true;
-	vector<int> remainings; // b values we haven't tried yet
 	int b, i;
 	while (1)
 	{
-		if (hashMode && bTriedSet.size() < M * 2.0 / 3)
-		{
-			// the random picked base must be co-prime with M
-			b = rand_int(2, M);
-
-			if (contains(bTriedSet, b))
-				continue;
-			else
-				bTriedSet.insert(b);
-		}
-		else
-		{
-			// init the vector once
-			if (hashMode)
-			{
-				hashMode = false;
-				i = 0;
-				for (int btmp = 2; btmp < M; ++btmp)
-				if (!contains(bTriedSet, btmp))
-					remainings.push_back(btmp);
-			}
-			if (i < remainings.size())
-				b = remainings[i++];
-			else
-				break; // we tried every b and failed. Break the infinite loop
-		}
+		b = rand_int(2, M);
 
 		if (gcd(b, M) != 1) continue;
 
 		// Shor's circuit goes here
 		Qureg q = q0.clone();
 
-		apply_oracle(q, shor_oracle(b, M), nbit);
+		// We can compile "shor_oracle" as a string and then get rid of the double quotes
+		apply_oracle(q, shor_oracle, nbit);
 
 		qft(q, 0, nbit);
 
@@ -123,10 +111,11 @@ int main(int argc, char **argv)
 
 		while (mTrial++ < 10)
 			// If 0, measure again
+			// q ? nbit
 		if ((measured = measure_top(q, nbit, false)) != 0)
 		{
 			// Use continued fraction approximation of {N / measured = r / k}
-			ContFrac cfrac = to_cont_frac(Frac(1 << nbit, measured));
+			vector<int64_t> cfrac = to_continued_fraction(Frac(1 << nbit, measured), 0);
 			// We reduce the continued fraction more and more to get a simpler approximate fraction
 			for (int size = cfrac.size(); size >= 1; --size)
 			{
