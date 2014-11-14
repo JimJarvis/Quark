@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Quark++", "CUDA.vcxproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\tests.vcxproj", "{104EC760-1250-4302-A771-AE6D00930874}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shor", "shor\shor.vcxproj", "{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -41,6 +43,17 @@ Global
 		{104EC760-1250-4302-A771-AE6D00930874}.Release|Win32.Build.0 = Release|Win32
 		{104EC760-1250-4302-A771-AE6D00930874}.Release|x64.ActiveCfg = Release|x64
 		{104EC760-1250-4302-A771-AE6D00930874}.Release|x64.Build.0 = Release|x64
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Debug|Win32.Build.0 = Debug|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Debug|x64.ActiveCfg = Debug|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|Win32.ActiveCfg = Release|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|Win32.Build.0 = Release|Win32
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|x64.ActiveCfg = Release|x64
+		{FECBFD4B-2BBF-4829-A427-2EEA37EBE5CE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
