@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_shor", "test_shor\test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_grover", "test_grover\test_grover.vcxproj", "{4A05A249-F5AF-4137-9837-475CA284C218}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_basics", "test_basics\test_basics.vcxproj", "{C349317C-5C22-4036-9365-C33B2EC231C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -67,6 +69,17 @@ Global
 		{4A05A249-F5AF-4137-9837-475CA284C218}.Release|Win32.Build.0 = Release|Win32
 		{4A05A249-F5AF-4137-9837-475CA284C218}.Release|x64.ActiveCfg = Release|x64
 		{4A05A249-F5AF-4137-9837-475CA284C218}.Release|x64.Build.0 = Release|x64
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Debug|Win32.Build.0 = Debug|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Debug|x64.ActiveCfg = Debug|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|Win32.ActiveCfg = Release|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|Win32.Build.0 = Release|Win32
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|x64.ActiveCfg = Release|x64
+		{C349317C-5C22-4036-9365-C33B2EC231C0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
