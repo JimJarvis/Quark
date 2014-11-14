@@ -17,7 +17,7 @@ int64_t exp_mod(int64_t b, int64_t e, int64_t m)
 	while (e != 0)
 	{
 		remainder = e % 2;
-		e >>= 1;
+		e = e >> 1;
 
 		if (remainder == 1)
 			x = (x * b) % m;
@@ -50,7 +50,7 @@ int64_t log2_int(int64_t x)
 	while (x > 0)
 	{
 		x = x >> 1;
-		++ans;
+		ans ++;
 	}
 	return ans;
 }
@@ -61,18 +61,29 @@ int64_t log2_int(int64_t x)
 vector<int64_t> to_continued_fraction(Frac frac, int64_t size)
 {
 	vector<int64_t> cfrac;
-	if (size > 0)
-		cfrac.reserve(size);
 	int64_t i = 0;
 	while (size < 1 || i < size)
 	{
-		cfrac.push_back(int64_t(frac));
+		cfrac.push_back(frac.num / frac.denom);
 		frac -= cfrac[i];
 		if (frac.num == 0) break;
-		frac = Frac(frac.denom, frac.num);
-		++ i;
+		frac = ~frac;
+		i ++;
 	}
 	return cfrac;
+}
+
+Frac to_fraction(const vector<int64_t>& cfrac, int64_t size)
+{
+	if (size < 1)
+		size = cfrac.size();
+	Frac ans(1, cfrac[size - 1]);
+	for (int i = size - 2; i >= 1; --i)
+	{
+		ans += cfrac[i];
+		ans = ~ans;
+	}
+	return ans + cfrac[0];
 }
 
 int64_t M = 17 * 13;
@@ -92,7 +103,7 @@ int main(int argc, char **argv)
 	qft(q0, 0, nbit);
 
 	int64_t b, i;
-	while (1)
+	while (true)
 	{
 		// built-in function: random int
 		b = rand_int(2, M);
@@ -110,8 +121,9 @@ int main(int argc, char **argv)
 		int64_t mTrial = 0; // measurement trial
 		int64_t measured;
 
-		while (mTrial++ < 10)
+		while (mTrial < 10)
 		{
+			mTrial++;
 			// If 0, measure again
 			// q ? nbit
 			measured = measure_top(q, nbit, false);
@@ -123,7 +135,7 @@ int main(int argc, char **argv)
 				for (int64_t size = cfrac.size(); size >= 1; --size)
 				{
 					// the actual period can be a multiple of p
-					int64_t p = to_frac(cfrac, size).num;
+					int64_t p = to_fraction(cfrac, size).num;
 					int64_t P = p;
 					// 64-bit long long limit
 					while (P < 128 && P < M)
