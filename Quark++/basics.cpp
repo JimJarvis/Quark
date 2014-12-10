@@ -5,7 +5,7 @@ using namespace Qumat;
 using namespace Qugate;
 
 template<typename T>
-Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T>& vec)
+Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
 {
 	int row = vec.size() / col;
 	Matrix<T, Dynamic, Dynamic> mlit = Matrix<T, Dynamic, Dynamic>::Zero(row, col);
@@ -18,5 +18,6 @@ Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T>& vec)
 int main(int argc, char **argv)
 {
 	pr(matrix_literal<float>(3, vector<float>{6, 4, 5, 10, 11, 12}));
+	pr(pow(complex<float>(4), 3));
 }
 

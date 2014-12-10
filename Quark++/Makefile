@@ -1,7 +1,9 @@
+EIGEN_PATH = E:\\Dropbox\\Programming\\C\\Eigen-3.2.1
+
 CXX = g++
 CC = $(CXX)
 
-CXXFLAGS = -std=c++11 -I E:\\Dropbox\\Programming\\C\\Eigen-3.2.1 -O3 -fno-rtti -flto -fwhole-program
+CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto -fwhole-program
 LDFLAGS = $(CXXFLAGS)
 CFLAGS = $(CXXFLAGS)
 
@@ -12,7 +14,7 @@ shor: shor.o $(QUOBJ)
 
 grover: grover.o $(QUOBJ)
 
-basics: basics.o $(QUOBJ)
+# basics: basics.o $(QUOBJ)
 
 # algor.o: algor.h $(QUHEAD)
 
@@ -20,13 +22,21 @@ shor.o: $(QUHEAD)
 
 grover.o: $(QUHEAD)
 
-basics.o: $(QUHEAD)
+#basics.o: $(QUHEAD)
 
 qugate.o: $(QUHEAD)
 
 qumate.o: $(QUHEAD)
 
 qureg.o: utils.h
+
+
+libquark.a: $(QUOBJ)
+	ar rcs $@ $^
+
+.PHONY: lib
+lib: libquark.a
+	@echo "Static library created"
 
 .PHONY: clean
 clean:
