@@ -13,7 +13,13 @@ int main(int argc, char **argv)
 
 	pr(concat_vector(vector<float>{3, 2, 1}, vector<float>{5, 4, 10}));
 	pr( (vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }}) );
-	auto v = (vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }});
+	// auto v = (vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }});
+	// auto v2 = (vector<float>{10, 3, 2});
+
+	vector<vector<float>> v;
+	vector<float> v2;
+
+	pr(membership_in(v2, v));
 	pr(len(v));
 	pr(len(vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }}));
 	pr( (vector<vector<float>>{vector<float>{1, 5, 6, -3}, vector<float>{10, 3, 2}, vector<float>{ 6 }}) );

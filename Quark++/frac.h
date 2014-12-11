@@ -83,6 +83,16 @@ public:
 	operator double() { return ((double)num) / denom; }
 };
 
+inline bool operator==(const Frac& lhs, const Frac& rhs)
+{
+	return lhs.num == rhs.num && lhs.denom == rhs.denom;
+}
+
+inline bool operator!=(const Frac& lhs, const Frac& rhs)
+{
+	return !(lhs == rhs);
+}
+
 inline Frac operator+(const Frac& lhs, const Frac& rhs)
 {
 	return Frac(lhs.num*rhs.denom
