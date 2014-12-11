@@ -14,15 +14,15 @@ shor: shor.o $(QUOBJ)
 
 grover: grover.o $(QUOBJ)
 
-# basics: basics.o $(QUOBJ)
+basics: basics.o $(QUOBJ)
 
-# algor.o: algor.h $(QUHEAD)
+algor.o: algor.h $(QUHEAD)
 
 shor.o: $(QUHEAD)
 
 grover.o: $(QUHEAD)
 
-#basics.o: $(QUHEAD)
+basics.o: $(QUHEAD)
 
 qugate.o: $(QUHEAD)
 

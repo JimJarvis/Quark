@@ -122,6 +122,7 @@
     <ClCompile Include="..\qureg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\quarklang.h" />
     <ClInclude Include="..\qugate.h" />
     <ClInclude Include="..\qumat.h" />
     <ClInclude Include="..\qureg.h" />
