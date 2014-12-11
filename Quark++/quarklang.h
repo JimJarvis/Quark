@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "qureg.h"
 
+// [1, 2] & [3,4,5]
 template <typename T>
 vector<T> concat_vector(vector<T> vec1, vector<T> vec2)
 {
@@ -23,6 +24,13 @@ Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
 	for (int j = 0; j < col; ++j)
 		mlit(i, j) = vec[col * i + j];
 	return mlit;
+}
+
+// keyword 'in'
+template<typename T>
+bool membership_in(T elem, vector<T> vec)
+{
+	return std::find(vec.begin(), vec.end(), elem) != vec.end();
 }
 
 template<typename T>
