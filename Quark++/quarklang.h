@@ -7,16 +7,11 @@
 #include "qureg.h"
 #include "qugate.h"
 
-// in case a literal is given by quarklang
-#define Q_ Qureg&& q 
-
 // [1, 2] & [3,4,5]
 template <typename T>
 vector<T> concat_vector(vector<T> vec1, vector<T> vec2)
 {
-	vector<T> ans = vec1;
-	ans.insert(ans.end(), vec2.begin(), vec2.end());
-	return ans;
+	vector<T> ans = vec1; ans.insert(ans.end(), vec2.begin(), vec2.end()); return ans;
 }
 
 template<typename T>
@@ -43,7 +38,7 @@ template<typename T>
 int len(vector<T>&& vec) { return vec.size(); }
 
 int qsize(Qureg& q) { return q.nqubit; }
-int qsize(Qureg&& q) { return q.nqubit; }
+// int qsize(Qureg&& q) { return q.nqubit; }
 
 template<typename T>
 int rowdim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.rows(); }
@@ -55,6 +50,9 @@ int coldim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.cols(); }
 template<typename T>
 int coldim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.cols(); }
 
+//**** Fraction getter
+int num(Frac f) { return f.num; }
+int denom(Frac f) { return f.denom; }
 
 ///////************** Qureg specific **************///////
 float prefix_prob(Q, int nbit, int64_t prefix)
@@ -62,6 +60,10 @@ float prefix_prob(Q, int nbit, int64_t prefix)
 	return q.prefix_prob(nbit, prefix);
 }
 
+Qureg qclone(Q)
+{
+	return q.clone();
+}
 
 ///////************** Qugate adaptor **************///////
 void generic_gate_1(Q, const Matrix2cf mat, int tar)
