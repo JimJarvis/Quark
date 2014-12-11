@@ -247,7 +247,7 @@ qubase measure(Q)
 	return 1 << q.nqubit; // return the last state
 }
 
-int measure(Q, int tar)
+int measure(Q, int tar, bool destructive)
 {
 	int result = 0;
 	float prob = 0; // probability of being 1
@@ -262,6 +262,8 @@ int measure(Q, int tar)
 				prob += norm(amp[base]);
 		if (prob > rand_float())
 			result = 1;
+		if (!destructive)
+			return result;
 		float newNorm = result == 1 ? sqrt(prob) : sqrt(1 - prob);
 		// eliminate all states that don't agree
 		DENSE_ITER(base)
@@ -277,6 +279,8 @@ int measure(Q, int tar)
 				prob += norm(q[base]);
 		if (prob > rand_float())
 			result = 1;
+		if (!destructive) // don't update the qureg
+			return result;
 		float newNorm = result == 1 ? sqrt(prob) : sqrt(1 - prob);
 
 		vector<CX> newAmp;

@@ -225,7 +225,7 @@ public:
 	/*
 	 *	Return either 0 or 1
 	 */
-	friend int measure(Q, int tar);
+	friend int measure(Q, int tar, bool destructive = true);
 	/*
 	 *	top n qubits
 	 * destructive, if true (which is physically the case) will alter the qureg state
