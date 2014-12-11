@@ -13,6 +13,16 @@ vector<T> concat_vector(vector<T> vec1, vector<T> vec2)
 	return ans;
 }
 
+template<typename T>
+Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
+{
+	int row = vec.size() / col;
+	Matrix<T, Dynamic, Dynamic> mlit = Matrix<T, Dynamic, Dynamic>::Zero(row, col);
+	for (int i = 0; i < row; ++i)
+	for (int j = 0; j < col; ++j)
+		mlit(i, j) = vec[col * i + j];
+	return mlit;
+}
 
 #endif // quarklang_h__
 
