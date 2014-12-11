@@ -314,6 +314,21 @@ uint64_t measure_top(Q, int topSize, bool destructive)
 		return measure(q) >> (q.nqubit - topSize);
 }
 
+uint64_t measure_range(Q, int startBit, int qsize, bool destructive)
+{
+	int endBit = startBit + qsize;
+	if (destructive)
+	{
+		// partial measurement: discard the last output bits
+		uint64_t result = 0;
+		for (int qi = startBit; qi < endBit; ++qi)
+			// going from msb to lsb
+			result |= measure(q, qi) << (endBit - 1 - qi);
+		return result;
+	}
+	else
+		return measure(q) >> (q.nqubit - endBit);
+}
 
 // Apply to n most significant bits
 void apply_oracle(Q, const oracle_function& oracle, int inputQubits)

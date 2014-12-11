@@ -231,6 +231,11 @@ public:
 	 * destructive, if true (which is physically the case) will alter the qureg state
 	 */
 	friend uint64_t measure_top(Q, int topSize, bool destructive = true);
+	/*
+	 *	from start to start+size-1 qubits
+	 * destructive, if true (which is physically the case) will alter the qureg state
+	 */
+	friend uint64_t measure_range(Q, int startBit, int qsize, bool destructive = true);
 
 	/*
 	 *	Apply an int -> int classical oracle on this register
