@@ -4,6 +4,7 @@
 #ifndef quarklang_h__
 #define quarklang_h__
 #include "utils.h"
+#include "qureg.h"
 
 template <typename T>
 vector<T> concat_vector(vector<T> vec1, vector<T> vec2)
@@ -23,6 +24,24 @@ Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
 		mlit(i, j) = vec[col * i + j];
 	return mlit;
 }
+
+template<typename T>
+int len(vector<T>& vec) { return vec.size(); }
+template<typename T>
+int len(vector<T>&& vec) { return vec.size(); }
+
+int qsize(Qureg& q) { return q.nqubit; }
+int qsize(Qureg&& q) { return q.nqubit; }
+
+template<typename T>
+int rowdim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.rows(); }
+template<typename T>
+int rowdim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.rows(); }
+
+template<typename T>
+int coldim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.cols(); }
+template<typename T>
+int coldim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.cols(); }
 
 #endif // quarklang_h__
 

@@ -7,7 +7,7 @@ CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto -fwhole-program
 LDFLAGS = $(CXXFLAGS)
 CFLAGS = $(CXXFLAGS)
 
-QUHEAD = qureg.h qugate.h qumat.h
+QUHEAD = qureg.h qugate.h qumat.h quarklang.h
 QUOBJ = qugate.o qureg.o qumat.o
 
 shor: shor.o $(QUOBJ)
