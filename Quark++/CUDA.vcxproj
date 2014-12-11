@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="algor.h" />
     <ClInclude Include="frac.h" />
+    <ClInclude Include="prettyprint.h" />
     <ClInclude Include="quarklang.h" />
     <ClInclude Include="qugate.h" />
     <ClInclude Include="qumat.h" />

@@ -22,6 +22,6 @@ int main(int argc, char **argv)
 	pr(pow(complex<float>(4), 3));
 
 	pr(concat_vector(vector<float>{3, 2, 1}, vector<float>{5, 4, 10}));
-	pr((vector<float>{67, 44, 33}));
+	pr( (vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }}) );
 }
 
