@@ -79,56 +79,21 @@ Qureg qclone(Q)
 }
 
 ///////************** Qugate adaptor **************///////
-//void generic_gate_1(Q, const Matrix2cf mat, int tar)
-//{
-//	Qugate::generic_gate(q, mat, tar);
-//}
-//
-//void generic_gate_2(Q, const Matrix4cf mat, int tar1, int tar2)
-//{
-//	Qugate::generic_gate(q, mat, tar1, tar2);
-//}
-///*
-//*	Works with arbitrary number of target qubits
-//*/
-//void generic_gate_n(Q, const MatrixXcf mat, vector<int> tars)
-//{
-//	Qugate::generic_gate(q, mat, tars);
-//}
+void generic_1gate(Q, const Matrix2cf mat, int tar)
+{
+	Qugate::generic_gate(q, mat, tar);
+}
 
-///////************** Single-qubit gates **************///////
-//void hadamard(Q_, int tar)
-//{
-//	Qugate::hadamard(q, tar);
-//}
-//
-//void hadamard_top(Q, int topSize);
+void generic_2gate(Q, const Matrix4cf mat, int tar1, int tar2)
+{
+	Qugate::generic_gate(q, mat, tar1, tar2);
+}
+/*
+*	Works with arbitrary number of target qubits
+*/
+void generic_ngate(Q, const MatrixXcf mat, vector<int> tars)
+{
+	Qugate::generic_gate(q, mat, tars);
+}
 
-//void pauli_X(Q, int tar);
-//void pauli_Y(Q, int tar);
-//void pauli_Z(Q, int tar);
-//
-//void rot_X(Q, float theta, int tar);
-//void rot_Y(Q, float theta, int tar);
-//void rot_Z(Q, float theta, int tar);
-//
-//void phase_scale(Q, float theta, int tar);
-//void phase_shift(Q, float theta, int tar);
-//
-/////////************** Controlled gates **************///////
-//void generic_control(Q, const Matrix2cf&, int ctrl, int tar);
-//void cnot(Q, int ctrl, int tar);
-//
-//void generic_toffoli(Q, const Matrix2cf&, int ctrl1, int ctrl2, int tar);
-//void toffoli(Q, int ctrl1, int ctrl2, int tar);
-//
-//void generic_ncontrol(Q, const Matrix2cf&, vector<int>& ctrls, int tar);
-//void ncnot(Q, vector<int>& ctrls, int tar);
-//
-//void control_phase_shift(Q, float theta, int ctrl, int tar);
-//
-/////////************** Swap gates **************///////
-//void swap(Q, int tar1, int tar2);
-//
-//void cswap(Q, int ctrl, int tar1, int tar2);
 #endif // quarklang_h__

@@ -7,6 +7,7 @@
 using namespace Qumat;
 using namespace Qugate;
 
+int64_t M = 803;
 
 ///////************** Helpers **************///////
 int64_t exp_mod(int64_t b, int64_t e, int64_t m)
@@ -86,7 +87,6 @@ Frac to_fraction(const vector<int64_t>& cfrac, int64_t size)
 	return ans + cfrac[0];
 }
 
-int64_t M = 17 * 13;
 int64_t nbit = log2_int(M) + 1;
 
 // This is the user defined function that should be passed as an argument
