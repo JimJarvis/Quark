@@ -8,11 +8,19 @@
 #include "qugate.h"
 
 // [1, 2] & [3,4,5]
-template <typename T>
-vector<T> concat_vector(vector<T> vec1, vector<T> vec2)
-{
-	vector<T> ans = vec1; ans.insert(ans.end(), vec2.begin(), vec2.end()); return ans;
+#define GEN_CONCAT_VECTOR(type1, type2) \
+template <typename T> \
+vector<T> concat_vector(type1 vec1, type2 vec2) \
+{ \
+	vector<T> ans = vec1; \
+	ans.insert(ans.end(), vec2.begin(), vec2.end()); \
+	return ans; \
 }
+
+GEN_CONCAT_VECTOR(vector<T>&, vector<T>&)
+GEN_CONCAT_VECTOR(vector<T>&&, vector<T>&)
+GEN_CONCAT_VECTOR(vector<T>&, vector<T>&&)
+GEN_CONCAT_VECTOR(vector<T>&&, vector<T>&&)
 
 template<typename T>
 Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
@@ -27,7 +35,12 @@ Matrix<T, Dynamic, Dynamic> matrix_literal(int col, vector<T> vec)
 
 // keyword 'in'
 template<typename T>
-bool membership_in(T elem, vector<T> vec)
+bool membership_in(T elem, vector<T>& vec)
+{
+	return std::find(vec.begin(), vec.end(), elem) != vec.end();
+}
+template<typename T>
+bool membership_in(T elem, vector<T>&& vec)
 {
 	return std::find(vec.begin(), vec.end(), elem) != vec.end();
 }
@@ -66,22 +79,22 @@ Qureg qclone(Q)
 }
 
 ///////************** Qugate adaptor **************///////
-void generic_gate_1(Q, const Matrix2cf mat, int tar)
-{
-	Qugate::generic_gate(q, mat, tar);
-}
-
-void generic_gate_2(Q, const Matrix4cf mat, int tar1, int tar2)
-{
-	Qugate::generic_gate(q, mat, tar1, tar2);
-}
-/*
-*	Works with arbitrary number of target qubits
-*/
-void generic_gate_n(Q, const MatrixXcf mat, vector<int> tars)
-{
-	Qugate::generic_gate(q, mat, tars);
-}
+//void generic_gate_1(Q, const Matrix2cf mat, int tar)
+//{
+//	Qugate::generic_gate(q, mat, tar);
+//}
+//
+//void generic_gate_2(Q, const Matrix4cf mat, int tar1, int tar2)
+//{
+//	Qugate::generic_gate(q, mat, tar1, tar2);
+//}
+///*
+//*	Works with arbitrary number of target qubits
+//*/
+//void generic_gate_n(Q, const MatrixXcf mat, vector<int> tars)
+//{
+//	Qugate::generic_gate(q, mat, tars);
+//}
 
 ///////************** Single-qubit gates **************///////
 //void hadamard(Q_, int tar)
@@ -118,17 +131,4 @@ void generic_gate_n(Q, const MatrixXcf mat, vector<int> tars)
 //void swap(Q, int tar1, int tar2);
 //
 //void cswap(Q, int ctrl, int tar1, int tar2);
-//
-/////////************** Special gates **************///////
-//// tarSize: number of qubits to be operated on
-//void qft(Q, int tarStart, int tarSize);
-//inline void qft(Q) { qft(q, 0, q.nqubit); }
-//
-//// diag([2; 0; 0; ...; 0]) - I, invert amplitude unless the state is 0^n 
-//void grover_diffuse(Q, int tarStart, int tarSize);
-//inline void grover_diffuse(Q) { grover_diffuse(q, 0, q.nqubit); }
-
-
-
 #endif // quarklang_h__
-
