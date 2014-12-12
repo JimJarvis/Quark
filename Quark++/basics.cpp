@@ -23,5 +23,9 @@ int main(int argc, char **argv)
 	pr(len(v));
 	pr(len(vector<vector<float>>{{1, 5, 6, -3}, {10, 3, 2}, { 6 }}));
 	pr( (vector<vector<float>>{vector<float>{1, 5, 6, -3}, vector<float>{10, 3, 2}, vector<float>{ 6 }}) );
+
+	string s = "shit";
+	string s2 = "thit";
+	pr((s < s2));
 }
 

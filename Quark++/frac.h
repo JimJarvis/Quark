@@ -93,6 +93,17 @@ inline bool operator!=(const Frac& lhs, const Frac& rhs)
 	return !(lhs == rhs);
 }
 
+#define GEN_RELATIONAL(op) \
+inline bool operator op (const Frac& lhs, const Frac& rhs) \
+{ \
+	return lhs.num*rhs.denom - rhs.num*lhs.denom op 0; \
+}
+
+GEN_RELATIONAL(>)
+GEN_RELATIONAL(>=)
+GEN_RELATIONAL(<)
+GEN_RELATIONAL(<=)
+
 inline Frac operator+(const Frac& lhs, const Frac& rhs)
 {
 	return Frac(lhs.num*rhs.denom
