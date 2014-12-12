@@ -63,6 +63,9 @@ int coldim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.cols(); }
 template<typename T>
 int coldim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.cols(); }
 
+// For Eigen matrix prettyprint
+IOFormat QuarkEigenIOFormat(StreamPrecision, DontAlignCols, ", ", ";\n", "", "", "[|", "|]");
+
 //**** Fraction getter
 int num(Frac f) { return f.num; }
 int denom(Frac f) { return f.denom; }
