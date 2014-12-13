@@ -50,9 +50,6 @@ int len(vector<T>& vec) { return vec.size(); }
 template<typename T>
 int len(vector<T>&& vec) { return vec.size(); }
 
-int qsize(Qureg& q) { return q.nqubit; }
-// int qsize(Qureg&& q) { return q.nqubit; }
-
 template<typename T>
 int rowdim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.rows(); }
 template<typename T>
@@ -66,11 +63,48 @@ int coldim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.cols(); }
 // For Eigen matrix prettyprint
 IOFormat QuarkEigenIOFormat(StreamPrecision, DontAlignCols, ", ", ";\n", "", "", "[|", "|]");
 
+// Floating comparison with tolerance
+#define QUARK_TOL 1e-6f
+
+bool equal_tolerance(float a, float b)
+{
+	return abs(a - b) < QUARK_TOL;
+}
+bool equal_tolerance(CX a, CX b)
+{
+	return abs(a - b) < QUARK_TOL;
+}
+template<typename T>
+bool equal_tolerance(Matrix<T, Dynamic, Dynamic> m1, Matrix<T, Dynamic, Dynamic> m2)
+{
+	int r = m1.rows();
+	int c = m1.cols();
+	if (r != m2.rows() || c != m2.cols())  return false;
+
+	for (int i = 0; i < r; ++i)
+	for (int j = 0; j < c; ++j)
+		if (!equal_tolerance(m1(i, j), m2(i, j)))
+			return false;
+	return true;
+}
+
+bool unequal_tolerance(float a, float b) { return !equal_tolerance(a, b); }
+bool unequal_tolerance(CX a, CX b) { return !equal_tolerance(a, b); }
+template<typename T>
+bool unequal_tolerance(Matrix<T, Dynamic, Dynamic> m1, Matrix<T, Dynamic, Dynamic> m2)
+{ 
+	return !equal_tolerance(move(m1), move(m2));
+}
+
+
 //**** Fraction getter
 int num(Frac f) { return f.num; }
 int denom(Frac f) { return f.denom; }
 
 ///////************** Qureg specific **************///////
+int qsize(Qureg& q) { return q.nqubit; }
+// int qsize(Qureg&& q) { return q.nqubit; }
+
 float prefix_prob(Q, int nbit, int64_t prefix)
 {
 	return q.prefix_prob(nbit, prefix);
