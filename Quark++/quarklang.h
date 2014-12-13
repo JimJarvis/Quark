@@ -50,15 +50,17 @@ int len(vector<T>& vec) { return vec.size(); }
 template<typename T>
 int len(vector<T>&& vec) { return vec.size(); }
 
+// MUST declare as 'const' and BOTH 'MatrixBase<T>&' and '&&'
+// otherwise  rowdim(Matrix<..>::Zero(4, 9)) doesn't work!!
 template<typename T>
-int rowdim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.rows(); }
+int rowdim(const MatrixBase<T>& mat) { return mat.rows(); }
 template<typename T>
-int rowdim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.rows(); }
+int rowdim(const MatrixBase<T>&& mat) { return mat.rows(); }
 
 template<typename T>
-int coldim(Matrix<T, Dynamic, Dynamic>& mat) { return mat.cols(); }
+int coldim(const MatrixBase<T>& mat) { return mat.cols(); }
 template<typename T>
-int coldim(Matrix<T, Dynamic, Dynamic>&& mat) { return mat.cols(); }
+int coldim(const MatrixBase<T>&& mat) { return mat.cols(); }
 
 // For Eigen matrix prettyprint
 IOFormat QuarkEigenIOFormat(StreamPrecision, DontAlignCols, ", ", ";\n", "", "", "[|", "|]");
@@ -66,36 +68,42 @@ IOFormat QuarkEigenIOFormat(StreamPrecision, DontAlignCols, ", ", ";\n", "", "",
 // Floating comparison with tolerance
 #define QUARK_TOL 1e-6f
 
-bool equal_tolerance(float a, float b)
+bool equal_tolerance(const float a, const float b)
 {
 	return abs(a - b) < QUARK_TOL;
 }
-bool equal_tolerance(CX a, CX b)
+bool equal_tolerance(const CX a, const CX b)
 {
 	return abs(a - b) < QUARK_TOL;
 }
-template<typename T>
-bool equal_tolerance(Matrix<T, Dynamic, Dynamic> m1, Matrix<T, Dynamic, Dynamic> m2)
-{
-	int r = m1.rows();
-	int c = m1.cols();
-	if (r != m2.rows() || c != m2.cols())  return false;
 
-	for (int i = 0; i < r; ++i)
-	for (int j = 0; j < c; ++j)
-		if (!equal_tolerance(m1(i, j), m2(i, j)))
-			return false;
-	return true;
+bool unequal_tolerance(const float a, const float b) { return !equal_tolerance(a, b); }
+bool unequal_tolerance(const CX a, const CX b) { return !equal_tolerance(a, b); }
+
+// Ugly workaround: 
+// Eigen doesn't copy Matrix<T, Dynamic, Dynamic> to MatrixBase<T> correctly
+#define GEN_EQUAL_TOL(MatType1, MatType2) \
+template<typename T> \
+bool equal_tolerance(const MatType1 m1, const MatType2 m2) \
+{ \
+	int r = m1.rows(); int c = m1.cols(); \
+	if (r != m2.rows() || c != m2.cols())  return false; \
+	for (int i = 0; i < r; ++i) \
+		for (int j = 0; j < c; ++j) \
+		if (!equal_tolerance(m1(i, j), m2(i, j))) \
+			cout << m1(i, j) << " vs " << m2(i, j) << endl; \
+		return true; \
+} \
+template<typename T> \
+bool unequal_tolerance(const MatType1 m1, const MatType2 m2) \
+{ \
+	return !equal_tolerance(move(m1), move(m2)); \
 }
 
-bool unequal_tolerance(float a, float b) { return !equal_tolerance(a, b); }
-bool unequal_tolerance(CX a, CX b) { return !equal_tolerance(a, b); }
-template<typename T>
-bool unequal_tolerance(Matrix<T, Dynamic, Dynamic> m1, Matrix<T, Dynamic, Dynamic> m2)
-{ 
-	return !equal_tolerance(move(m1), move(m2));
-}
-
+GEN_EQUAL_TOL(MatrixBase<T>&, MatrixBase<T>&)
+GEN_EQUAL_TOL(MatrixBase<T>&, MatrixBase<T>&&)
+GEN_EQUAL_TOL(MatrixBase<T>&&, MatrixBase<T>&)
+GEN_EQUAL_TOL(MatrixBase<T>&&, MatrixBase<T>&&)
 
 //**** Fraction getter
 int num(Frac f) { return f.num; }
