@@ -4,7 +4,15 @@ EIGEN_PATH = ../QUARK/lib
 CXX = g++
 CC = $(CXX)
 
-CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto -fwhole-program #-fPIC
+CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto
+
+# detect Cygwin or Unix
+ifeq ($(OS),Windows_NT)
+	CXXFLAGS += -fwhole-program
+else
+	CXXFLAGS += -fPIC
+endif
+
 LDFLAGS = $(CXXFLAGS)
 CFLAGS = $(CXXFLAGS)
 
