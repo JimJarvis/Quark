@@ -1,9 +1,10 @@
 EIGEN_PATH = E:\\Dropbox\\Programming\\C\\Eigen-3.2.1
+EIGEN_PATH = ../QUARK/lib
 
 CXX = g++
 CC = $(CXX)
 
-CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto -fwhole-program
+CXXFLAGS = -std=c++11 -I $(EIGEN_PATH) -O3 -fno-rtti -flto -fwhole-program -fPIC
 LDFLAGS = $(CXXFLAGS)
 CFLAGS = $(CXXFLAGS)
 
@@ -34,13 +35,34 @@ qureg.o: utils.h
 libquark.a: $(QUOBJ)
 	ar rcs $@ $^
 
-.PHONY: lib
-lib: libquark.a
+libquark.dylib: $(QUOBJ)
+	g++ -dynamiclib -o libquark.dylib $(QUOBJ)
+
+libquark.so: $(QUOBJ)
+	g++ -shared -o libquark.so $(QUOBJ)
+
+libquark.dll: $(QUOBJ)
+	g++ -shared -o libquark.dll $(QUOBJ)
+
+.PHONY: staticlib
+staticlib: libquark.a
 	@echo "Static library created"
+
+.PHONY: maclib
+maclib: libquark.dylib
+	@echo "Shared library on Mac (.dylib) created"
+
+.PHONY: linuxlib
+linuxlib: libquark.so
+	@echo "Shared library on Linux (.so) created"
+
+.PHONY: winlib
+winlib: libquark.dll
+	@echo "Shared library on Win (.dll) created"
 
 .PHONY: clean
 clean:
-	@rm -rf *~ *.o *.exe shor grover basics
+	@rm -rf *~ *.o *.exe *.a *.so *.dylib *.dll shor grover basics
 	@echo "cleaned"
 
 .PHONY: all
