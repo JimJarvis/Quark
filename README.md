@@ -2,4 +2,6 @@ Quark
 =======
 ### QUantum Analysis and Realization Kit
 
-A domain-specific quantum computing language. A basic quantum circuit simulator is included as part of the language architecture. 
+An optimized quantum circuit simulator library in C++11. 
+
+Can be used in conjunction with the Quarklang compiler, a user-friendly quantum computing language for education and research purposes. 
