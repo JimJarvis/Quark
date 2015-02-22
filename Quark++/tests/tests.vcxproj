@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\Dropbox\Programming\C\Eigen-3.2.1\;E:\Dropbox\Programming\Compiler\Quark\Quark++;E:\Dropbox\Programming\C\GoogleTest\gtest\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Dropbox\Programming\C\GoogleTest\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\Dropbox\Programming\C\Tools\Eigen;E:\Dropbox\Programming\Compiler\Quark\Quark++;E:\Dropbox\Programming\C\Tools\GoogleTest\gtest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Dropbox\Programming\C\Tools\GoogleTest\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
